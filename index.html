@@ -19,6 +19,9 @@
     <!-- PeerJS (WebRTC P2P Library) CDN -->
     <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 
+    <!-- YouTube IFrame API for Direct In-App Synchronized Playback -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
     <!-- Tailwind Theme Configuration -->
     <script>
         tailwind.config = {
@@ -59,7 +62,7 @@
                 radial-gradient(at 100% 100%, rgba(244, 114, 182, 0.12) 0px, transparent 50%),
                 radial-gradient(at 50% 50%, rgba(52, 211, 153, 0.05) 0px, transparent 60%);
             color: #F8FAFC;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
         /* Custom Scrollbars */
@@ -124,10 +127,39 @@
 
         /* Glassmorphism utility */
         .glass-card {
-            background: rgba(28, 25, 41, 0.78);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(28, 25, 41, 0.82);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+        }
+
+        /* Fullscreen Expanded Video Stage Mode */
+        body.immersive-fullscreen header {
+            display: none !important;
+        }
+        body.immersive-fullscreen main {
+            padding: 0 !important;
+            gap: 0 !important;
+        }
+        body.immersive-fullscreen #stage-container {
+            border-radius: 0 !important;
+            border: none !important;
+            width: 100vw !important;
+            height: 100vh !important;
+        }
+        body.immersive-fullscreen #bottom-dock {
+            position: fixed;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 40;
+            width: auto;
+            max-width: 95vw;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        body.immersive-fullscreen:hover #bottom-dock {
+            opacity: 1;
         }
     </style>
 </head>
@@ -137,16 +169,21 @@
     <input type="file" id="input-local-video" accept="video/mp4,video/webm,video/ogg" class="hidden">
 
     <!-- ==================== TOAST NOTIFICATIONS ==================== -->
-    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+    <div id="toast-container" class="fixed top-5 right-5 z-[60] flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+    <!-- ==================== FLOATING SIDEBAR TOGGLE TAB (Always accessible on right edge) ==================== -->
+    <button id="btn-floating-drawer" class="fixed right-0 top-1/2 -translate-y-1/2 z-50 py-4 px-2 rounded-l-2xl bg-cozy-card/90 hover:bg-cozy-pink hover:text-slate-950 text-white border border-r-0 border-cozy-border shadow-2xl flex flex-col items-center gap-1.5 transition-all duration-300 group" title="Slide Chat & Cameras In/Out">
+        <i id="icon-floating-drawer" data-lucide="panel-right-close" class="w-4 h-4 text-cozy-pink group-hover:text-slate-950 transition"></i>
+        <span class="text-[10px] font-bold tracking-wider uppercase [writing-mode:vertical-rl] rotate-180">Chat</span>
+        <span id="unread-chat-dot" class="hidden w-2 h-2 rounded-full bg-cozy-mint animate-ping"></span>
+    </button>
 
     <!-- ==================== LOBBY / WELCOME MODAL ==================== -->
-    <div id="lobby-modal" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md transition-opacity duration-300">
+    <div id="lobby-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md transition-opacity duration-300">
         <div class="glass-card rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-cozy-border relative overflow-hidden">
-            <!-- Decorative Glow -->
             <div class="absolute -top-20 -right-20 w-44 h-44 bg-cozy-pink/20 rounded-full blur-3xl pointer-events-none"></div>
             <div class="absolute -bottom-20 -left-20 w-44 h-44 bg-cozy-lavender/20 rounded-full blur-3xl pointer-events-none"></div>
 
-            <!-- Brand Header -->
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cozy-pink to-cozy-lavender flex items-center justify-center shadow-glow-pink">
@@ -164,7 +201,6 @@
                 </span>
             </div>
 
-            <!-- User Profile Setup -->
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5 ml-1">
@@ -177,7 +213,6 @@
                     </div>
                 </div>
 
-                <!-- Avatar Color Picker -->
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5 ml-1">
                         Choose Your Vibe Color
@@ -191,7 +226,6 @@
                     </div>
                 </div>
 
-                <!-- Camera & Mic Pre-toggle -->
                 <div class="p-3.5 rounded-2xl bg-cozy-bg/70 border border-cozy-border/70 flex items-center justify-between">
                     <div class="flex items-center gap-2.5">
                         <i data-lucide="video" class="w-4 h-4 text-cozy-pink"></i>
@@ -203,20 +237,17 @@
                     </label>
                 </div>
 
-                <!-- Divider -->
                 <div class="relative py-2 flex items-center">
                     <div class="flex-grow border-t border-cozy-border"></div>
                     <span class="flex-shrink mx-3 text-[11px] uppercase tracking-wider text-slate-400">Create or Join</span>
                     <div class="flex-grow border-t border-cozy-border"></div>
                 </div>
 
-                <!-- Create New Room Button -->
                 <button id="btn-create-room" class="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender hover:opacity-95 active:scale-[0.99] text-slate-950 font-bold text-sm shadow-glow-pink flex items-center justify-center gap-2 transition">
                     <i data-lucide="sparkles" class="w-4 h-4 stroke-[2.5]"></i>
                     <span>Create New Watch Party (Host)</span>
                 </button>
 
-                <!-- Join Existing Room Input + Button -->
                 <div class="pt-1">
                     <label class="block text-xs text-slate-400 mb-1.5 ml-1">Have an invite code or link?</label>
                     <div class="flex gap-2">
@@ -232,43 +263,105 @@
         </div>
     </div>
 
-    <!-- ==================== HELP MODAL (HOW TO SHARE STREAMING PLATFORMS) ==================== -->
-    <div id="help-modal" class="fixed inset-0 z-40 hidden items-center justify-center p-4 bg-black/75 backdrop-blur-md">
-        <div class="glass-card rounded-3xl max-w-lg w-full p-6 sm:p-7 border border-cozy-border shadow-2xl">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-2.5">
-                    <div class="p-2 rounded-xl bg-cozy-lavender/20 text-cozy-lavender">
-                        <i data-lucide="help-circle" class="w-5 h-5"></i>
+    <!-- ==================== STREAMING PLATFORMS & BUILT-IN PLAYER HUB MODAL ==================== -->
+    <div id="platforms-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="glass-card rounded-3xl max-w-2xl w-full p-6 sm:p-7 border border-cozy-border shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 rounded-2xl bg-gradient-to-tr from-cozy-pink/20 to-cozy-lavender/20 border border-cozy-pink/30 text-cozy-pink">
+                        <i data-lucide="tv-2" class="w-6 h-6"></i>
                     </div>
-                    <h3 class="font-display text-lg font-bold text-white">How to Watch Together?</h3>
+                    <div>
+                        <h3 class="font-display text-xl font-bold text-white">Choose What to Watch Together 🍿</h3>
+                        <p class="text-xs text-slate-400">Play directly inside VeeVee with 100% synced Start/Stop or log in to your streaming service</p>
+                    </div>
                 </div>
-                <button id="btn-close-help" class="p-1.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition">
-                    <i data-lucide="x" class="w-4 h-4"></i>
+                <button id="btn-close-platforms" class="p-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
-            <div class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
-                <div class="p-3 rounded-2xl bg-cozy-bg/80 border border-cozy-border">
-                    <p class="font-semibold text-cozy-pink mb-1">1. Open Netflix, Disney+, Max or YouTube in another tab</p>
-                    <p class="text-xs text-slate-400">Use Chrome, Edge, or Brave and open your streaming site, or pick a local MP4 file directly from your computer.</p>
+
+            <!-- Section 1: 100% Direct In-App Player (YouTube / Direct MP4 / Local File) -->
+            <div class="p-4 rounded-2xl bg-cozy-bg/90 border border-cozy-mint/30 mb-5">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold uppercase tracking-wider text-cozy-mint flex items-center gap-1.5">
+                        <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                        Direct In-App Player (Start / Stop / Seek Directly on VeeVee)
+                    </span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-cozy-mint/15 text-cozy-mint font-semibold">No Tab Switching!</span>
                 </div>
-                <div class="p-3 rounded-2xl bg-cozy-bg/80 border border-cozy-border">
-                    <p class="font-semibold text-cozy-lavender mb-1">2. Click "Share Screen / Tab" & control right from the video</p>
-                    <p class="text-xs text-slate-400">Enable <strong>"Also share tab audio"</strong>. Hover over the video stage anytime to <strong>Pause/Resume</strong>, <strong>Change Source</strong>, or <strong>Stop Sharing</strong>!</p>
-                </div>
-                <div class="p-3 rounded-2xl bg-cozy-bg/80 border border-cozy-border">
-                    <p class="font-semibold text-cozy-mint mb-1">3. Seeing a black screen on Netflix / Disney+?</p>
-                    <p class="text-xs text-slate-400">Disable <em>"Use graphics acceleration when available"</em> in your browser settings (Settings → System) — this prevents DRM black screens.</p>
+                <p class="text-xs text-slate-400 mb-3">
+                    Paste any <strong>YouTube video link</strong> or direct <strong>.mp4 / .webm URL</strong> below, or pick a movie file from your computer. Everyone in the room can Start, Stop, and Seek directly from the VeeVee video screen!
+                </p>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input id="input-media-url" type="text" placeholder="Paste YouTube URL (e.g. https://youtu.be/...) or .mp4 link" 
+                        class="flex-1 px-3.5 py-2.5 rounded-xl bg-cozy-card border border-cozy-border focus:border-cozy-mint focus:outline-none text-xs text-white placeholder-slate-500">
+                    <button id="btn-load-url" class="px-4 py-2.5 rounded-xl bg-cozy-mint hover:opacity-95 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shrink-0 transition">
+                        <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+                        <span>Load & Sync Now</span>
+                    </button>
+                    <button id="btn-modal-local-file" class="px-3.5 py-2.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border font-semibold text-xs flex items-center justify-center gap-1.5 shrink-0 transition">
+                        <i data-lucide="folder-video" class="w-4 h-4 text-cozy-lavender"></i>
+                        <span>Local File</span>
+                    </button>
                 </div>
             </div>
-            <button id="btn-got-it-help" class="mt-5 w-full py-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs">
-                Got it, let's watch! 🍿
-            </button>
+
+            <!-- Section 2: Streaming Service Login & 1-Click Share -->
+            <div>
+                <div class="flex items-center justify-between mb-2.5">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                        <i data-lucide="key-round" class="w-3.5 h-3.5 text-cozy-pink"></i>
+                        Log In & Stream Your Subscription (Pop-out Login + Tab Capture)
+                    </span>
+                </div>
+                <p class="text-[11px] text-slate-400 mb-3">
+                    Click a platform to open its login window and automatically start streaming it into your room (remember to check <em>"Share tab audio"</em>):
+                </p>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <!-- Netflix -->
+                    <button data-platform="Netflix" data-url="https://www.netflix.com/browse" class="platform-launch-btn p-3.5 rounded-2xl bg-gradient-to-br from-red-950/60 to-cozy-card hover:from-red-900/70 border border-red-500/30 flex flex-col items-center gap-2 text-center group transition">
+                        <div class="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center font-display font-bold text-lg text-white shadow-lg group-hover:scale-105 transition">N</div>
+                        <div>
+                            <div class="font-bold text-xs text-white">Netflix</div>
+                            <div class="text-[10px] text-slate-400">Login & Share</div>
+                        </div>
+                    </button>
+
+                    <!-- Disney+ -->
+                    <button data-platform="Disney+" data-url="https://www.disneyplus.com" class="platform-launch-btn p-3.5 rounded-2xl bg-gradient-to-br from-sky-950/60 to-cozy-card hover:from-sky-900/70 border border-sky-500/30 flex flex-col items-center gap-2 text-center group transition">
+                        <div class="w-10 h-10 rounded-xl bg-sky-600 flex items-center justify-center font-display font-bold text-sm text-white shadow-lg group-hover:scale-105 transition">D+</div>
+                        <div>
+                            <div class="font-bold text-xs text-white">Disney+</div>
+                            <div class="text-[10px] text-slate-400">Login & Share</div>
+                        </div>
+                    </button>
+
+                    <!-- Max -->
+                    <button data-platform="Max" data-url="https://play.max.com" class="platform-launch-btn p-3.5 rounded-2xl bg-gradient-to-br from-indigo-950/60 to-cozy-card hover:from-indigo-900/70 border border-indigo-500/30 flex flex-col items-center gap-2 text-center group transition">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-display font-bold text-xs text-white shadow-lg group-hover:scale-105 transition">MAX</div>
+                        <div>
+                            <div class="font-bold text-xs text-white">HBO Max</div>
+                            <div class="text-[10px] text-slate-400">Login & Share</div>
+                        </div>
+                    </button>
+
+                    <!-- Prime Video -->
+                    <button data-platform="Prime Video" data-url="https://www.primevideo.com" class="platform-launch-btn p-3.5 rounded-2xl bg-gradient-to-br from-cyan-950/60 to-cozy-card hover:from-cyan-900/70 border border-cyan-500/30 flex flex-col items-center gap-2 text-center group transition">
+                        <div class="w-10 h-10 rounded-xl bg-cyan-600 flex items-center justify-center font-display font-bold text-xs text-white shadow-lg group-hover:scale-105 transition">PV</div>
+                        <div>
+                            <div class="font-bold text-xs text-white">Prime Video</div>
+                            <div class="text-[10px] text-slate-400">Login & Share</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- ==================== TOP NAVIGATION BAR ==================== -->
     <header class="h-16 px-4 sm:px-6 border-b border-cozy-border/80 bg-cozy-bg/80 backdrop-blur-xl flex items-center justify-between shrink-0 z-20">
-        <!-- Left: Logo & Room Status -->
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cozy-pink to-cozy-lavender flex items-center justify-center shadow-glow-pink">
                 <i data-lucide="tv" class="w-5 h-5 text-slate-950 stroke-[2.3]"></i>
@@ -287,108 +380,136 @@
             </div>
         </div>
 
-        <!-- Center: Room ID & Copy Invite Link -->
         <div class="hidden md:flex items-center gap-2 bg-cozy-card px-3 py-1.5 rounded-2xl border border-cozy-border">
             <span class="text-xs text-slate-400">Room:</span>
             <code id="display-room-id" class="text-xs font-mono font-semibold text-cozy-pink px-1.5">---</code>
-            <button id="btn-copy-invite" class="px-3 py-1.5 rounded-xl bg-cozy-panel hover:bg-cozy-pink hover:text-slate-950 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition" title="Copy Invite Link">
+            <button id="btn-copy-invite" class="px-3 py-1.5 rounded-xl bg-cozy-panel hover:bg-cozy-pink hover:text-slate-950 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition">
                 <i data-lucide="link" class="w-3.5 h-3.5"></i>
                 <span>Copy Invite Link</span>
             </button>
         </div>
 
-        <!-- Right: Quality, Participants Counter & Help -->
         <div class="flex items-center gap-2">
-            <!-- Stream Quality Selector -->
-            <select id="select-stream-quality" class="hidden sm:block bg-cozy-card border border-cozy-border text-slate-200 text-xs rounded-2xl px-3 py-2 focus:outline-none focus:border-cozy-pink cursor-pointer" title="Screen Share Quality">
+            <button id="btn-open-platforms-top" class="px-3 py-2 rounded-2xl bg-cozy-panel hover:bg-cozy-border border border-cozy-pink/30 text-cozy-pink text-xs font-semibold flex items-center gap-1.5 transition">
+                <i data-lucide="tv-2" class="w-4 h-4"></i>
+                <span class="hidden sm:inline">Platforms & URL</span>
+            </button>
+
+            <select id="select-stream-quality" class="hidden lg:block bg-cozy-card border border-cozy-border text-slate-200 text-xs rounded-2xl px-3 py-2 focus:outline-none focus:border-cozy-pink cursor-pointer">
                 <option value="1080p60">HD 1080p • 60fps</option>
                 <option value="720p30">Smooth 720p • 30fps</option>
             </select>
 
-            <!-- Mobile Copy Link Button -->
-            <button id="btn-copy-invite-mobile" class="md:hidden p-2.5 rounded-2xl bg-cozy-card border border-cozy-border text-cozy-pink hover:bg-cozy-panel transition" title="Copy Invite Link">
+            <button id="btn-copy-invite-mobile" class="md:hidden p-2.5 rounded-2xl bg-cozy-card border border-cozy-border text-cozy-pink hover:bg-cozy-panel transition">
                 <i data-lucide="share-2" class="w-4 h-4"></i>
             </button>
 
-            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-cozy-card border border-cozy-border text-xs font-semibold text-slate-200" title="Connected Participants">
+            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-cozy-card border border-cozy-border text-xs font-semibold text-slate-200">
                 <i data-lucide="users" class="w-3.5 h-3.5 text-cozy-mint"></i>
                 <span id="participant-count">1</span>
             </div>
-
-            <button id="btn-open-help" class="p-2.5 rounded-2xl bg-cozy-card hover:bg-cozy-panel border border-cozy-border text-slate-300 hover:text-white transition" title="Screen Sharing Guide">
-                <i data-lucide="help-circle" class="w-4 h-4"></i>
-            </button>
         </div>
     </header>
 
     <!-- ==================== MAIN WORKSPACE ==================== -->
-    <main class="flex-1 flex flex-col lg:flex-row gap-3.5 p-3 sm:p-4 overflow-hidden min-h-0">
+    <main class="flex-1 flex flex-col lg:flex-row gap-3.5 p-3 sm:p-4 overflow-hidden min-h-0 relative">
         
-        <!-- ========== LEFT COLUMN: MAIN STAGE & CONTROLS ========== -->
+        <!-- ========== LEFT COLUMN: MAIN VIDEO STAGE & DOCK ========== -->
         <section id="main-stage-column" class="w-full lg:w-3/4 flex flex-col gap-3 min-h-0 flex-1 transition-all duration-300">
             
             <!-- Main Video Stage Container -->
-            <div id="stage-container" class="relative flex-1 rounded-3xl bg-cozy-card border border-cozy-border overflow-hidden shadow-2xl flex items-center justify-center group min-h-[240px]">
+            <div id="stage-container" class="relative flex-1 rounded-3xl bg-black border border-cozy-border overflow-hidden shadow-2xl flex items-center justify-center group min-h-[240px]">
                 
-                <!-- Main Shared Stream Video Element -->
+                <!-- 1. HTML5 Video Element (For Screen Share, Local MP4, Direct URL, or Demo) -->
                 <video id="main-screen-video" autoplay playsinline class="w-full h-full object-contain bg-black hidden"></video>
 
+                <!-- 2. Built-in YouTube Synchronized Player Container -->
+                <div id="yt-stage-wrapper" class="w-full h-full hidden relative bg-black">
+                    <div id="yt-player-container" class="w-full h-full pointer-events-none"></div>
+                    <!-- Transparent click-shield so clicking anywhere on video toggles Play/Pause directly via VeeVee -->
+                    <div id="yt-click-shield" class="absolute inset-0 z-10 cursor-pointer"></div>
+                </div>
+
                 <!-- Paused Overlay Indicator -->
-                <div id="stage-paused-banner" class="hidden absolute inset-0 bg-black/60 backdrop-blur-sm z-20 flex-col items-center justify-center pointer-events-none">
-                    <div class="w-16 h-16 rounded-full bg-cozy-pink/20 border border-cozy-pink flex items-center justify-center mb-3">
+                <div id="stage-paused-banner" class="hidden absolute inset-0 bg-black/55 backdrop-blur-sm z-20 flex-col items-center justify-center pointer-events-none">
+                    <div class="w-16 h-16 rounded-full bg-cozy-pink/25 border border-cozy-pink flex items-center justify-center mb-3 shadow-glow-pink">
                         <i data-lucide="pause" class="w-8 h-8 text-cozy-pink"></i>
                     </div>
-                    <span class="font-display font-bold text-lg text-white">Stream Paused</span>
-                    <span class="text-xs text-slate-300 mt-1">Click Play on the stage controls to resume</span>
+                    <span class="font-display font-bold text-lg text-white">Paused</span>
+                    <span class="text-xs text-slate-300 mt-1">Click Start / Play below or press Spacebar to resume</span>
                 </div>
 
                 <!-- Floating Emoji Overlay Container -->
                 <div id="reactions-overlay" class="absolute inset-0 pointer-events-none overflow-hidden z-30"></div>
 
-                <!-- Stream Info Badge (Top Left on Video) -->
-                <div id="stream-live-badge" class="hidden absolute top-4 left-4 z-20 items-center gap-2 px-3 py-1.5 rounded-2xl bg-black/70 backdrop-blur-md border border-white/10 text-xs">
-                    <span id="live-dot-indicator" class="w-2 h-2 rounded-full bg-rose-500 pulse-dot"></span>
-                    <span id="stream-source-label" class="font-semibold text-white">LIVE • Screen Share</span>
+                <!-- Top-Left Stream Info Badge -->
+                <div id="stream-live-badge" class="hidden absolute top-4 left-4 z-30 items-center gap-2 px-3 py-1.5 rounded-2xl bg-black/75 backdrop-blur-md border border-white/10 text-xs">
+                    <span class="w-2 h-2 rounded-full bg-rose-500 pulse-dot"></span>
+                    <span id="stream-source-label" class="font-semibold text-white">LIVE</span>
                 </div>
 
-                <!-- Volume / Audio Unmute Prompt for Guests -->
-                <button id="btn-unmute-stage" class="hidden absolute top-4 right-4 z-30 items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-cozy-pink text-slate-950 font-bold text-xs shadow-glow-pink hover:scale-105 transition">
-                    <i data-lucide="volume-2" class="w-4 h-4"></i>
-                    <span>Click to Enable Stream Audio</span>
-                </button>
-
-                <!-- ON-STAGE INTERACTIVE OVERLAY BAR (Hover over video when streaming) -->
-                <div id="stage-overlay-controls" class="hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-30 items-center gap-2 px-4 py-2.5 rounded-2xl bg-black/80 backdrop-blur-xl border border-white/15 shadow-2xl opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
-                    <!-- Play / Pause Stream Button -->
-                    <button id="btn-stage-playpause" class="px-3.5 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-white text-xs font-semibold flex items-center gap-1.5 transition" title="Pause or Resume Stream">
-                        <i data-lucide="pause" class="w-4 h-4 text-cozy-amber"></i>
-                        <span>Pause</span>
+                <!-- Top-Right Expand Fullscreen & Unmute Buttons -->
+                <div class="absolute top-4 right-12 z-30 flex items-center gap-2">
+                    <button id="btn-unmute-stage" class="hidden items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-cozy-pink text-slate-950 font-bold text-xs shadow-glow-pink hover:scale-105 transition">
+                        <i data-lucide="volume-2" class="w-4 h-4"></i>
+                        <span>Enable Audio</span>
                     </button>
 
-                    <!-- Host-Only Direct Stage Controls -->
-                    <div id="host-stage-actions" class="hidden items-center gap-2">
-                        <!-- Switch Shared Screen/Tab -->
-                        <button id="btn-stage-reshare" class="px-3.5 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition" title="Change Shared Window or Tab">
-                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-cozy-lavender"></i>
-                            <span class="hidden sm:inline">Change Source</span>
-                        </button>
+                    <button id="btn-stage-expand" class="p-2.5 rounded-2xl bg-black/70 hover:bg-cozy-pink hover:text-slate-950 text-white border border-white/15 backdrop-blur-md opacity-0 group-hover:opacity-100 transition" title="Expand Movie to Fill 100% Screen">
+                        <i data-lucide="maximize-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
 
-                        <!-- Stop Sharing Directly from Stage -->
-                        <button id="btn-stage-stop" class="px-3.5 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transition" title="Stop Sharing Immediately">
-                            <i data-lucide="square" class="w-3.5 h-3.5 fill-current"></i>
-                            <span>Stop Stream</span>
-                        </button>
+                <!-- ==================== UNIFIED ON-STAGE START / STOP / SEEK CONTROL BAR ==================== -->
+                <div id="stage-overlay-controls" class="hidden absolute bottom-4 left-4 right-12 z-30 flex-col gap-2 px-4 py-3 rounded-2xl bg-black/85 backdrop-blur-xl border border-white/15 shadow-2xl opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
+                    
+                    <!-- Interactive Seekbar Row (Shown for YouTube, Local MP4 & Direct Video URLs) -->
+                    <div id="stage-seekbar-row" class="hidden items-center gap-3 w-full">
+                        <span id="label-current-time" class="text-[11px] font-mono text-slate-300 w-11 text-right">00:00</span>
+                        <input id="slider-stage-seek" type="range" min="0" max="100" step="0.1" value="0" class="flex-1 accent-cozy-pink h-1.5 bg-slate-700 rounded-lg cursor-pointer">
+                        <span id="label-duration-time" class="text-[11px] font-mono text-slate-400 w-11">00:00</span>
+                    </div>
+
+                    <!-- Control Buttons Row -->
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <!-- Direct START / PAUSE Button -->
+                            <button id="btn-stage-playpause" class="px-4 py-2 rounded-xl bg-cozy-mint hover:opacity-95 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-glow-mint transition">
+                                <i data-lucide="pause" class="w-4 h-4 fill-current"></i>
+                                <span>Pause</span>
+                            </button>
+
+                            <!-- Restart / Rewind 10s Button -->
+                            <button id="btn-stage-rewind" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1 transition" title="Rewind 10 seconds for everyone">
+                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                                <span>-10s</span>
+                            </button>
+
+                            <!-- Change Source / Open Platform Hub -->
+                            <button id="btn-stage-change-source" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition">
+                                <i data-lucide="tv-2" class="w-3.5 h-3.5 text-cozy-lavender"></i>
+                                <span class="hidden sm:inline">Change Movie / Platform</span>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <!-- Direct STOP Button -->
+                            <button id="btn-stage-stop" class="px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transition">
+                                <i data-lucide="square" class="w-3.5 h-3.5 fill-current"></i>
+                                <span>Stop Stream</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Cozy Empty Placeholder (When no screen is currently shared) -->
-                <div id="stage-placeholder" class="flex flex-col items-center justify-center text-center p-6 max-w-lg mx-auto z-10">
+                <!-- Cozy Empty Placeholder (When nothing is playing yet) -->
+                <div id="stage-placeholder" class="flex flex-col items-center justify-center text-center p-6 max-w-xl mx-auto z-10">
                     <div class="relative mb-5">
                         <div class="w-20 h-20 rounded-3xl bg-gradient-to-tr from-cozy-pink/20 via-cozy-lavender/20 to-cozy-mint/20 border border-cozy-border flex items-center justify-center">
                             <i data-lucide="film" class="w-10 h-10 text-cozy-pink"></i>
                         </div>
                         <span class="absolute -bottom-1 -right-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-cozy-mint text-slate-950">
-                            HD 60fps
+                            Synced Start/Stop
                         </span>
                     </div>
 
@@ -396,17 +517,21 @@
                         Ready for a Cozy Movie Night? 🍿
                     </h2>
                     <p class="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
-                        Share a browser tab with <span class="text-rose-400 font-semibold">Netflix</span>, <span class="text-purple-400 font-semibold">Max</span>, <span class="text-sky-400 font-semibold">Disney+</span>, or <span class="text-red-400 font-semibold">YouTube</span> (check <em>"Share tab audio"</em>), pick a local <strong>MP4 file</strong>, or launch the Demo Stream!
+                        Open the <strong>Streaming Platforms & Player Hub</strong> to watch <span class="text-red-400 font-semibold">YouTube</span> or <span class="text-cozy-mint font-semibold">MP4 movies</span> with direct Start/Stop controls right on this screen, or log in to <span class="text-rose-400 font-semibold">Netflix</span>, <span class="text-sky-400 font-semibold">Disney+</span> & <span class="text-indigo-400 font-semibold">Max</span>!
                     </p>
 
                     <div class="flex flex-wrap items-center justify-center gap-2.5">
-                        <button id="btn-hero-share" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender hover:opacity-95 text-slate-950 font-bold text-xs sm:text-sm shadow-glow-pink flex items-center gap-2 transition">
-                            <i data-lucide="monitor-up" class="w-4 h-4 stroke-[2.2]"></i>
+                        <button id="btn-hero-platforms" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender hover:opacity-95 text-slate-950 font-bold text-xs sm:text-sm shadow-glow-pink flex items-center gap-2 transition">
+                            <i data-lucide="tv-2" class="w-4 h-4 stroke-[2.2]"></i>
+                            <span>Netflix / Disney+ / YouTube Hub</span>
+                        </button>
+                        <button id="btn-hero-share" class="px-4 py-3 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border font-semibold text-xs sm:text-sm flex items-center gap-2 transition">
+                            <i data-lucide="monitor-up" class="w-4 h-4 text-cozy-pink"></i>
                             <span>Share Screen / Tab</span>
                         </button>
                         <button id="btn-hero-file" class="px-4 py-3 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border font-semibold text-xs sm:text-sm flex items-center gap-2 transition">
                             <i data-lucide="folder-video" class="w-4 h-4 text-cozy-lavender"></i>
-                            <span>Play Local MP4</span>
+                            <span>Local MP4</span>
                         </button>
                         <button id="btn-hero-demo" class="px-4 py-3 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border font-semibold text-xs sm:text-sm flex items-center gap-2 transition">
                             <i data-lucide="sparkles" class="w-4 h-4 text-cozy-mint"></i>
@@ -417,69 +542,63 @@
             </div>
 
             <!-- Bottom Control Dock -->
-            <div class="glass-card rounded-3xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
+            <div id="bottom-dock" class="glass-card rounded-3xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
                 
-                <!-- Left: Media & Screen Controls -->
+                <!-- Left: Media & Stream Controls -->
                 <div class="flex items-center flex-wrap gap-2">
-                    <!-- Toggle Microphone -->
-                    <button id="btn-toggle-mic" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border flex items-center gap-2 text-xs font-semibold transition" title="Mute / Unmute Microphone">
+                    <button id="btn-toggle-mic" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border flex items-center gap-2 text-xs font-semibold transition">
                         <i data-lucide="mic" class="w-4 h-4 text-cozy-mint"></i>
                         <span class="hidden sm:inline">Mic On</span>
                     </button>
 
-                    <!-- Toggle Camera -->
-                    <button id="btn-toggle-cam" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border flex items-center gap-2 text-xs font-semibold transition" title="Turn Camera On / Off">
+                    <button id="btn-toggle-cam" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border flex items-center gap-2 text-xs font-semibold transition">
                         <i data-lucide="video" class="w-4 h-4 text-cozy-mint"></i>
                         <span class="hidden sm:inline">Cam On</span>
                     </button>
 
-                    <!-- Share Screen / Stop Share Button -->
                     <button id="btn-share-screen" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs shadow-glow-pink flex items-center gap-2 hover:opacity-95 transition">
                         <i data-lucide="screen-share" class="w-4 h-4 stroke-[2.2]"></i>
                         <span>Share Screen</span>
+                    </button>
+
+                    <button id="btn-dock-platforms" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender border border-cozy-lavender/30 flex items-center gap-1.5 text-xs font-semibold transition">
+                        <i data-lucide="play-square" class="w-4 h-4"></i>
+                        <span class="hidden md:inline">Watch Hub</span>
                     </button>
                 </div>
 
                 <!-- Center: Quick Floating Emoji Reactions -->
                 <div class="flex items-center gap-1.5 bg-cozy-bg/80 px-2.5 py-1.5 rounded-2xl border border-cozy-border">
-                    <span class="text-[11px] text-slate-400 hidden xl:inline mr-1">Reactions:</span>
-                    <button data-emoji="💖" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Send Heart">💖</button>
-                    <button data-emoji="😂" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Laugh">😂</button>
-                    <button data-emoji="😱" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Shocked">😱</button>
-                    <button data-emoji="🍿" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Popcorn">🍿</button>
-                    <button data-emoji="🔥" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Fire">🔥</button>
-                    <button data-emoji="🥺" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Emotional">🥺</button>
+                    <button data-emoji="💖" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition">💖</button>
+                    <button data-emoji="😂" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition">😂</button>
+                    <button data-emoji="😱" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition">😱</button>
+                    <button data-emoji="🍿" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition">🍿</button>
+                    <button data-emoji="🔥" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition">🔥</button>
+                    <button data-emoji="🥺" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition">🥺</button>
                 </div>
 
-                <!-- Right: Auto-Duck, Volume, Cinema Mode & Fullscreen -->
+                <!-- Right: Auto-Duck, Volume, Fullscreen Expand -->
                 <div class="flex items-center gap-2">
-                    <!-- Auto-Ducking Toggle -->
                     <button id="btn-toggle-autoduck" class="px-3 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-mint border border-cozy-mint/30 flex items-center gap-1.5 text-xs font-semibold transition" title="Auto-Ducking: Automatically lower movie volume when someone speaks">
                         <i data-lucide="ear" class="w-4 h-4"></i>
-                        <span class="hidden md:inline">Auto-Duck</span>
+                        <span class="hidden xl:inline">Auto-Duck</span>
                     </button>
 
-                    <!-- Stage Volume Slider -->
                     <div class="hidden sm:flex items-center gap-2 bg-cozy-bg/80 px-3 py-2 rounded-2xl border border-cozy-border">
                         <i data-lucide="volume-2" class="w-4 h-4 text-cozy-lavender"></i>
                         <input id="slider-stage-volume" type="range" min="0" max="1" step="0.05" value="1" class="w-16 accent-cozy-pink cursor-pointer">
                     </div>
 
-                    <!-- Cinema Mode Toggle (Hides Sidebar) -->
-                    <button id="btn-cinema-mode" class="p-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border transition" title="Toggle Cinema Mode (Hide/Show Sidebar)">
-                        <i data-lucide="panel-right-close" class="w-4 h-4"></i>
-                    </button>
-
-                    <!-- Fullscreen Toggle -->
-                    <button id="btn-fullscreen" class="p-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border transition" title="Fullscreen Mode">
+                    <button id="btn-fullscreen" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-pink hover:text-slate-950 text-slate-200 border border-cozy-border flex items-center gap-1.5 text-xs font-semibold transition" title="Expand Video to Fill Entire Screen">
                         <i data-lucide="maximize" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline" id="label-fullscreen">Full Screen</span>
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- ========== RIGHT COLUMN: CAMERAS & LIVE CHAT ========== -->
-        <aside id="sidebar-column" class="w-full lg:w-1/4 flex flex-col gap-3 min-h-0 h-[360px] lg:h-auto shrink-0 transition-all duration-300">
+        <!-- ========== RIGHT COLUMN / SLIDE-OUT DRAWER: CAMERAS & LIVE CHAT ========== -->
+        <aside id="sidebar-column" class="w-full lg:w-1/4 flex flex-col gap-3 min-h-0 h-[360px] lg:h-auto shrink-0 transition-transform duration-300 z-40">
             
             <!-- Top Section: Participant Webcams Grid -->
             <div class="glass-card rounded-3xl p-3 flex flex-col border border-cozy-border max-h-[42%] min-h-[145px]">
@@ -488,18 +607,17 @@
                         <i data-lucide="camera" class="w-3.5 h-3.5 text-cozy-pink"></i>
                         <h3 class="font-display font-bold text-xs uppercase tracking-wider text-slate-200">Cameras & Voice</h3>
                     </div>
-                    <span class="text-[10px] text-cozy-mint font-semibold">Voice Detection On</span>
+                    <button id="btn-close-drawer-inside" class="text-[11px] text-slate-400 hover:text-white flex items-center gap-1">
+                        <span>Hide</span>
+                        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                    </button>
                 </div>
 
-                <!-- Webcams Grid Container -->
-                <div id="cameras-grid" class="grid grid-cols-2 gap-2 overflow-y-auto pr-0.5 flex-1">
-                    <!-- Local & Remote Camera Cards injected dynamically -->
-                </div>
+                <div id="cameras-grid" class="grid grid-cols-2 gap-2 overflow-y-auto pr-0.5 flex-1"></div>
             </div>
 
             <!-- Bottom Section: Cozy Chat & Emoji Drawer -->
             <div class="glass-card rounded-3xl p-3.5 flex-1 flex flex-col border border-cozy-border min-h-0 relative">
-                <!-- Chat Header -->
                 <div class="flex items-center justify-between pb-2.5 border-b border-cozy-border/70">
                     <div class="flex items-center gap-2">
                         <i data-lucide="message-circle-heart" class="w-4 h-4 text-cozy-lavender"></i>
@@ -508,19 +626,16 @@
                     <span class="text-[11px] text-slate-400">Encrypted P2P</span>
                 </div>
 
-                <!-- Messages List -->
                 <div id="chat-messages" class="flex-1 overflow-y-auto py-3 px-1 space-y-2.5 text-xs select-text">
                     <div class="bg-cozy-panel/60 border border-cozy-border/60 rounded-2xl p-2.5 text-center text-slate-400 text-[11px]">
-                        ✨ Welcome to VeeVee! Copy the invite link at the top and share it with friends to watch together.
+                        ✨ Welcome to VeeVee! Use the button on the right edge anytime to slide this chat in or out while watching in full screen.
                     </div>
                 </div>
 
-                <!-- Typing Indicator -->
                 <div id="typing-indicator" class="hidden px-2 py-1 text-[11px] text-cozy-lavender italic animate-pulse">
                     Someone is typing...
                 </div>
 
-                <!-- Emoji Picker Drawer -->
                 <div id="emoji-drawer" class="hidden absolute bottom-16 left-3 right-3 p-2.5 rounded-2xl bg-cozy-card/95 backdrop-blur-xl border border-cozy-border shadow-2xl z-30">
                     <div class="grid grid-cols-7 gap-1 text-base text-center">
                         <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">😊</button>
@@ -540,14 +655,13 @@
                     </div>
                 </div>
 
-                <!-- Chat Input Form -->
                 <form id="chat-form" class="pt-2 flex items-center gap-1.5">
-                    <button type="button" id="btn-toggle-emoji" class="p-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender transition shrink-0" title="Insert Emoji">
+                    <button type="button" id="btn-toggle-emoji" class="p-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender transition shrink-0">
                         <i data-lucide="smile" class="w-4 h-4"></i>
                     </button>
                     <input id="chat-input" type="text" maxlength="300" autocomplete="off" placeholder="Write a message..." 
                         class="flex-1 px-3.5 py-2.5 rounded-2xl bg-cozy-bg/90 border border-cozy-border focus:border-cozy-pink focus:outline-none text-xs text-white placeholder-slate-500">
-                    <button type="submit" class="p-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold hover:opacity-95 transition shrink-0" title="Send">
+                    <button type="submit" class="p-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold hover:opacity-95 transition shrink-0">
                         <i data-lucide="send" class="w-4 h-4"></i>
                     </button>
                 </form>
@@ -559,9 +673,6 @@
     <script>
         lucide.createIcons();
 
-        /**
-         * Main VeeVee Application State
-         */
         const state = {
             peer: null,
             myPeerId: null,
@@ -576,28 +687,36 @@
             demoAudioCtx: null,
             micEnabled: true,
             camEnabled: true,
+            // Active Stage Mode: 'none' | 'screen' | 'file' | 'url' | 'youtube' | 'demo'
+            stageMode: 'none',
             isSharingScreen: false,
             isStagePaused: false,
+            ytPlayer: null,
+            ytReady: false,
+            ytVideoId: null,
             autoDuckEnabled: true,
             userStageVolume: 1.0,
-            cinemaMode: false,
+            drawerOpen: true,
+            isImmersiveFullscreen: false,
             activeSpeakers: new Set(),
             typingTimeout: null,
             lastTypingSent: 0,
-            // Connected peers storage
+            ignoreNextSyncEvent: false,
             dataConnections: new Map(),
             camCalls: new Map(),
             screenCalls: new Map(),
             participants: new Map()
         };
 
-        // DOM Elements Cache
         const dom = {
             lobbyModal: document.getElementById('lobby-modal'),
-            helpModal: document.getElementById('help-modal'),
+            platformsModal: document.getElementById('platforms-modal'),
             inputUsername: document.getElementById('input-username'),
             inputRoomId: document.getElementById('input-room-id'),
             inputLocalVideo: document.getElementById('input-local-video'),
+            inputMediaUrl: document.getElementById('input-media-url'),
+            btnLoadUrl: document.getElementById('btn-load-url'),
+            btnModalLocalFile: document.getElementById('btn-modal-local-file'),
             toggleInitialMedia: document.getElementById('toggle-initial-media'),
             btnCreateRoom: document.getElementById('btn-create-room'),
             btnJoinRoom: document.getElementById('btn-join-room'),
@@ -609,31 +728,44 @@
             participantCount: document.getElementById('participant-count'),
             btnCopyInvite: document.getElementById('btn-copy-invite'),
             btnCopyInviteMobile: document.getElementById('btn-copy-invite-mobile'),
+            btnFloatingDrawer: document.getElementById('btn-floating-drawer'),
+            iconFloatingDrawer: document.getElementById('icon-floating-drawer'),
+            unreadChatDot: document.getElementById('unread-chat-dot'),
+            btnCloseDrawerInside: document.getElementById('btn-close-drawer-inside'),
             mainStageColumn: document.getElementById('main-stage-column'),
             sidebarColumn: document.getElementById('sidebar-column'),
             stageContainer: document.getElementById('stage-container'),
             mainScreenVideo: document.getElementById('main-screen-video'),
+            ytStageWrapper: document.getElementById('yt-stage-wrapper'),
+            ytClickShield: document.getElementById('yt-click-shield'),
             stagePausedBanner: document.getElementById('stage-paused-banner'),
             stagePlaceholder: document.getElementById('stage-placeholder'),
             streamLiveBadge: document.getElementById('stream-live-badge'),
             streamSourceLabel: document.getElementById('stream-source-label'),
             btnUnmuteStage: document.getElementById('btn-unmute-stage'),
+            btnStageExpand: document.getElementById('btn-stage-expand'),
             stageOverlayControls: document.getElementById('stage-overlay-controls'),
+            stageSeekbarRow: document.getElementById('stage-seekbar-row'),
+            sliderStageSeek: document.getElementById('slider-stage-seek'),
+            labelCurrentTime: document.getElementById('label-current-time'),
+            labelDurationTime: document.getElementById('label-duration-time'),
             btnStagePlayPause: document.getElementById('btn-stage-playpause'),
-            hostStageActions: document.getElementById('host-stage-actions'),
-            btnStageReshare: document.getElementById('btn-stage-reshare'),
+            btnStageRewind: document.getElementById('btn-stage-rewind'),
+            btnStageChangeSource: document.getElementById('btn-stage-change-source'),
             btnStageStop: document.getElementById('btn-stage-stop'),
             reactionsOverlay: document.getElementById('reactions-overlay'),
+            btnHeroPlatforms: document.getElementById('btn-hero-platforms'),
             btnHeroShare: document.getElementById('btn-hero-share'),
             btnHeroFile: document.getElementById('btn-hero-file'),
             btnHeroDemo: document.getElementById('btn-hero-demo'),
             btnToggleMic: document.getElementById('btn-toggle-mic'),
             btnToggleCam: document.getElementById('btn-toggle-cam'),
             btnShareScreen: document.getElementById('btn-share-screen'),
+            btnDockPlatforms: document.getElementById('btn-dock-platforms'),
             btnToggleAutoduck: document.getElementById('btn-toggle-autoduck'),
             sliderStageVolume: document.getElementById('slider-stage-volume'),
-            btnCinemaMode: document.getElementById('btn-cinema-mode'),
             btnFullscreen: document.getElementById('btn-fullscreen'),
+            labelFullscreen: document.getElementById('label-fullscreen'),
             camerasGrid: document.getElementById('cameras-grid'),
             chatMessages: document.getElementById('chat-messages'),
             typingIndicator: document.getElementById('typing-indicator'),
@@ -644,15 +776,26 @@
             toastContainer: document.getElementById('toast-container')
         };
 
-        // ==================== UI HELPER FUNCTIONS ====================
+        // ==================== HELPERS ====================
 
         function generateShortRoomId() {
             const chars = 'abcdefghjkmnpqrstuvwxyz23456789';
             let code = 'veevee-';
-            for (let i = 0; i < 6; i++) {
-                code += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
+            for (let i = 0; i < 6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
             return code;
+        }
+
+        function formatSeconds(sec) {
+            if (!sec || isNaN(sec) || sec < 0) return '00:00';
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60);
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        function extractYouTubeId(url) {
+            const regExp = /^.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
+            const match = String(url).match(regExp);
+            return (match && match[1].length === 11) ? match[1] : null;
         }
 
         function showToast(message, type = 'info') {
@@ -678,10 +821,7 @@
             dom.toastContainer.appendChild(toast);
             lucide.createIcons({ nodes: [toast] });
 
-            requestAnimationFrame(() => {
-                toast.classList.remove('opacity-0', 'translate-y-2');
-            });
-
+            requestAnimationFrame(() => toast.classList.remove('opacity-0', 'translate-y-2'));
             setTimeout(() => {
                 toast.classList.add('opacity-0', '-translate-y-2');
                 setTimeout(() => toast.remove(), 300);
@@ -697,13 +837,9 @@
         function updateConnectionUI(status, text) {
             dom.connectionStatusText.textContent = text;
             dom.connectionDot.className = 'w-2 h-2 rounded-full pulse-dot ';
-            if (status === 'connected') {
-                dom.connectionDot.classList.add('bg-cozy-mint');
-            } else if (status === 'connecting') {
-                dom.connectionDot.classList.add('bg-amber-400');
-            } else {
-                dom.connectionDot.classList.add('bg-rose-500');
-            }
+            if (status === 'connected') dom.connectionDot.classList.add('bg-cozy-mint');
+            else if (status === 'connecting') dom.connectionDot.classList.add('bg-amber-400');
+            else dom.connectionDot.classList.add('bg-rose-500');
         }
 
         function updateParticipantsCounter() {
@@ -717,6 +853,171 @@
             } catch (e) {}
         }
 
+        // ==================== SLIDE-IN / SLIDE-OUT CHAT DRAWER & IMMERSIVE FULLSCREEN ====================
+
+        function updateDrawerAndLayout() {
+            if (state.isImmersiveFullscreen) {
+                document.body.classList.add('immersive-fullscreen');
+                dom.mainStageColumn.className = 'w-screen h-screen flex flex-col';
+                // Make sidebar a floating slide-over drawer on top of the fullscreen movie
+                dom.sidebarColumn.className = `fixed top-3 bottom-3 right-3 w-80 sm:w-96 flex flex-col gap-3 z-40 transition-transform duration-300 ${
+                    state.drawerOpen ? 'translate-x-0' : 'translate-x-[110%]'
+                }`;
+            } else {
+                document.body.classList.remove('immersive-fullscreen');
+                if (state.drawerOpen) {
+                    dom.mainStageColumn.className = 'w-full lg:w-3/4 flex flex-col gap-3 min-h-0 flex-1 transition-all duration-300';
+                    dom.sidebarColumn.className = 'w-full lg:w-1/4 flex flex-col gap-3 min-h-0 h-[360px] lg:h-auto shrink-0 transition-all duration-300 z-30';
+                } else {
+                    dom.mainStageColumn.className = 'w-full flex flex-col gap-3 min-h-0 flex-1 transition-all duration-300';
+                    dom.sidebarColumn.className = 'hidden';
+                }
+            }
+
+            // Update Floating Tab Icon
+            dom.btnFloatingDrawer.innerHTML = `
+                <i data-lucide="${state.drawerOpen ? 'panel-right-close' : 'panel-right-open'}" class="w-4 h-4 text-cozy-pink group-hover:text-slate-950 transition"></i>
+                <span class="text-[10px] font-bold tracking-wider uppercase [writing-mode:vertical-rl] rotate-180">${state.drawerOpen ? 'Hide Chat' : 'Open Chat'}</span>
+                <span id="unread-chat-dot" class="${state.drawerOpen ? 'hidden' : 'hidden'} w-2 h-2 rounded-full bg-cozy-mint animate-ping"></span>
+            `;
+            lucide.createIcons({ nodes: [dom.btnFloatingDrawer] });
+        }
+
+        function toggleDrawer(forceState) {
+            state.drawerOpen = typeof forceState === 'boolean' ? forceState : !state.drawerOpen;
+            updateDrawerAndLayout();
+        }
+
+        function toggleImmersiveFullscreen() {
+            state.isImmersiveFullscreen = !state.isImmersiveFullscreen;
+
+            if (state.isImmersiveFullscreen) {
+                // Auto-hide drawer initially when expanding movie so it fills 100% screen, user can slide it out anytime
+                state.drawerOpen = false;
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(() => {});
+                }
+                showToast('Full Screen Active! Use the "Open Chat" tab on the right edge anytime.', 'info');
+            } else {
+                state.drawerOpen = true;
+                if (document.fullscreenElement) {
+                    document.exitFullscreen().catch(() => {});
+                }
+            }
+
+            dom.btnFullscreen.innerHTML = `
+                <i data-lucide="${state.isImmersiveFullscreen ? 'minimize' : 'maximize'}" class="w-4 h-4"></i>
+                <span class="hidden sm:inline">${state.isImmersiveFullscreen ? 'Exit Full' : 'Full Screen'}</span>
+            `;
+            dom.btnStageExpand.innerHTML = `<i data-lucide="${state.isImmersiveFullscreen ? 'minimize-2' : 'maximize-2'}" class="w-4 h-4"></i>`;
+            lucide.createIcons({ nodes: [dom.btnFullscreen, dom.btnStageExpand] });
+
+            updateDrawerAndLayout();
+        }
+
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement && state.isImmersiveFullscreen) {
+                state.isImmersiveFullscreen = false;
+                state.drawerOpen = true;
+                updateDrawerAndLayout();
+            }
+        });
+
+        // ==================== YOUTUBE IFRAME API INTEGRATION ====================
+
+        window.onYouTubeIframeAPIReady = function () {
+            state.ytReady = true;
+        };
+
+        function loadYouTubeStageVideo(videoId, startSeconds = 0, broadcast = true) {
+            if (state.isSharingScreen) cleanupLocalStageStreams();
+
+            state.stageMode = 'youtube';
+            state.ytVideoId = videoId;
+            state.isStagePaused = false;
+
+            dom.mainScreenVideo.pause();
+            dom.mainScreenVideo.classList.add('hidden');
+            dom.stagePlaceholder.classList.add('hidden');
+            dom.ytStageWrapper.classList.remove('hidden');
+
+            dom.streamLiveBadge.classList.remove('hidden');
+            dom.streamLiveBadge.classList.add('flex');
+            dom.streamSourceLabel.textContent = 'LIVE • YouTube Sync Player';
+
+            dom.stageOverlayControls.classList.remove('hidden');
+            dom.stageOverlayControls.classList.add('flex');
+            dom.stageSeekbarRow.classList.remove('hidden');
+            dom.stageSeekbarRow.classList.add('flex');
+
+            updateStagePlayPauseUI();
+
+            if (state.ytPlayer && typeof state.ytPlayer.loadVideoById === 'function') {
+                state.ytPlayer.loadVideoById({ videoId: videoId, startSeconds: startSeconds });
+            } else if (window.YT && window.YT.Player) {
+                state.ytPlayer = new YT.Player('yt-player-container', {
+                    videoId: videoId,
+                    playerVars: {
+                        autoplay: 1,
+                        controls: 0,
+                        rel: 0,
+                        modestbranding: 1,
+                        playsinline: 1,
+                        start: Math.floor(startSeconds)
+                    },
+                    events: {
+                        onReady: (e) => {
+                            e.target.setVolume(state.userStageVolume * 100);
+                            e.target.playVideo();
+                        },
+                        onStateChange: (e) => {
+                            if (state.ignoreNextSyncEvent) return;
+                            if (e.data === YT.PlayerState.PLAYING) {
+                                state.isStagePaused = false;
+                                updateStagePlayPauseUI();
+                            } else if (e.data === YT.PlayerState.PAUSED) {
+                                state.isStagePaused = true;
+                                updateStagePlayPauseUI();
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (broadcast) {
+                broadcastData({
+                    type: 'load-youtube',
+                    videoId: videoId,
+                    startSeconds: startSeconds,
+                    sender: state.username
+                });
+                appendSystemMessage(`▶️ ${state.username} started a YouTube Watch Party!`);
+            }
+        }
+
+        // Periodic Seekbar & Time UI updater
+        setInterval(() => {
+            if (state.stageMode === 'youtube' && state.ytPlayer && typeof state.ytPlayer.getCurrentTime === 'function') {
+                const cur = state.ytPlayer.getCurrentTime() || 0;
+                const dur = state.ytPlayer.getDuration() || 0;
+                if (dur > 0) {
+                    dom.sliderStageSeek.max = dur;
+                    dom.sliderStageSeek.value = cur;
+                    dom.labelCurrentTime.textContent = formatSeconds(cur);
+                    dom.labelDurationTime.textContent = formatSeconds(dur);
+                }
+            } else if ((state.stageMode === 'file' || state.stageMode === 'url') && !dom.mainScreenVideo.classList.contains('hidden')) {
+                const cur = dom.mainScreenVideo.currentTime || 0;
+                const dur = dom.mainScreenVideo.duration || 0;
+                if (dur > 0 && isFinite(dur)) {
+                    dom.sliderStageSeek.max = dur;
+                    dom.sliderStageSeek.value = cur;
+                    dom.labelCurrentTime.textContent = formatSeconds(cur);
+                    dom.labelDurationTime.textContent = formatSeconds(dur);
+                }
+            }
+        }, 500);
+
         // ==================== LOCAL CAMERA / AVATAR FALLBACK ====================
 
         function createAvatarFallbackStream(username, bgColor) {
@@ -724,7 +1025,6 @@
             canvas.width = 480;
             canvas.height = 360;
             const ctx = canvas.getContext('2d');
-
             const initials = (username || 'VV').slice(0, 2).toUpperCase();
             let angle = 0;
 
@@ -786,13 +1086,10 @@
                 state.localCamStream = stream;
                 state.micEnabled = true;
                 state.camEnabled = true;
-                showToast('Camera & microphone active ✨', 'success');
             } catch (err) {
-                console.warn('Could not access camera/microphone, using cozy avatar fallback:', err);
                 state.localCamStream = createAvatarFallbackStream(state.username, state.avatarColor);
                 state.micEnabled = false;
                 state.camEnabled = false;
-                showToast('Joined with cozy avatar (no camera/mic detected)', 'warning');
             }
 
             updateMediaButtonsUI();
@@ -800,33 +1097,23 @@
         }
 
         function updateMediaButtonsUI() {
-            // Re-render Microphone button with fresh <i> tag for Lucide
-            dom.btnToggleMic.classList.toggle('bg-rose-500/20', !state.micEnabled);
-            dom.btnToggleMic.classList.toggle('border-rose-500/40', !state.micEnabled);
-            dom.btnToggleMic.classList.toggle('text-rose-300', !state.micEnabled);
             dom.btnToggleMic.innerHTML = `
                 <i data-lucide="${state.micEnabled ? 'mic' : 'mic-off'}" class="w-4 h-4 ${state.micEnabled ? 'text-cozy-mint' : 'text-rose-400'}"></i>
                 <span class="hidden sm:inline">${state.micEnabled ? 'Mic On' : 'Muted'}</span>
             `;
-
-            // Re-render Camera button with fresh <i> tag for Lucide
-            dom.btnToggleCam.classList.toggle('bg-rose-500/20', !state.camEnabled);
-            dom.btnToggleCam.classList.toggle('border-rose-500/40', !state.camEnabled);
-            dom.btnToggleCam.classList.toggle('text-rose-300', !state.camEnabled);
             dom.btnToggleCam.innerHTML = `
                 <i data-lucide="${state.camEnabled ? 'video' : 'video-off'}" class="w-4 h-4 ${state.camEnabled ? 'text-cozy-mint' : 'text-rose-400'}"></i>
                 <span class="hidden sm:inline">${state.camEnabled ? 'Cam On' : 'Cam Off'}</span>
             `;
-
             lucide.createIcons({ nodes: [dom.btnToggleMic, dom.btnToggleCam] });
         }
 
         function updateShareButtonUI() {
-            if (state.isSharingScreen) {
+            if (state.isSharingScreen || state.stageMode !== 'none') {
                 dom.btnShareScreen.className = 'px-4 py-2.5 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 transition';
                 dom.btnShareScreen.innerHTML = `
                     <i data-lucide="square" class="w-4 h-4 fill-current"></i>
-                    <span>Stop Sharing</span>
+                    <span>Stop Stream</span>
                 `;
             } else {
                 dom.btnShareScreen.className = 'px-4 py-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs shadow-glow-pink flex items-center gap-2 hover:opacity-95 transition';
@@ -840,15 +1127,17 @@
 
         function updateStagePlayPauseUI() {
             if (state.isStagePaused) {
+                dom.btnStagePlayPause.className = 'px-4 py-2 rounded-xl bg-cozy-pink hover:opacity-95 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-glow-pink transition';
                 dom.btnStagePlayPause.innerHTML = `
-                    <i data-lucide="play" class="w-4 h-4 text-cozy-mint fill-current"></i>
-                    <span>Resume</span>
+                    <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+                    <span>Start / Resume</span>
                 `;
                 dom.stagePausedBanner.classList.remove('hidden');
                 dom.stagePausedBanner.classList.add('flex');
             } else {
+                dom.btnStagePlayPause.className = 'px-4 py-2 rounded-xl bg-cozy-mint hover:opacity-95 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-glow-mint transition';
                 dom.btnStagePlayPause.innerHTML = `
-                    <i data-lucide="pause" class="w-4 h-4 text-cozy-amber"></i>
+                    <i data-lucide="pause" class="w-4 h-4 fill-current"></i>
                     <span>Pause</span>
                 `;
                 dom.stagePausedBanner.classList.add('hidden');
@@ -857,18 +1146,16 @@
             lucide.createIcons({ nodes: [dom.btnStagePlayPause] });
         }
 
-        // ==================== VOICE ACTIVITY DETECTION & AUTO-DUCKING ====================
+        // ==================== VOICE DETECTION & AUTO-DUCKING ====================
 
         function attachVoiceDetector(peerId, stream) {
             if (!stream || stream.getAudioTracks().length === 0) return;
-
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const source = audioCtx.createMediaStreamSource(stream);
                 const analyser = audioCtx.createAnalyser();
                 analyser.fftSize = 256;
                 source.connect(analyser);
-
                 const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
                 function checkAudioLevel() {
@@ -878,41 +1165,34 @@
                         audioCtx.close().catch(() => {});
                         return;
                     }
-
                     analyser.getByteFrequencyData(dataArray);
                     let sum = 0;
                     for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
                     const avg = sum / dataArray.length;
-
                     const isSpeaking = avg > 16 && (peerId !== 'local' || state.micEnabled);
 
                     tile.classList.toggle('ring-2', isSpeaking);
                     tile.classList.toggle('ring-cozy-mint', isSpeaking);
 
-                    if (isSpeaking) {
-                        state.activeSpeakers.add(peerId);
-                    } else {
-                        state.activeSpeakers.delete(peerId);
-                    }
+                    if (isSpeaking) state.activeSpeakers.add(peerId);
+                    else state.activeSpeakers.delete(peerId);
 
-                    // Auto-Ducking: gently lower stage video volume when someone speaks
-                    if (state.autoDuckEnabled && !dom.mainScreenVideo.muted && !state.isSharingScreen) {
+                    if (state.autoDuckEnabled) {
                         const targetVol = state.activeSpeakers.size > 0
                             ? Math.max(0.12, state.userStageVolume * 0.3)
                             : state.userStageVolume;
-                        dom.mainScreenVideo.volume += (targetVol - dom.mainScreenVideo.volume) * 0.2;
+                        if (!dom.mainScreenVideo.muted && !state.isSharingScreen) {
+                            dom.mainScreenVideo.volume += (targetVol - dom.mainScreenVideo.volume) * 0.2;
+                        }
+                        if (state.stageMode === 'youtube' && state.ytPlayer && typeof state.ytPlayer.setVolume === 'function') {
+                            state.ytPlayer.setVolume(Math.round(targetVol * 100));
+                        }
                     }
-
                     requestAnimationFrame(checkAudioLevel);
                 }
-
                 checkAudioLevel();
-            } catch (e) {
-                console.warn('Voice activity detection skipped:', e);
-            }
+            } catch (e) {}
         }
-
-        // ==================== WEBCAM TILE RENDERING ====================
 
         function renderCameraTile(peerId, stream, label, isLocal = false) {
             let tile = document.getElementById(`cam-tile-${peerId}`);
@@ -932,29 +1212,10 @@
 
                 const badge = document.createElement('div');
                 badge.className = 'cam-label absolute bottom-1.5 left-2 right-2 flex items-center justify-between px-2 py-0.5 rounded-lg bg-black/65 backdrop-blur-sm text-[10px] text-white font-medium truncate';
-                badge.innerHTML = `
-                    <span class="truncate">${escapeHtml(label)}</span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-cozy-mint shrink-0 ml-1"></span>
-                `;
+                badge.innerHTML = `<span class="truncate">${escapeHtml(label)}</span><span class="w-1.5 h-1.5 rounded-full bg-cozy-mint shrink-0 ml-1"></span>`;
 
                 tile.appendChild(video);
                 tile.appendChild(badge);
-
-                // Per-user Mute Toggle Button for Remote Participants
-                if (!isLocal) {
-                    const muteBtn = document.createElement('button');
-                    muteBtn.className = 'absolute top-1.5 right-1.5 p-1.5 rounded-lg bg-black/65 hover:bg-cozy-pink hover:text-slate-950 text-white opacity-0 group-hover:opacity-100 transition z-10';
-                    muteBtn.title = 'Mute / Unmute Participant';
-                    muteBtn.innerHTML = `<i data-lucide="volume-2" class="w-3 h-3"></i>`;
-                    muteBtn.addEventListener('click', () => {
-                        video.muted = !video.muted;
-                        muteBtn.innerHTML = `<i data-lucide="${video.muted ? 'volume-x' : 'volume-2'}" class="w-3 h-3 ${video.muted ? 'text-rose-400' : ''}"></i>`;
-                        lucide.createIcons({ nodes: [muteBtn] });
-                    });
-                    tile.appendChild(muteBtn);
-                    lucide.createIcons({ nodes: [muteBtn] });
-                }
-
                 dom.camerasGrid.appendChild(tile);
             }
 
@@ -964,11 +1225,6 @@
                 videoEl.play().catch(() => {});
                 attachVoiceDetector(peerId, stream);
             }
-
-            const labelSpan = tile.querySelector('.cam-label span');
-            if (labelSpan) {
-                labelSpan.textContent = label;
-            }
         }
 
         function removeCameraTile(peerId) {
@@ -977,7 +1233,7 @@
             if (tile) tile.remove();
         }
 
-        // ==================== SCREEN SHARING, LOCAL MP4 & DEMO STREAM ====================
+        // ==================== STREAMING SOURCES & DIRECT STAGE START/STOP ====================
 
         function getSelectedMediaConstraints() {
             const quality = dom.selectStreamQuality.value;
@@ -993,48 +1249,77 @@
             };
         }
 
-        async function startScreenShare(forceReshare = false) {
-            if (state.isSharingScreen && !forceReshare) {
-                stopScreenShare();
-                return;
-            }
-
+        async function startScreenShare(customLabel = null) {
             try {
                 const screenStream = await navigator.mediaDevices.getDisplayMedia(getSelectedMediaConstraints());
-                if (state.isSharingScreen) {
-                    cleanupLocalStageStreams();
-                }
+                cleanupLocalStageStreams();
+                state.stageMode = 'screen';
+                dom.stageSeekbarRow.classList.add('hidden');
+                dom.stageSeekbarRow.classList.remove('flex');
 
-                activateSharedStageStream(screenStream, `${state.username}'s Screen`, false);
+                activateSharedStageStream(screenStream, customLabel || `${state.username}'s Screen`, false);
 
                 const videoTrack = screenStream.getVideoTracks()[0];
                 if (videoTrack) {
-                    videoTrack.onended = () => {
-                        stopScreenShare();
-                    };
+                    videoTrack.onended = () => stopAllStageStreams();
                 }
             } catch (err) {
-                console.warn('getDisplayMedia cancelled or unavailable:', err);
-                if (!state.isSharingScreen) {
-                    showToast('Screen share cancelled. You can also play a local MP4 or launch the Demo Stream!', 'warning');
-                }
+                showToast('Screen capture cancelled.', 'warning');
+            }
+        }
+
+        function startDirectUrlStream(url, broadcast = true) {
+            cleanupLocalStageStreams();
+            state.stageMode = 'url';
+            state.isStagePaused = false;
+
+            dom.ytStageWrapper.classList.add('hidden');
+            dom.stagePlaceholder.classList.add('hidden');
+            dom.mainScreenVideo.srcObject = null;
+            dom.mainScreenVideo.src = url;
+            dom.mainScreenVideo.muted = false;
+            dom.mainScreenVideo.volume = state.userStageVolume;
+            dom.mainScreenVideo.classList.remove('hidden');
+
+            dom.streamLiveBadge.classList.remove('hidden');
+            dom.streamLiveBadge.classList.add('flex');
+            dom.streamSourceLabel.textContent = 'LIVE • Direct Synchronized Movie';
+
+            dom.stageOverlayControls.classList.remove('hidden');
+            dom.stageOverlayControls.classList.add('flex');
+            dom.stageSeekbarRow.classList.remove('hidden');
+            dom.stageSeekbarRow.classList.add('flex');
+
+            dom.mainScreenVideo.play().catch(() => {});
+            updateStagePlayPauseUI();
+            updateShareButtonUI();
+
+            if (broadcast) {
+                broadcastData({
+                    type: 'load-url',
+                    url: url,
+                    sender: state.username
+                });
+                appendSystemMessage(`🎬 ${state.username} loaded a shared video link!`);
             }
         }
 
         function startLocalFileStream(file) {
             if (!file) return;
-            if (state.isSharingScreen) {
-                cleanupLocalStageStreams();
-            }
+            cleanupLocalStageStreams();
+            state.stageMode = 'file';
 
             const fileUrl = URL.createObjectURL(file);
             state.localFileUrl = fileUrl;
 
+            dom.ytStageWrapper.classList.add('hidden');
             dom.mainScreenVideo.srcObject = null;
             dom.mainScreenVideo.src = fileUrl;
-            dom.mainScreenVideo.controls = true;
             dom.mainScreenVideo.muted = false;
             dom.mainScreenVideo.volume = state.userStageVolume;
+
+            dom.stageSeekbarRow.classList.remove('hidden');
+            dom.stageSeekbarRow.classList.add('flex');
 
             dom.mainScreenVideo.onloadedmetadata = () => {
                 dom.mainScreenVideo.play().then(() => {
@@ -1044,33 +1329,22 @@
 
                     if (capturedStream) {
                         activateSharedStageStream(capturedStream, `🎬 ${file.name}`, true);
-                        showToast(`Streaming local file: ${file.name}`, 'success');
-                    } else {
-                        showToast('Your browser does not support captureStream for local files.', 'error');
                     }
-                }).catch(err => {
-                    console.warn('File play failed:', err);
-                });
+                }).catch(() => {});
             };
         }
 
         function startDemoStream() {
-            if (state.isSharingScreen) {
-                cleanupLocalStageStreams();
-            }
+            cleanupLocalStageStreams();
+            state.stageMode = 'demo';
+            dom.stageSeekbarRow.classList.add('hidden');
+            dom.stageSeekbarRow.classList.remove('flex');
 
             const canvas = document.createElement('canvas');
             canvas.width = 1280;
             canvas.height = 720;
             const ctx = canvas.getContext('2d');
-
             let frame = 0;
-            const stars = Array.from({ length: 65 }, () => ({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                r: Math.random() * 2.5 + 0.8,
-                s: Math.random() * 0.7 + 0.2
-            }));
 
             state.demoCanvasInterval = setInterval(() => {
                 if (state.isStagePaused) return;
@@ -1082,57 +1356,24 @@
                 ctx.fillStyle = grad;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                stars.forEach(st => {
-                    st.y -= st.s;
-                    if (st.y < 0) st.y = canvas.height;
-                    ctx.beginPath();
-                    ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
-                    ctx.fillStyle = 'rgba(244, 114, 182, 0.75)';
-                    ctx.fill();
-                });
-
                 const orbY = canvas.height / 2 - 40 + Math.sin(frame * 0.04) * 18;
                 ctx.beginPath();
-                ctx.arc(canvas.width / 2, orbY, 95, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(192, 132, 252, 0.25)';
-                ctx.fill();
-
-                ctx.beginPath();
-                ctx.arc(canvas.width / 2, orbY, 70, 0, Math.PI * 2);
+                ctx.arc(canvas.width / 2, orbY, 75, 0, Math.PI * 2);
                 ctx.fillStyle = '#F472B6';
                 ctx.fill();
 
                 ctx.fillStyle = '#FFFFFF';
                 ctx.font = 'bold 44px Quicksand, sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText('🍿 VeeVee • P2P Cinema Stream', canvas.width / 2, canvas.height / 2 + 105);
+                ctx.fillText('🍿 VeeVee • Interactive Stage Stream', canvas.width / 2, canvas.height / 2 + 105);
 
                 ctx.fillStyle = '#34D399';
                 ctx.font = '600 22px Plus Jakarta Sans, sans-serif';
-                const timecode = new Date().toLocaleTimeString();
-                ctx.fillText(`LIVE SYNC • ${timecode} • Host: ${state.username}`, canvas.width / 2, canvas.height / 2 + 150);
+                ctx.fillText(`Click Pause / Start below to test instant stage control! (${frame})`, canvas.width / 2, canvas.height / 2 + 150);
             }, 1000 / 30);
 
             const demoStream = canvas.captureStream(30);
-
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const dest = audioCtx.createMediaStreamDestination();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(220, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
-                osc.connect(gain);
-                gain.connect(dest);
-                osc.start();
-                state.demoAudioCtx = audioCtx;
-                const audioTrack = dest.stream.getAudioTracks()[0];
-                if (audioTrack) demoStream.addTrack(audioTrack);
-            } catch (e) {}
-
             activateSharedStageStream(demoStream, `Demo Cinema • ${state.username}`, false);
-            showToast('Launched built-in Demo Stream! 🎬', 'success');
         }
 
         function activateSharedStageStream(stream, labelText, isLocalFile = false) {
@@ -1140,11 +1381,11 @@
             state.isSharingScreen = true;
             state.isStagePaused = false;
 
+            dom.ytStageWrapper.classList.add('hidden');
             if (!isLocalFile) {
                 dom.mainScreenVideo.src = '';
-                dom.mainScreenVideo.controls = false;
                 dom.mainScreenVideo.srcObject = stream;
-                dom.mainScreenVideo.muted = true; // Prevent echo when sharing screen/tab
+                dom.mainScreenVideo.muted = true;
             }
 
             dom.mainScreenVideo.classList.remove('hidden');
@@ -1153,16 +1394,12 @@
             dom.streamLiveBadge.classList.add('flex');
             dom.streamSourceLabel.textContent = `LIVE • ${labelText}`;
 
-            // Show on-stage overlay controls
             dom.stageOverlayControls.classList.remove('hidden');
             dom.stageOverlayControls.classList.add('flex');
-            dom.hostStageActions.classList.remove('hidden');
-            dom.hostStageActions.classList.add('flex');
 
             updateStagePlayPauseUI();
             updateShareButtonUI();
 
-            // Stream to all connected peers
             for (const [peerId] of state.dataConnections.entries()) {
                 callPeerWithScreen(peerId, stream, labelText);
             }
@@ -1173,20 +1410,24 @@
                 label: labelText,
                 sender: state.username
             });
-
-            appendSystemMessage(`🎬 ${state.username} started streaming: ${labelText}`);
         }
 
-        function toggleStagePlayPause() {
+        function toggleStagePlayPause(broadcast = true) {
             state.isStagePaused = !state.isStagePaused;
+            let currentTime = 0;
 
-            if (state.isStagePaused) {
-                dom.mainScreenVideo.pause();
+            if (state.stageMode === 'youtube' && state.ytPlayer) {
+                state.ignoreNextSyncEvent = true;
+                currentTime = state.ytPlayer.getCurrentTime() || 0;
+                if (state.isStagePaused) state.ytPlayer.pauseVideo();
+                else state.ytPlayer.playVideo();
+                setTimeout(() => { state.ignoreNextSyncEvent = false; }, 350);
             } else {
-                dom.mainScreenVideo.play().catch(() => {});
+                currentTime = dom.mainScreenVideo.currentTime || 0;
+                if (state.isStagePaused) dom.mainScreenVideo.pause();
+                else dom.mainScreenVideo.play().catch(() => {});
             }
 
-            // If we are sharing our screen, also pause/enable outgoing tracks
             if (state.isSharingScreen && state.localScreenStream) {
                 state.localScreenStream.getTracks().forEach(track => {
                     track.enabled = !state.isStagePaused;
@@ -1195,11 +1436,30 @@
 
             updateStagePlayPauseUI();
 
-            broadcastData({
-                type: 'stage-playback',
-                paused: state.isStagePaused,
-                sender: state.username
-            });
+            if (broadcast) {
+                broadcastData({
+                    type: 'stage-playback',
+                    paused: state.isStagePaused,
+                    currentTime: currentTime,
+                    sender: state.username
+                });
+            }
+        }
+
+        function seekStageVideo(targetSeconds, broadcast = true) {
+            if (state.stageMode === 'youtube' && state.ytPlayer && typeof state.ytPlayer.seekTo === 'function') {
+                state.ytPlayer.seekTo(targetSeconds, true);
+            } else if (!dom.mainScreenVideo.classList.contains('hidden')) {
+                dom.mainScreenVideo.currentTime = targetSeconds;
+            }
+
+            if (broadcast) {
+                broadcastData({
+                    type: 'stage-seek',
+                    currentTime: targetSeconds,
+                    sender: state.username
+                });
+            }
         }
 
         function cleanupLocalStageStreams() {
@@ -1215,16 +1475,16 @@
                 clearInterval(state.demoCanvasInterval);
                 state.demoCanvasInterval = null;
             }
-            if (state.demoAudioCtx) {
-                state.demoAudioCtx.close().catch(() => {});
-                state.demoAudioCtx = null;
+            if (state.ytPlayer && typeof state.ytPlayer.stopVideo === 'function') {
+                state.ytPlayer.stopVideo();
             }
         }
 
-        function stopScreenShare() {
+        function stopAllStageStreams(broadcast = true) {
             cleanupLocalStageStreams();
             state.isSharingScreen = false;
             state.isStagePaused = false;
+            state.stageMode = 'none';
 
             for (const [, call] of state.screenCalls.entries()) {
                 try { call.close(); } catch (e) {}
@@ -1234,38 +1494,37 @@
             resetStageToPlaceholder();
             updateShareButtonUI();
 
-            broadcastData({
-                type: 'screen-status',
-                active: false,
-                sender: state.username
-            });
-
-            appendSystemMessage(`⏹️ ${state.username} ended the stream.`);
-            showToast('Stream stopped.', 'info');
+            if (broadcast) {
+                broadcastData({
+                    type: 'screen-status',
+                    active: false,
+                    sender: state.username
+                });
+                appendSystemMessage(`⏹️ ${state.username} stopped the movie.`);
+            }
         }
 
         function resetStageToPlaceholder() {
             dom.mainScreenVideo.pause();
             dom.mainScreenVideo.srcObject = null;
             dom.mainScreenVideo.src = '';
-            dom.mainScreenVideo.controls = false;
             dom.mainScreenVideo.classList.add('hidden');
+            dom.ytStageWrapper.classList.add('hidden');
             dom.stagePlaceholder.classList.remove('hidden');
             dom.streamLiveBadge.classList.add('hidden');
             dom.streamLiveBadge.classList.remove('flex');
             dom.btnUnmuteStage.classList.add('hidden');
             dom.stageOverlayControls.classList.add('hidden');
             dom.stageOverlayControls.classList.remove('flex');
-            dom.hostStageActions.classList.add('hidden');
-            dom.hostStageActions.classList.remove('flex');
             dom.stagePausedBanner.classList.add('hidden');
             dom.stagePausedBanner.classList.remove('flex');
         }
 
         function displayRemoteScreenStream(stream, labelText) {
+            state.stageMode = 'screen';
             state.isStagePaused = false;
+            dom.ytStageWrapper.classList.add('hidden');
             dom.mainScreenVideo.src = '';
-            dom.mainScreenVideo.controls = false;
             dom.mainScreenVideo.srcObject = stream;
             dom.mainScreenVideo.muted = false;
             dom.mainScreenVideo.volume = state.userStageVolume;
@@ -1275,11 +1534,8 @@
             dom.streamLiveBadge.classList.add('flex');
             dom.streamSourceLabel.textContent = `LIVE • ${labelText || 'Shared Screen'}`;
 
-            // Show Play/Pause overlay for guest (hide Host-only Stop/Reshare buttons)
             dom.stageOverlayControls.classList.remove('hidden');
             dom.stageOverlayControls.classList.add('flex');
-            dom.hostStageActions.classList.add('hidden');
-            dom.hostStageActions.classList.remove('flex');
             updateStagePlayPauseUI();
 
             dom.mainScreenVideo.play().catch(() => {
@@ -1294,7 +1550,6 @@
 
         function initPeerSession(isCreatingHost, customRoomId) {
             updateConnectionUI('connecting', 'Connecting to PeerJS...');
-
             const targetId = isCreatingHost ? customRoomId : undefined;
             const peer = new Peer(targetId, {
                 debug: 1,
@@ -1312,9 +1567,7 @@
             peer.on('open', (id) => {
                 state.myPeerId = id;
                 state.roomId = isCreatingHost ? id : customRoomId;
-
-                const newUrl = `${window.location.pathname}?room=${encodeURIComponent(state.roomId)}`;
-                window.history.replaceState({}, '', newUrl);
+                window.history.replaceState({}, '', `${window.location.pathname}?room=${encodeURIComponent(state.roomId)}`);
 
                 state.participants.set(id, {
                     username: state.username,
@@ -1330,16 +1583,12 @@
                 dom.lobbyModal.classList.add('opacity-0', 'pointer-events-none');
                 setTimeout(() => dom.lobbyModal.classList.add('hidden'), 300);
 
-                if (state.isHost) {
-                    showToast(`Room ${state.roomId} is ready! Copy the link and invite your friends.`, 'success');
-                } else {
+                if (!state.isHost) {
                     connectToHostPeer(state.roomId);
                 }
             });
 
-            peer.on('connection', (conn) => {
-                setupDataConnection(conn);
-            });
+            peer.on('connection', setupDataConnection);
 
             peer.on('call', (call) => {
                 const callType = call.metadata?.type || 'camera';
@@ -1350,52 +1599,24 @@
                     call.on('stream', (remoteScreenStream) => {
                         displayRemoteScreenStream(remoteScreenStream, call.metadata?.label || `${callerName}'s Screen`);
                     });
-                    call.on('close', () => {
-                        resetStageToPlaceholder();
-                    });
+                    call.on('close', resetStageToPlaceholder);
                     state.screenCalls.set(call.peer, call);
                 } else {
                     call.answer(state.localCamStream);
                     call.on('stream', (remoteCamStream) => {
                         renderCameraTile(call.peer, remoteCamStream, callerName, false);
                     });
-                    call.on('close', () => {
-                        removeCameraTile(call.peer);
-                    });
+                    call.on('close', () => removeCameraTile(call.peer));
                     state.camCalls.set(call.peer, call);
                 }
             });
 
-            peer.on('disconnected', () => {
-                updateConnectionUI('connecting', 'Reconnecting...');
-                peer.reconnect();
-            });
-
-            peer.on('error', (err) => {
-                console.error('PeerJS Error:', err);
-                if (err.type === 'unavailable-id') {
-                    showToast('This Room ID is already taken. Generating a new one...', 'warning');
-                    initPeerSession(true, generateShortRoomId());
-                } else if (err.type === 'peer-unavailable') {
-                    updateConnectionUI('error', 'Room not found');
-                    showToast('Could not find a room with that code. Make sure the Host is online!', 'error');
-                } else {
-                    showToast(`WebRTC Status: ${err.type}`, 'warning');
-                }
-            });
+            peer.on('disconnected', () => peer.reconnect());
         }
 
         function connectToHostPeer(hostRoomId) {
             if (!state.peer || hostRoomId === state.myPeerId) return;
-
-            const conn = state.peer.connect(hostRoomId, {
-                reliable: true,
-                metadata: {
-                    username: state.username,
-                    color: state.avatarColor
-                }
-            });
-
+            const conn = state.peer.connect(hostRoomId, { reliable: true });
             setupDataConnection(conn);
             callPeerWithCamera(hostRoomId);
         }
@@ -1403,7 +1624,6 @@
         function setupDataConnection(conn) {
             conn.on('open', () => {
                 state.dataConnections.set(conn.peer, conn);
-
                 conn.send({
                     type: 'hello',
                     peerId: state.myPeerId,
@@ -1413,67 +1633,45 @@
                 });
 
                 if (state.isHost) {
-                    const peerList = Array.from(state.participants.keys()).filter(
-                        id => id !== state.myPeerId && id !== conn.peer
-                    );
-                    conn.send({
-                        type: 'peer-list',
-                        peers: peerList
-                    });
+                    const peerList = Array.from(state.participants.keys()).filter(id => id !== state.myPeerId && id !== conn.peer);
+                    conn.send({ type: 'peer-list', peers: peerList });
                 }
 
-                if (state.isSharingScreen && state.localScreenStream) {
+                // Sync current active movie with newly joined friend
+                if (state.stageMode === 'youtube' && state.ytVideoId) {
+                    const cur = state.ytPlayer?.getCurrentTime ? state.ytPlayer.getCurrentTime() : 0;
+                    conn.send({ type: 'load-youtube', videoId: state.ytVideoId, startSeconds: cur, sender: state.username });
+                } else if (state.stageMode === 'url' && dom.mainScreenVideo.src) {
+                    conn.send({ type: 'load-url', url: dom.mainScreenVideo.src, sender: state.username });
+                } else if (state.isSharingScreen && state.localScreenStream) {
                     callPeerWithScreen(conn.peer, state.localScreenStream, dom.streamSourceLabel.textContent.replace('LIVE • ', ''));
                 }
             });
 
-            conn.on('data', (data) => {
-                handleIncomingData(conn.peer, data);
-            });
-
-            conn.on('close', () => {
-                handlePeerDisconnect(conn.peer);
-            });
-
-            conn.on('error', () => {
-                handlePeerDisconnect(conn.peer);
-            });
+            conn.on('data', (data) => handleIncomingData(conn.peer, data));
+            conn.on('close', () => handlePeerDisconnect(conn.peer));
         }
 
         function callPeerWithCamera(targetPeerId) {
             if (!state.peer || !state.localCamStream || targetPeerId === state.myPeerId) return;
             const call = state.peer.call(targetPeerId, state.localCamStream, {
-                metadata: {
-                    type: 'camera',
-                    username: state.username
-                }
+                metadata: { type: 'camera', username: state.username }
             });
             if (!call) return;
-
             call.on('stream', (remoteCamStream) => {
                 const peerInfo = state.participants.get(targetPeerId);
                 renderCameraTile(targetPeerId, remoteCamStream, peerInfo?.username || 'Participant', false);
             });
-
-            call.on('close', () => {
-                removeCameraTile(targetPeerId);
-            });
-
+            call.on('close', () => removeCameraTile(targetPeerId));
             state.camCalls.set(targetPeerId, call);
         }
 
         function callPeerWithScreen(targetPeerId, screenStream, label) {
             if (!state.peer || !screenStream || targetPeerId === state.myPeerId) return;
             const call = state.peer.call(targetPeerId, screenStream, {
-                metadata: {
-                    type: 'screen',
-                    username: state.username,
-                    label: label
-                }
+                metadata: { type: 'screen', username: state.username, label: label }
             });
-            if (call) {
-                state.screenCalls.set(targetPeerId, call);
-            }
+            if (call) state.screenCalls.set(targetPeerId, call);
         }
 
         function handleIncomingData(fromPeerId, data) {
@@ -1488,20 +1686,9 @@
                         isHost: !!data.isHost
                     });
                     updateParticipantsCounter();
-
-                    const existingTile = document.getElementById(`cam-tile-${fromPeerId}`);
-                    if (existingTile) {
-                        const span = existingTile.querySelector('.cam-label span');
-                        if (span) span.textContent = data.username;
-                    }
-
-                    if (isNew) {
-                        appendSystemMessage(`👋 ${data.username} joined the room!`);
-                        showToast(`${data.username} joined the Watch Party!`, 'info');
-                    }
+                    if (isNew) appendSystemMessage(`👋 ${data.username} joined the room!`);
                     break;
                 }
-
                 case 'peer-list': {
                     if (Array.isArray(data.peers)) {
                         data.peers.forEach(otherPeerId => {
@@ -1514,7 +1701,42 @@
                     }
                     break;
                 }
-
+                case 'load-youtube': {
+                    loadYouTubeStageVideo(data.videoId, data.startSeconds || 0, false);
+                    appendSystemMessage(`▶️ ${data.sender} started a YouTube video!`);
+                    break;
+                }
+                case 'load-url': {
+                    startDirectUrlStream(data.url, false);
+                    appendSystemMessage(`🎬 ${data.sender} started a synchronized movie!`);
+                    break;
+                }
+                case 'stage-playback': {
+                    state.isStagePaused = !!data.paused;
+                    if (state.stageMode === 'youtube' && state.ytPlayer) {
+                        state.ignoreNextSyncEvent = true;
+                        if (typeof data.currentTime === 'number') state.ytPlayer.seekTo(data.currentTime, true);
+                        if (state.isStagePaused) state.ytPlayer.pauseVideo();
+                        else state.ytPlayer.playVideo();
+                        setTimeout(() => { state.ignoreNextSyncEvent = false; }, 350);
+                    } else {
+                        if (typeof data.currentTime === 'number' && Math.abs(dom.mainScreenVideo.currentTime - data.currentTime) > 1.2) {
+                            dom.mainScreenVideo.currentTime = data.currentTime;
+                        }
+                        if (state.isStagePaused) dom.mainScreenVideo.pause();
+                        else dom.mainScreenVideo.play().catch(() => {});
+                    }
+                    updateStagePlayPauseUI();
+                    break;
+                }
+                case 'stage-seek': {
+                    seekStageVideo(data.currentTime, false);
+                    break;
+                }
+                case 'screen-status': {
+                    if (!data.active) stopAllStageStreams(false);
+                    break;
+                }
                 case 'chat': {
                     dom.typingIndicator.classList.add('hidden');
                     appendChatMessage({
@@ -1526,41 +1748,15 @@
                     });
                     break;
                 }
-
                 case 'typing': {
                     dom.typingIndicator.textContent = `✍️ ${data.sender} is typing...`;
                     dom.typingIndicator.classList.remove('hidden');
                     clearTimeout(state.typingTimeout);
-                    state.typingTimeout = setTimeout(() => {
-                        dom.typingIndicator.classList.add('hidden');
-                    }, 2200);
+                    state.typingTimeout = setTimeout(() => dom.typingIndicator.classList.add('hidden'), 2200);
                     break;
                 }
-
                 case 'reaction': {
                     spawnFloatingReaction(data.emoji, data.sender);
-                    break;
-                }
-
-                case 'stage-playback': {
-                    state.isStagePaused = !!data.paused;
-                    if (state.isStagePaused) {
-                        dom.mainScreenVideo.pause();
-                    } else {
-                        dom.mainScreenVideo.play().catch(() => {});
-                    }
-                    updateStagePlayPauseUI();
-                    appendSystemMessage(`${state.isStagePaused ? '⏸️' : '▶️'} ${data.sender} ${state.isStagePaused ? 'paused' : 'resumed'} the stream.`);
-                    break;
-                }
-
-                case 'screen-status': {
-                    if (!data.active) {
-                        resetStageToPlaceholder();
-                        appendSystemMessage(`⏹️ ${data.sender} ended the stream.`);
-                    } else {
-                        appendSystemMessage(`🎬 ${data.sender} started streaming: ${data.label || 'Screen'}`);
-                    }
                     break;
                 }
             }
@@ -1574,17 +1770,12 @@
             state.participants.delete(peerId);
             removeCameraTile(peerId);
             updateParticipantsCounter();
-
-            if (peerInfo) {
-                appendSystemMessage(`💨 ${peerInfo.username} left the room.`);
-            }
+            if (peerInfo) appendSystemMessage(`💨 ${peerInfo.username} left the room.`);
         }
 
         function broadcastData(payload) {
             for (const [, conn] of state.dataConnections.entries()) {
-                if (conn && conn.open) {
-                    conn.send(payload);
-                }
+                if (conn && conn.open) conn.send(payload);
             }
         }
 
@@ -1593,7 +1784,6 @@
         function appendChatMessage({ sender, color, text, time, isSelf }) {
             const wrapper = document.createElement('div');
             wrapper.className = `flex flex-col ${isSelf ? 'items-end' : 'items-start'}`;
-
             const bubbleColor = isSelf
                 ? 'bg-gradient-to-r from-cozy-pink/25 to-cozy-lavender/25 border-cozy-pink/40 text-white'
                 : 'bg-cozy-panel/90 border-cozy-border text-slate-100';
@@ -1608,7 +1798,6 @@
                     ${escapeHtml(text)}
                 </div>
             `;
-
             dom.chatMessages.appendChild(wrapper);
             dom.chatMessages.scrollTop = dom.chatMessages.scrollHeight;
         }
@@ -1624,99 +1813,109 @@
         function spawnFloatingReaction(emoji, senderName) {
             const el = document.createElement('div');
             el.className = 'floating-reaction flex flex-col items-center';
-            const randomLeft = Math.floor(Math.random() * 73) + 12;
-            el.style.left = `${randomLeft}%`;
-
+            el.style.left = `${Math.floor(Math.random() * 73) + 12}%`;
             el.innerHTML = `
                 <span class="text-3xl sm:text-4xl select-none">${escapeHtml(emoji)}</span>
                 <span class="mt-0.5 px-2 py-0.5 rounded-full bg-black/65 text-[10px] text-white font-semibold">${escapeHtml(senderName || '')}</span>
             `;
-
             dom.reactionsOverlay.appendChild(el);
             setTimeout(() => el.remove(), 2600);
         }
 
         // ==================== EVENT LISTENERS ====================
 
-        // Color Swatch Selection in Lobby
-        function selectColorSwatch(colorHex) {
-            state.avatarColor = colorHex;
-            document.querySelectorAll('.color-swatch').forEach(b => {
-                const isMatch = b.getAttribute('data-color') === colorHex;
-                b.classList.toggle('ring-2', isMatch);
-                b.classList.toggle('ring-white', isMatch);
-                b.classList.toggle('scale-105', isMatch);
-                b.classList.toggle('opacity-75', !isMatch);
-            });
+        // Slide-Out Chat Drawer Listeners
+        dom.btnFloatingDrawer.addEventListener('click', () => toggleDrawer());
+        dom.btnCloseDrawerInside.addEventListener('click', () => toggleDrawer(false));
+
+        // Fullscreen / Expand Video Listeners
+        dom.btnFullscreen.addEventListener('click', toggleImmersiveFullscreen);
+        dom.btnStageExpand.addEventListener('click', toggleImmersiveFullscreen);
+
+        // Platforms & Built-in Player Modal Listeners
+        function openPlatformsModal() {
+            dom.platformsModal.classList.remove('hidden');
+            dom.platformsModal.classList.add('flex');
+        }
+        function closePlatformsModal() {
+            dom.platformsModal.classList.add('hidden');
+            dom.platformsModal.classList.remove('flex');
         }
 
-        document.querySelectorAll('.color-swatch').forEach(btn => {
+        document.getElementById('btn-open-platforms-top').addEventListener('click', openPlatformsModal);
+        dom.btnHeroPlatforms.addEventListener('click', openPlatformsModal);
+        dom.btnDockPlatforms.addEventListener('click', openPlatformsModal);
+        dom.btnStageChangeSource.addEventListener('click', openPlatformsModal);
+        document.getElementById('btn-close-platforms').addEventListener('click', closePlatformsModal);
+
+        // Load YouTube or Direct MP4 URL inside VeeVee
+        dom.btnLoadUrl.addEventListener('click', () => {
+            const rawUrl = dom.inputMediaUrl.value.trim();
+            if (!rawUrl) {
+                showToast('Paste a YouTube link or direct video URL first!', 'warning');
+                return;
+            }
+            const ytId = extractYouTubeId(rawUrl);
+            closePlatformsModal();
+            if (ytId) {
+                loadYouTubeStageVideo(ytId, 0, true);
+                showToast('YouTube loaded! Use Start / Pause directly on the stage.', 'success');
+            } else {
+                startDirectUrlStream(rawUrl, true);
+                showToast('Video URL loaded! Use Start / Pause directly on the stage.', 'success');
+            }
+        });
+
+        dom.btnModalLocalFile.addEventListener('click', () => {
+            closePlatformsModal();
+            dom.inputLocalVideo.click();
+        });
+
+        // Launch Netflix / Disney+ / Max Login Companion Window + Screen Share
+        document.querySelectorAll('.platform-launch-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                selectColorSwatch(btn.getAttribute('data-color') || '#F472B6');
+                const platformName = btn.getAttribute('data-platform');
+                const platformUrl = btn.getAttribute('data-url');
+                closePlatformsModal();
+
+                // Open login/player window so user can log into their account
+                window.open(platformUrl, `${platformName}_VeeVee`, 'width=1150,height=720,menubar=no,toolbar=no,location=yes,status=no');
+                showToast(`Log in to ${platformName} in the new window, then select it in the capture prompt!`, 'info');
+
+                setTimeout(() => {
+                    startScreenShare(`${platformName} • ${state.username}`);
+                }, 900);
             });
         });
 
-        // Create Room (Host)
-        dom.btnCreateRoom.addEventListener('click', async () => {
-            const nameVal = dom.inputUsername.value.trim();
-            state.username = nameVal || `CozyHost_${Math.floor(Math.random() * 90 + 10)}`;
-            saveProfilePreferences();
-
-            const wantMedia = dom.toggleInitialMedia.checked;
-            dom.btnCreateRoom.disabled = true;
-            dom.btnCreateRoom.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Opening room...</span>`;
-            lucide.createIcons({ nodes: [dom.btnCreateRoom] });
-
-            await initLocalMedia(wantMedia);
-            const customRoomId = generateShortRoomId();
-            initPeerSession(true, customRoomId);
+        // Stage Direct Start / Pause / Rewind / Seek / Stop
+        dom.btnStagePlayPause.addEventListener('click', () => toggleStagePlayPause(true));
+        dom.mainScreenVideo.addEventListener('click', () => {
+            if (state.stageMode !== 'none') toggleStagePlayPause(true);
+        });
+        dom.ytClickShield.addEventListener('click', () => {
+            if (state.stageMode === 'youtube') toggleStagePlayPause(true);
         });
 
-        // Join Existing Room (Guest)
-        dom.btnJoinRoom.addEventListener('click', async () => {
-            const targetRoom = dom.inputRoomId.value.trim();
-            if (!targetRoom) {
-                showToast('Enter a Room ID to join!', 'warning');
-                dom.inputRoomId.focus();
-                return;
-            }
-            const nameVal = dom.inputUsername.value.trim();
-            state.username = nameVal || `CozyGuest_${Math.floor(Math.random() * 90 + 10)}`;
-            saveProfilePreferences();
-
-            const wantMedia = dom.toggleInitialMedia.checked;
-            dom.btnJoinRoom.disabled = true;
-            await initLocalMedia(wantMedia);
-            initPeerSession(false, targetRoom);
+        dom.btnStageRewind.addEventListener('click', () => {
+            let cur = 0;
+            if (state.stageMode === 'youtube' && state.ytPlayer) cur = state.ytPlayer.getCurrentTime() || 0;
+            else cur = dom.mainScreenVideo.currentTime || 0;
+            seekStageVideo(Math.max(0, cur - 10), true);
         });
 
-        // Toggle Microphone
-        dom.btnToggleMic.addEventListener('click', () => {
-            state.micEnabled = !state.micEnabled;
-            if (state.localCamStream) {
-                state.localCamStream.getAudioTracks().forEach(track => {
-                    track.enabled = state.micEnabled;
-                });
-            }
-            updateMediaButtonsUI();
-            showToast(state.micEnabled ? 'Microphone unmuted 🎙️' : 'Microphone muted 🔇', 'info');
+        dom.sliderStageSeek.addEventListener('input', (e) => {
+            seekStageVideo(parseFloat(e.target.value), true);
         });
 
-        // Toggle Camera
-        dom.btnToggleCam.addEventListener('click', () => {
-            state.camEnabled = !state.camEnabled;
-            if (state.localCamStream) {
-                state.localCamStream.getVideoTracks().forEach(track => {
-                    track.enabled = state.camEnabled;
-                });
-            }
-            updateMediaButtonsUI();
-            showToast(state.camEnabled ? 'Camera turned on 📷' : 'Camera turned off', 'info');
-        });
+        dom.btnStageStop.addEventListener('click', () => stopAllStageStreams(true));
 
-        // Screen Share / Local File / Demo Buttons
-        dom.btnShareScreen.addEventListener('click', () => startScreenShare(false));
-        dom.btnHeroShare.addEventListener('click', () => startScreenShare(false));
+        // Share Screen / Local File / Demo Buttons
+        dom.btnShareScreen.addEventListener('click', () => {
+            if (state.isSharingScreen || state.stageMode !== 'none') stopAllStageStreams(true);
+            else startScreenShare();
+        });
+        dom.btnHeroShare.addEventListener('click', () => startScreenShare());
         dom.btnHeroDemo.addEventListener('click', startDemoStream);
         dom.btnHeroFile.addEventListener('click', () => dom.inputLocalVideo.click());
 
@@ -1726,140 +1925,109 @@
             e.target.value = '';
         });
 
-        // On-Stage Interactive Overlay Controls
-        dom.btnStagePlayPause.addEventListener('click', toggleStagePlayPause);
-        dom.btnStageReshare.addEventListener('click', () => startScreenShare(true));
-        dom.btnStageStop.addEventListener('click', stopScreenShare);
+        // Lobby Setup
+        document.querySelectorAll('.color-swatch').forEach(btn => {
+            btn.addEventListener('click', () => {
+                state.avatarColor = btn.getAttribute('data-color') || '#F472B6';
+                document.querySelectorAll('.color-swatch').forEach(b => {
+                    const match = b === btn;
+                    b.classList.toggle('ring-2', match);
+                    b.classList.toggle('ring-white', match);
+                    b.classList.toggle('scale-105', match);
+                    b.classList.toggle('opacity-75', !match);
+                });
+            });
+        });
 
-        // Unmute Remote Stage Button
+        dom.btnCreateRoom.addEventListener('click', async () => {
+            state.username = dom.inputUsername.value.trim() || `CozyHost_${Math.floor(Math.random() * 90 + 10)}`;
+            saveProfilePreferences();
+            dom.btnCreateRoom.disabled = true;
+            await initLocalMedia(dom.toggleInitialMedia.checked);
+            initPeerSession(true, generateShortRoomId());
+        });
+
+        dom.btnJoinRoom.addEventListener('click', async () => {
+            const targetRoom = dom.inputRoomId.value.trim();
+            if (!targetRoom) return showToast('Enter a Room ID to join!', 'warning');
+            state.username = dom.inputUsername.value.trim() || `CozyGuest_${Math.floor(Math.random() * 90 + 10)}`;
+            saveProfilePreferences();
+            dom.btnJoinRoom.disabled = true;
+            await initLocalMedia(dom.toggleInitialMedia.checked);
+            initPeerSession(false, targetRoom);
+        });
+
+        // Mic & Camera Toggles
+        dom.btnToggleMic.addEventListener('click', () => {
+            state.micEnabled = !state.micEnabled;
+            if (state.localCamStream) state.localCamStream.getAudioTracks().forEach(t => t.enabled = state.micEnabled);
+            updateMediaButtonsUI();
+        });
+
+        dom.btnToggleCam.addEventListener('click', () => {
+            state.camEnabled = !state.camEnabled;
+            if (state.localCamStream) state.localCamStream.getVideoTracks().forEach(t => t.enabled = state.camEnabled);
+            updateMediaButtonsUI();
+        });
+
         dom.btnUnmuteStage.addEventListener('click', () => {
             dom.mainScreenVideo.muted = false;
             dom.mainScreenVideo.play().catch(() => {});
             dom.btnUnmuteStage.classList.add('hidden');
-            dom.btnUnmuteStage.classList.remove('flex');
         });
 
-        // Auto-Ducking Toggle
         dom.btnToggleAutoduck.addEventListener('click', () => {
             state.autoDuckEnabled = !state.autoDuckEnabled;
             dom.btnToggleAutoduck.classList.toggle('text-cozy-mint', state.autoDuckEnabled);
-            dom.btnToggleAutoduck.classList.toggle('border-cozy-mint/30', state.autoDuckEnabled);
             dom.btnToggleAutoduck.classList.toggle('text-slate-400', !state.autoDuckEnabled);
-            dom.btnToggleAutoduck.classList.toggle('border-cozy-border', !state.autoDuckEnabled);
-            showToast(state.autoDuckEnabled ? 'Auto-Ducking enabled (lowers movie volume when speaking)' : 'Auto-Ducking disabled', 'info');
+            showToast(state.autoDuckEnabled ? 'Auto-Ducking enabled' : 'Auto-Ducking disabled', 'info');
         });
 
-        // Stage Volume Slider
         dom.sliderStageVolume.addEventListener('input', (e) => {
             state.userStageVolume = parseFloat(e.target.value);
             dom.mainScreenVideo.volume = state.userStageVolume;
-            if (state.userStageVolume > 0 && dom.mainScreenVideo.muted && !state.isSharingScreen) {
-                dom.mainScreenVideo.muted = false;
+            if (state.stageMode === 'youtube' && state.ytPlayer && typeof state.ytPlayer.setVolume === 'function') {
+                state.ytPlayer.setVolume(Math.round(state.userStageVolume * 100));
             }
         });
 
-        // Cinema Mode Toggle (Hide/Show Right Sidebar)
-        dom.btnCinemaMode.addEventListener('click', () => {
-            state.cinemaMode = !state.cinemaMode;
-            dom.sidebarColumn.classList.toggle('hidden', state.cinemaMode);
-            dom.mainStageColumn.classList.toggle('lg:w-3/4', !state.cinemaMode);
-            dom.mainStageColumn.classList.toggle('lg:w-full', state.cinemaMode);
-
-            dom.btnCinemaMode.innerHTML = `<i data-lucide="${state.cinemaMode ? 'panel-right-open' : 'panel-right-close'}" class="w-4 h-4 ${state.cinemaMode ? 'text-cozy-pink' : ''}"></i>`;
-            lucide.createIcons({ nodes: [dom.btnCinemaMode] });
-        });
-
-        // Fullscreen Toggle (Whole Application so Chat & Reactions stay accessible)
-        dom.btnFullscreen.addEventListener('click', () => {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(() => {
-                    showToast('Fullscreen mode is blocked by your browser.', 'warning');
-                });
-            } else {
-                document.exitFullscreen().catch(() => {});
-            }
-        });
-
-        // Modern Clipboard API Copy Invite Link
         async function copyInviteLink() {
             const roomId = state.roomId || dom.inputRoomId.value.trim() || 'veevee-room';
             const inviteUrl = `${window.location.origin}${window.location.pathname}?room=${encodeURIComponent(roomId)}`;
-
-            try {
-                await navigator.clipboard.writeText(inviteUrl);
-            } catch (err) {
-                const tempInput = document.createElement('textarea');
-                tempInput.value = inviteUrl;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                document.execCommand('copy');
-                tempInput.remove();
-            }
-
+            try { await navigator.clipboard.writeText(inviteUrl); } catch (e) {}
             showToast('Invite link copied to clipboard! 🔗✨', 'success');
         }
-
         dom.btnCopyInvite.addEventListener('click', copyInviteLink);
         dom.btnCopyInviteMobile.addEventListener('click', copyInviteLink);
 
-        // Quick Floating Reactions
         document.querySelectorAll('.reaction-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const emoji = btn.getAttribute('data-emoji');
                 spawnFloatingReaction(emoji, state.username);
-                broadcastData({
-                    type: 'reaction',
-                    emoji: emoji,
-                    sender: state.username
-                });
+                broadcastData({ type: 'reaction', emoji, sender: state.username });
             });
         });
 
-        // Typing Indicator Broadcast
         dom.chatInput.addEventListener('input', () => {
             const now = Date.now();
             if (now - state.lastTypingSent > 1200) {
                 state.lastTypingSent = now;
-                broadcastData({
-                    type: 'typing',
-                    sender: state.username
-                });
+                broadcastData({ type: 'typing', sender: state.username });
             }
         });
 
-        // Chat Submission
         dom.chatForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const text = dom.chatInput.value.trim();
             if (!text) return;
-
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-            appendChatMessage({
-                sender: state.username,
-                color: state.avatarColor,
-                text: text,
-                time: time,
-                isSelf: true
-            });
-
-            broadcastData({
-                type: 'chat',
-                sender: state.username,
-                color: state.avatarColor,
-                text: text,
-                time: time
-            });
-
+            appendChatMessage({ sender: state.username, color: state.avatarColor, text, time, isSelf: true });
+            broadcastData({ type: 'chat', sender: state.username, color: state.avatarColor, text, time });
             dom.chatInput.value = '';
             dom.emojiDrawer.classList.add('hidden');
         });
 
-        // Emoji Drawer in Chat
-        dom.btnToggleEmoji.addEventListener('click', () => {
-            dom.emojiDrawer.classList.toggle('hidden');
-        });
-
+        dom.btnToggleEmoji.addEventListener('click', () => dom.emojiDrawer.classList.toggle('hidden'));
         document.querySelectorAll('.emoji-pick').forEach(btn => {
             btn.addEventListener('click', () => {
                 dom.chatInput.value += btn.textContent;
@@ -1867,37 +2035,14 @@
             });
         });
 
-        // Help Modal Open / Close
-        document.getElementById('btn-open-help').addEventListener('click', () => {
-            dom.helpModal.classList.remove('hidden');
-            dom.helpModal.classList.add('flex');
-        });
-        document.getElementById('btn-close-help').addEventListener('click', () => {
-            dom.helpModal.classList.add('hidden');
-            dom.helpModal.classList.remove('flex');
-        });
-        document.getElementById('btn-got-it-help').addEventListener('click', () => {
-            dom.helpModal.classList.add('hidden');
-            dom.helpModal.classList.remove('flex');
-        });
-
-        // Initialize Saved Profile & Room Parameter on Load
         window.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
             const roomParam = params.get('room');
-            if (roomParam) {
-                dom.inputRoomId.value = roomParam.trim();
-                showToast(`Invite to room "${roomParam}" detected! Click "Join".`, 'info');
-            }
+            if (roomParam) dom.inputRoomId.value = roomParam.trim();
 
             const savedName = localStorage.getItem('veevee_username');
-            const savedColor = localStorage.getItem('veevee_color');
             const cuteNames = ['CozyPanda', 'StarryFox', 'MochiCat', 'LunaBunny', 'VelvetOwl', 'SweetPeach'];
-
             dom.inputUsername.value = savedName || cuteNames[Math.floor(Math.random() * cuteNames.length)];
-            if (savedColor) {
-                selectColorSwatch(savedColor);
-            }
         });
     </script>
 </body>
