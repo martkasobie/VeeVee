@@ -104,7 +104,7 @@
 
         .floating-reaction {
             position: absolute;
-            bottom: 90px;
+            bottom: 95px;
             pointer-events: none;
             z-index: 40;
             animation: floatUpReaction 2.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
@@ -127,13 +127,13 @@
 
         /* Glassmorphism utility */
         .glass-card {
-            background: rgba(28, 25, 41, 0.82);
+            background: rgba(28, 25, 41, 0.86);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
             border: 1px solid rgba(255, 255, 255, 0.09);
         }
 
-        /* Fullscreen Expanded Video Stage Mode */
+        /* Fullscreen Expanded Video Stage Mode (100% Screen Fill) */
         body.immersive-fullscreen header {
             display: none !important;
         }
@@ -149,53 +149,57 @@
         }
         body.immersive-fullscreen #bottom-dock {
             position: fixed;
-            bottom: 16px;
+            bottom: 14px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 40;
             width: auto;
-            max-width: 95vw;
+            max-width: 96vw;
             opacity: 0;
+            pointer-events: none;
             transition: opacity 0.25s ease;
         }
-        body.immersive-fullscreen:hover #bottom-dock {
+        body.immersive-fullscreen:hover #bottom-dock,
+        body.immersive-fullscreen #bottom-dock:focus-within {
             opacity: 1;
+            pointer-events: auto;
         }
     </style>
 </head>
 <body class="h-screen w-screen overflow-hidden flex flex-col select-none">
 
     <!-- Hidden File Input for Local Video Watch Party -->
-    <input type="file" id="input-local-video" accept="video/mp4,video/webm,video/ogg" class="hidden">
+    <input type="file" id="input-local-video" accept="video/mp4,video/webm,video/ogg,video/x-matroska" class="hidden">
 
     <!-- ==================== TOAST NOTIFICATIONS ==================== -->
-    <div id="toast-container" class="fixed top-5 right-5 z-[60] flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+    <div id="toast-container" class="fixed top-5 right-5 z-[80] flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
 
     <!-- ==================== FLOATING SIDEBAR TOGGLE TAB (Always accessible on right edge) ==================== -->
-    <button id="btn-floating-drawer" class="fixed right-0 top-1/2 -translate-y-1/2 z-50 py-4 px-2 rounded-l-2xl bg-cozy-card/90 hover:bg-cozy-pink hover:text-slate-950 text-white border border-r-0 border-cozy-border shadow-2xl flex flex-col items-center gap-1.5 transition-all duration-300 group" title="Wsuń / Wysuń Czat i Kamery">
+    <button id="btn-floating-drawer" class="fixed right-0 top-1/2 -translate-y-1/2 z-40 py-4 px-2.5 rounded-l-2xl bg-cozy-card/95 hover:bg-cozy-pink hover:text-slate-950 text-white border border-r-0 border-cozy-border shadow-2xl flex flex-col items-center gap-2 transition-all duration-300 group" title="Wsuń lub wysuń czat i kamery (działa także na pełnym ekranie)">
         <span id="floating-drawer-icon-wrap">
             <i data-lucide="panel-right-close" class="w-4 h-4 text-cozy-pink group-hover:text-slate-950 transition"></i>
         </span>
         <span id="floating-drawer-label" class="text-[10px] font-bold tracking-wider uppercase [writing-mode:vertical-rl] rotate-180">Ukryj Czat</span>
-        <span id="unread-chat-dot" class="hidden w-2.5 h-2.5 rounded-full bg-cozy-mint animate-ping"></span>
+        <span id="unread-chat-dot" class="hidden px-1.5 py-0.5 rounded-full bg-cozy-mint text-slate-950 font-bold text-[9px] animate-bounce">!</span>
     </button>
 
     <!-- ==================== LOBBY / WELCOME MODAL ==================== -->
-    <div id="lobby-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md transition-opacity duration-300">
-        <div class="glass-card rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-cozy-border relative overflow-hidden">
+    <div id="lobby-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md transition-opacity duration-300 overflow-y-auto">
+        <div class="glass-card rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-cozy-border relative overflow-hidden my-auto">
             <div class="absolute -top-20 -right-20 w-44 h-44 bg-cozy-pink/20 rounded-full blur-3xl pointer-events-none"></div>
             <div class="absolute -bottom-20 -left-20 w-44 h-44 bg-cozy-lavender/20 rounded-full blur-3xl pointer-events-none"></div>
 
-            <div class="flex items-center justify-between mb-6">
+            <!-- Brand Header -->
+            <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cozy-pink to-cozy-lavender flex items-center justify-center shadow-glow-pink">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-cozy-pink to-cozy-lavender flex items-center justify-center shadow-glow-pink">
                         <i data-lucide="popcorn" class="w-6 h-6 text-slate-950 stroke-[2.2]"></i>
                     </div>
                     <div>
                         <h1 class="font-display text-2xl font-bold tracking-tight bg-gradient-to-r from-white via-pink-200 to-cozy-lavender bg-clip-text text-transparent">
                             VeeVee
                         </h1>
-                        <p class="text-xs text-slate-400">Cozy P2P Online Cinema • No Sign-up Required</p>
+                        <p class="text-xs text-slate-400">Cozy P2P Online Cinema • Bez Rejestracji</p>
                     </div>
                 </div>
                 <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-cozy-mint/15 text-cozy-mint border border-cozy-mint/30">
@@ -203,7 +207,24 @@
                 </span>
             </div>
 
-            <div class="space-y-4">
+            <!-- PROMINENT EXTENSION INSTALL BANNER RIGHT IN LOBBY -->
+            <div id="lobby-extension-banner" class="mb-4 p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-cozy-pink/15 to-cozy-lavender/15 border border-amber-400/40 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="p-2 rounded-xl bg-amber-400/20 text-amber-300 shrink-0">
+                        <i data-lucide="puzzle" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <span id="lobby-ext-title" class="text-xs font-bold text-white block">Wtyczka Netflix / Disney+ / Max</span>
+                        <span id="lobby-ext-sub" class="text-[11px] text-amber-200">Kliknij, aby pobrać i sterować VOD z ekranu!</span>
+                    </div>
+                </div>
+                <button type="button" id="btn-lobby-install-ext" class="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs shrink-0 shadow-lg transition">
+                    Zainstaluj
+                </button>
+            </div>
+
+            <!-- User Profile Setup -->
+            <div class="space-y-3.5">
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5 ml-1">
                         Twój Nick ✨
@@ -211,10 +232,11 @@
                     <div class="relative">
                         <i data-lucide="smile-plus" class="w-4 h-4 text-cozy-lavender absolute left-3.5 top-1/2 -translate-y-1/2"></i>
                         <input id="input-username" type="text" maxlength="20" placeholder="np. CozyPanda" 
-                            class="w-full pl-10 pr-4 py-3 rounded-2xl bg-cozy-bg/90 border border-cozy-border focus:border-cozy-pink focus:outline-none text-sm text-white placeholder-slate-500 transition">
+                            class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-cozy-bg/90 border border-cozy-border focus:border-cozy-pink focus:outline-none text-sm text-white placeholder-slate-500 transition">
                     </div>
                 </div>
 
+                <!-- Avatar Color Picker -->
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5 ml-1">
                         Wybierz Swój Kolor
@@ -225,10 +247,12 @@
                         <button type="button" data-color="#34D399" class="color-swatch w-8 h-8 rounded-xl bg-[#34D399] opacity-75 hover:opacity-100 transition"></button>
                         <button type="button" data-color="#FBBF24" class="color-swatch w-8 h-8 rounded-xl bg-[#FBBF24] opacity-75 hover:opacity-100 transition"></button>
                         <button type="button" data-color="#60A5FA" class="color-swatch w-8 h-8 rounded-xl bg-[#60A5FA] opacity-75 hover:opacity-100 transition"></button>
+                        <button type="button" data-color="#F87171" class="color-swatch w-8 h-8 rounded-xl bg-[#F87171] opacity-75 hover:opacity-100 transition"></button>
                     </div>
                 </div>
 
-                <div class="p-3.5 rounded-2xl bg-cozy-bg/70 border border-cozy-border/70 flex items-center justify-between">
+                <!-- Camera & Mic Pre-toggle -->
+                <div class="p-3 rounded-2xl bg-cozy-bg/70 border border-cozy-border/70 flex items-center justify-between">
                     <div class="flex items-center gap-2.5">
                         <i data-lucide="video" class="w-4 h-4 text-cozy-pink"></i>
                         <span class="text-xs text-slate-300">Dołącz z Kamerą i Mikrofonem</span>
@@ -239,19 +263,22 @@
                     </label>
                 </div>
 
-                <div class="relative py-2 flex items-center">
+                <!-- Divider -->
+                <div class="relative py-1.5 flex items-center">
                     <div class="flex-grow border-t border-cozy-border"></div>
                     <span class="flex-shrink mx-3 text-[11px] uppercase tracking-wider text-slate-400">Stwórz lub Dołącz</span>
                     <div class="flex-grow border-t border-cozy-border"></div>
                 </div>
 
+                <!-- Create New Room Button -->
                 <button id="btn-create-room" class="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender hover:opacity-95 active:scale-[0.99] text-slate-950 font-bold text-sm shadow-glow-pink flex items-center justify-center gap-2 transition">
                     <i data-lucide="sparkles" class="w-4 h-4 stroke-[2.5]"></i>
                     <span>Stwórz Nowy Pokój (Host)</span>
                 </button>
 
+                <!-- Join Existing Room Input + Button -->
                 <div class="pt-1">
-                    <label class="block text-xs text-slate-400 mb-1.5 ml-1">Masz kod zaproszenia lub link?</label>
+                    <label class="block text-xs text-slate-400 mb-1.5 ml-1">Masz kod zaproszenia lub link od znajomego?</label>
                     <div class="flex gap-2">
                         <input id="input-room-id" type="text" placeholder="Wklej Room ID (np. veevee-xxxx)" 
                             class="flex-1 px-3.5 py-2.5 rounded-2xl bg-cozy-bg/90 border border-cozy-border focus:border-cozy-lavender focus:outline-none text-xs text-white placeholder-slate-500 font-mono">
@@ -265,9 +292,97 @@
         </div>
     </div>
 
+    <!-- ==================== AUTO-POPUP CHROME EXTENSION INSTALLER MODAL (Z-INDEX 65 - ABOVE LOBBY) ==================== -->
+    <div id="extension-modal" class="fixed inset-0 z-[65] hidden items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+        <div class="glass-card rounded-3xl max-w-xl w-full p-6 sm:p-7 border-2 border-cozy-pink/60 shadow-glow-pink max-h-[92vh] overflow-y-auto relative">
+            <div class="flex items-start justify-between gap-3 mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="p-3 rounded-2xl bg-gradient-to-tr from-cozy-pink to-cozy-lavender text-slate-950 shadow-glow-pink shrink-0">
+                        <i data-lucide="puzzle" class="w-6 h-6 stroke-[2.2]"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/40 text-[10px] font-bold uppercase">Wymagane dla Netflix / Disney+ / Max</span>
+                        </div>
+                        <h3 class="font-display text-xl font-bold text-white mt-1">Zainstaluj Wtyczkę VeeVee Bridge 🧩</h3>
+                    </div>
+                </div>
+                <button id="btn-close-extension-modal" class="p-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                Aby przyciski <strong>Start / Pauza / Przewijanie (-10s / +10s) / Pasek Czasu</strong> na ekranie VeeVee mogły bezpośrednio zatrzymywać i wznawiać film na karcie <strong>Netflix, Disney+, Max lub Prime Video</strong>, pobierz i włącz tę lekką wtyczkę (zajmuje to 15 sekund):
+            </p>
+
+            <div class="space-y-3.5 text-xs text-slate-300 leading-relaxed">
+                <!-- STEP 1: 1-Click Download -->
+                <div class="p-4 rounded-2xl bg-cozy-bg/95 border border-cozy-pink/40">
+                    <p class="font-bold text-cozy-pink mb-2.5 flex items-center gap-1.5">
+                        <i data-lucide="folder-down" class="w-4 h-4"></i>
+                        <span>Krok 1: Pobierz pliki wtyczki i umieść je w jednym nowym folderze na komputerze (np. na Pulpicie w folderze „wtyczka-veevee”)</span>
+                    </p>
+                    <button id="btn-download-both-ext" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs shadow-glow-pink flex items-center justify-center gap-2 hover:opacity-95 transition mb-2">
+                        <i data-lucide="download" class="w-4 h-4 stroke-[2.5]"></i>
+                        <span>Pobierz oba pliki naraz (manifest.json + content.js)</span>
+                    </button>
+                    <div class="grid grid-cols-2 gap-2 pt-1">
+                        <button id="btn-download-manifest" class="py-2 px-3 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border font-semibold text-[11px] flex items-center justify-center gap-1.5 transition">
+                            <i data-lucide="file-json" class="w-3.5 h-3.5 text-cozy-pink"></i>
+                            <span>Pobierz manifest.json</span>
+                        </button>
+                        <button id="btn-download-contentjs" class="py-2 px-3 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border font-semibold text-[11px] flex items-center justify-center gap-1.5 transition">
+                            <i data-lucide="file-code" class="w-3.5 h-3.5 text-cozy-mint"></i>
+                            <span>Pobierz content.js</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Load Unpacked in Chrome/Edge/Brave -->
+                <div class="p-4 rounded-2xl bg-cozy-bg/95 border border-cozy-border">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <p class="font-bold text-cozy-lavender flex items-center gap-1.5">
+                            <i data-lucide="settings" class="w-4 h-4"></i>
+                            <span>Krok 2: Włącz wtyczkę w Chrome / Edge / Brave / Opera</span>
+                        </p>
+                        <button id="btn-copy-ext-url" class="px-2.5 py-1 rounded-lg bg-cozy-panel hover:bg-cozy-lavender hover:text-slate-950 text-cozy-lavender border border-cozy-lavender/30 text-[11px] font-bold transition">
+                            Kopiuj chrome://extensions
+                        </button>
+                    </div>
+                    <ol class="list-decimal list-inside space-y-1.5 text-slate-300 text-xs">
+                        <li>Otwórz nową kartę i wklej w pasku adresu: <code class="text-cozy-mint bg-cozy-panel px-1.5 py-0.5 rounded font-mono">chrome://extensions</code></li>
+                        <li>W prawym górnym rogu włącz przełącznik <strong>Tryb dewelopera</strong> (Developer mode).</li>
+                        <li>Kliknij przycisk <strong>Załaduj rozpakowane</strong> (Load unpacked) w lewym górnym rogu i wybierz swój folder z plikami <code class="text-cozy-pink">manifest.json</code> i <code class="text-cozy-pink">content.js</code>.</li>
+                        <li>Wróć na tę kartę i kliknij poniżej <strong>„Sprawdź Połączenie z Wtyczką”</strong> (lub odśwież stronę F5).</li>
+                    </ol>
+                </div>
+
+                <!-- STEP 3: Live Status Verification -->
+                <div class="p-3.5 rounded-2xl bg-cozy-bg/95 border border-cozy-border flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5">
+                        <span id="ext-modal-dot" class="w-3 h-3 rounded-full bg-amber-400 pulse-dot shrink-0"></span>
+                        <div>
+                            <span class="font-bold text-white block">Status wtyczki w Twojej przeglądarce:</span>
+                            <span id="modal-ext-status-text" class="text-[11px] text-amber-300">Nie wykryto wtyczki — pobierz pliki powyżej lub kliknij Sprawdź.</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <button id="btn-test-extension-ping" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-cozy-mint text-slate-950 font-bold text-xs hover:opacity-95 transition">
+                            Sprawdź Wtyczkę
+                        </button>
+                        <button id="btn-skip-extension-modal" class="px-3.5 py-2.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-300 font-semibold text-xs transition">
+                            Pomiń na razie
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ==================== STREAMING PLATFORMS & BUILT-IN PLAYER HUB MODAL ==================== -->
     <div id="platforms-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-        <div class="glass-card rounded-3xl max-w-2xl w-full p-6 sm:p-7 border border-cozy-border shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div class="glass-card rounded-3xl max-w-2xl w-full p-6 sm:p-7 border border-cozy-border shadow-2xl max-h-[92vh] overflow-y-auto">
             <div class="flex items-center justify-between mb-5">
                 <div class="flex items-center gap-3">
                     <div class="p-2.5 rounded-2xl bg-gradient-to-tr from-cozy-pink/20 to-cozy-lavender/20 border border-cozy-pink/30 text-cozy-pink">
@@ -275,7 +390,7 @@
                     </div>
                     <div>
                         <h3 class="font-display text-xl font-bold text-white">Wybierz Co Oglądamy Razem 🍿</h3>
-                        <p class="text-xs text-slate-400">Odtwarzaj bezpośrednio w VeeVee lub połącz kartę VOD przez wtyczkę</p>
+                        <p class="text-xs text-slate-400">Steruj filmem (Start / Stop / Przewijanie) bezpośrednio z ekranu VeeVee</p>
                     </div>
                 </div>
                 <button id="btn-close-platforms" class="p-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition">
@@ -288,12 +403,12 @@
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-xs font-bold uppercase tracking-wider text-cozy-mint flex items-center gap-1.5">
                         <i data-lucide="zap" class="w-3.5 h-3.5"></i>
-                        Opcja 1: Bezpośredni Odtwarzacz w VeeVee (Start / Stop / Przewijanie)
+                        Opcja 1: Bezpośredni Odtwarzacz w VeeVee (YouTube / MP4 / Plik z dysku)
                     </span>
-                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-cozy-mint/15 text-cozy-mint font-semibold">Bez zmiany karty!</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-cozy-mint/15 text-cozy-mint font-semibold">Działa od razu bez wtyczki!</span>
                 </div>
-                <p class="text-xs text-slate-400 mb-3">
-                    Wklej link do <strong>YouTube</strong>, bezpośredni link <strong>.mp4 / .webm</strong> lub wybierz plik z dysku. Film włączy się bezpośrednio tutaj ze wspólnym paskiem przewijania i przyciskami Start/Stop:
+                <p class="text-xs text-slate-400 mb-3 leading-relaxed">
+                    Wklej dowolny link do <strong>YouTube</strong>, bezpośredni link <strong>.mp4 / .webm</strong> lub wybierz plik wideo z komputera. Film wyświetli się bezpośrednio w oknie VeeVee ze zsynchronizowanym paskiem przewijania oraz przyciskami Start i Stop:
                 </p>
                 <div class="flex flex-col sm:flex-row gap-2">
                     <input id="input-media-url" type="text" placeholder="Wklej link YouTube (np. https://youtu.be/...) lub .mp4" 
@@ -311,18 +426,20 @@
 
             <!-- Section 2: Streaming Service Login & 2-Step Tab Share with Chrome Extension -->
             <div class="p-4 rounded-2xl bg-cozy-bg/90 border border-cozy-border">
-                <div class="flex items-center justify-between mb-2">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                     <span class="text-xs font-bold uppercase tracking-wider text-cozy-pink flex items-center gap-1.5">
                         <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
-                        Opcja 2: Netflix, Disney+, Max, Prime Video (Z obsługą Wtyczki)
+                        Opcja 2: Netflix, Disney+, Max, Prime Video
                     </span>
-                    <span id="extension-status-badge" class="text-[10px] px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 font-semibold">
-                        Wtyczka: Sprawdzanie...
-                    </span>
+                    <!-- CLICKABLE EXTENSION INSTALL BUTTON RIGHT HERE -->
+                    <button type="button" id="extension-status-badge" class="text-[11px] px-3 py-1 rounded-xl bg-amber-500/20 hover:bg-amber-400 hover:text-slate-950 text-amber-300 border border-amber-400/50 font-bold flex items-center gap-1.5 transition cursor-pointer shadow-sm">
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                        <span>Wtyczka: Nie wykryto — Kliknij tutaj, aby zainstalować!</span>
+                    </button>
                 </div>
                 <p class="text-xs text-slate-400 mb-3 leading-relaxed">
-                    <strong>Krok 1:</strong> Kliknij wybraną platformę poniżej — otworzy się w nowej karcie, gdzie spokojnie się zalogujesz i włączysz film.<br>
-                    <strong>Krok 2:</strong> Wróć tutaj i kliknij zielony przycisk poniżej. Z zainstalowaną wtyczką Chrome przyciski <strong>Start / Pause / -10s / +10s</strong> w VeeVee sterują bezpośrednio filmem na tamtej karcie!
+                    <strong>Krok 1:</strong> Kliknij wybraną platformę — otworzy się ona w sąsiedniej karcie, gdzie spokojnie się zalogujesz i włączysz odcinek.<br>
+                    <strong>Krok 2:</strong> Wróć na kartę VeeVee i kliknij zielony przycisk poniżej. Dzięki wtyczce <strong>Start / Pauza / Pasek Czasu / Pomiń Intro / Prędkość</strong> na ekranie VeeVee sterują bezpośrednio filmem na Netflixie/Disney+!
                 </p>
 
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
@@ -363,7 +480,7 @@
                 <div id="step2-capture-box" class="p-3.5 rounded-2xl bg-cozy-mint/10 border border-cozy-mint/40 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <div class="text-xs text-slate-200">
                         <span id="step2-status-title" class="font-bold text-cozy-mint block">Krok 2: Masz już włączony film na karcie obok?</span>
-                        <span class="text-[11px] text-slate-400">Kliknij przycisk obok, wybierz kartę z filmem i zaznacz <strong>„Udostępnij też dźwięk z karty”</strong>.</span>
+                        <span class="text-[11px] text-slate-400">Kliknij przycisk obok, wskaż kartę z filmem i zaznacz <strong>„Udostępnij też dźwięk z karty”</strong>.</span>
                     </div>
                     <button id="btn-step2-start-capture" class="w-full sm:w-auto px-5 py-3 rounded-xl bg-cozy-mint hover:opacity-95 text-slate-950 font-bold text-xs shadow-glow-mint flex items-center justify-center gap-2 shrink-0 transition">
                         <i data-lucide="monitor-up" class="w-4 h-4 stroke-[2.3]"></i>
@@ -374,8 +491,43 @@
         </div>
     </div>
 
+    <!-- ==================== HELP MODAL ==================== -->
+    <div id="help-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/75 backdrop-blur-md">
+        <div class="glass-card rounded-3xl max-w-lg w-full p-6 sm:p-7 border border-cozy-border shadow-2xl">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="p-2 rounded-xl bg-cozy-lavender/20 text-cozy-lavender">
+                        <i data-lucide="help-circle" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="font-display text-lg font-bold text-white">Poradnik Wspólnego Oglądania 🍿</h3>
+                </div>
+                <button id="btn-close-help" class="p-1.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                <div class="p-3 rounded-2xl bg-cozy-bg/80 border border-cozy-border">
+                    <p class="font-semibold text-cozy-pink mb-1">1. Czarny ekran na Netflix / Disney+ / Max?</p>
+                    <p class="text-xs text-slate-400">Wejdź w ustawienia przeglądarki (Ustawienia → System) i wyłącz opcję <em>„Użyj akceleracji grafiki, gdy jest dostępna”</em>. Eliminuje to blokadę DRM podczas udostępniania karty.</p>
+                </div>
+                <div class="p-3 rounded-2xl bg-cozy-bg/80 border border-cozy-border">
+                    <p class="font-semibold text-cozy-lavender mb-1">2. Jak sterować Start / Stop bez przełączania kart?</p>
+                    <p class="text-xs text-slate-400">Filmy z YouTube i pliki MP4 działają od razu w oknie VeeVee. Dla Netflixa i Disney+ kliknij pomarańczowy przycisk <strong>„Zainstaluj Wtyczkę VOD”</strong> u góry ekranu.</p>
+                </div>
+                <div class="p-3 rounded-2xl bg-cozy-bg/80 border border-cozy-border">
+                    <p class="font-semibold text-cozy-mint mb-1">3. Pełny ekran z wysuwanym czatem</p>
+                    <p class="text-xs text-slate-400">Kliknij <strong>Pełny Ekran</strong>, aby film wypełnił 100% monitora. Przy prawej krawędzi ekranu cały czas dostępna jest zakładka <strong>Czat</strong>, którą możesz płynnie wsuwać i wysuwać.</p>
+                </div>
+            </div>
+            <button id="btn-got-it-help" class="mt-5 w-full py-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs">
+                Rozumiem, oglądamy! 🍿
+            </button>
+        </div>
+    </div>
+
     <!-- ==================== TOP NAVIGATION BAR ==================== -->
     <header class="h-16 px-4 sm:px-6 border-b border-cozy-border/80 bg-cozy-bg/80 backdrop-blur-xl flex items-center justify-between shrink-0 z-20">
+        <!-- Left: Logo & Room Status -->
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cozy-pink to-cozy-lavender flex items-center justify-center shadow-glow-pink">
                 <i data-lucide="tv" class="w-5 h-5 text-slate-950 stroke-[2.3]"></i>
@@ -394,34 +546,45 @@
             </div>
         </div>
 
+        <!-- Center: Room ID & Copy Invite Link -->
         <div class="hidden md:flex items-center gap-2 bg-cozy-card px-3 py-1.5 rounded-2xl border border-cozy-border">
             <span class="text-xs text-slate-400">Pokój:</span>
             <code id="display-room-id" class="text-xs font-mono font-semibold text-cozy-pink px-1.5">---</code>
-            <button id="btn-copy-invite" class="px-3 py-1.5 rounded-xl bg-cozy-panel hover:bg-cozy-pink hover:text-slate-950 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition">
+            <button id="btn-copy-invite" class="px-3 py-1.5 rounded-xl bg-cozy-panel hover:bg-cozy-pink hover:text-slate-950 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition" title="Skopiuj link zaproszenia">
                 <i data-lucide="link" class="w-3.5 h-3.5"></i>
                 <span>Kopiuj Link</span>
             </button>
         </div>
 
+        <!-- Right: Hub, Extension, Quality, Participants, Help -->
         <div class="flex items-center gap-2">
-            <button id="btn-open-platforms-top" class="px-3 py-2 rounded-2xl bg-cozy-panel hover:bg-cozy-border border border-cozy-pink/30 text-cozy-pink text-xs font-semibold flex items-center gap-1.5 transition">
+            <button id="btn-open-platforms-top" class="px-3 py-2 rounded-2xl bg-cozy-panel hover:bg-cozy-border border border-cozy-pink/30 text-cozy-pink text-xs font-semibold flex items-center gap-1.5 transition" title="Otwórz Centrum Platform i Odtwarzacz">
                 <i data-lucide="tv-2" class="w-4 h-4"></i>
-                <span class="hidden sm:inline">Platformy & Linki</span>
+                <span class="hidden sm:inline">Co Oglądamy</span>
             </button>
 
-            <select id="select-stream-quality" class="hidden lg:block bg-cozy-card border border-cozy-border text-slate-200 text-xs rounded-2xl px-3 py-2 focus:outline-none focus:border-cozy-pink cursor-pointer">
+            <button id="btn-open-extension-top" class="px-3 py-2 rounded-2xl bg-amber-400/20 hover:bg-amber-400 hover:text-slate-950 border border-amber-400/50 text-amber-300 text-xs font-bold flex items-center gap-1.5 transition shadow-sm" title="Pobierz i zainstaluj wtyczkę Chrome do sterowania Netflix / Disney+">
+                <i data-lucide="puzzle" class="w-4 h-4"></i>
+                <span id="top-ext-label">Zainstaluj Wtyczkę</span>
+            </button>
+
+            <select id="select-stream-quality" class="hidden lg:block bg-cozy-card border border-cozy-border text-slate-200 text-xs rounded-2xl px-3 py-2 focus:outline-none focus:border-cozy-pink cursor-pointer" title="Jakość udostępniania ekranu">
                 <option value="1080p60">HD 1080p • 60fps</option>
                 <option value="720p30">Płynne 720p • 30fps</option>
             </select>
 
-            <button id="btn-copy-invite-mobile" class="md:hidden p-2.5 rounded-2xl bg-cozy-card border border-cozy-border text-cozy-pink hover:bg-cozy-panel transition">
+            <button id="btn-copy-invite-mobile" class="md:hidden p-2.5 rounded-2xl bg-cozy-card border border-cozy-border text-cozy-pink hover:bg-cozy-panel transition" title="Kopiuj Link">
                 <i data-lucide="share-2" class="w-4 h-4"></i>
             </button>
 
-            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-cozy-card border border-cozy-border text-xs font-semibold text-slate-200">
+            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-cozy-card border border-cozy-border text-xs font-semibold text-slate-200" title="Liczba uczestników w pokoju">
                 <i data-lucide="users" class="w-3.5 h-3.5 text-cozy-mint"></i>
                 <span id="participant-count">1</span>
             </div>
+
+            <button id="btn-open-help" class="p-2.5 rounded-2xl bg-cozy-card hover:bg-cozy-panel border border-cozy-border text-slate-300 hover:text-white transition" title="Pomoc i wskazówki">
+                <i data-lucide="help-circle" class="w-4 h-4"></i>
+            </button>
         </div>
     </header>
 
@@ -444,13 +607,16 @@
                     <div id="yt-click-shield" class="absolute inset-0 z-10 cursor-pointer"></div>
                 </div>
 
+                <!-- 3. Interactive Laser Pointer Canvas Overlay -->
+                <canvas id="laser-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-25"></canvas>
+
                 <!-- Paused Overlay Indicator -->
                 <div id="stage-paused-banner" class="hidden absolute inset-0 bg-black/55 backdrop-blur-sm z-20 flex-col items-center justify-center pointer-events-none">
                     <div class="w-16 h-16 rounded-full bg-cozy-pink/25 border border-cozy-pink flex items-center justify-center mb-3 shadow-glow-pink">
                         <i data-lucide="pause" class="w-8 h-8 text-cozy-pink"></i>
                     </div>
                     <span class="font-display font-bold text-lg text-white">Wstrzymano (Pauza)</span>
-                    <span class="text-xs text-slate-300 mt-1">Kliknij Start / Wznów na pasku poniżej lub bezpośrednio na ekranie</span>
+                    <span id="paused-banner-subtitle" class="text-xs text-slate-300 mt-1">Kliknij Start / Wznów poniżej lub bezpośrednio na ekranie wideo</span>
                 </div>
 
                 <!-- Floating Emoji Overlay Container -->
@@ -460,13 +626,22 @@
                 <div id="stream-live-badge" class="hidden absolute top-4 left-4 z-30 items-center gap-2 px-3 py-1.5 rounded-2xl bg-black/75 backdrop-blur-md border border-white/10 text-xs">
                     <span class="w-2 h-2 rounded-full bg-rose-500 pulse-dot"></span>
                     <span id="stream-source-label" class="font-semibold text-white">LIVE</span>
+                    <span id="vod-sync-badge" class="hidden px-2 py-0.5 rounded-full bg-cozy-mint/20 text-cozy-mint text-[10px] font-bold">Mostek VOD Aktywny</span>
                 </div>
 
-                <!-- Top-Right Expand Fullscreen & Unmute Buttons -->
+                <!-- Top-Right Stage Utility Buttons (Unmute, Laser Pointer, PiP, Fullscreen Expand) -->
                 <div class="absolute top-4 right-12 z-30 flex items-center gap-2">
                     <button id="btn-unmute-stage" class="hidden items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-cozy-pink text-slate-950 font-bold text-xs shadow-glow-pink hover:scale-105 transition">
                         <i data-lucide="volume-2" class="w-4 h-4"></i>
                         <span>Włącz Dźwięk Filmu</span>
+                    </button>
+
+                    <button id="btn-stage-laser" class="p-2.5 rounded-2xl bg-black/70 hover:bg-cozy-pink hover:text-slate-950 text-white border border-white/15 backdrop-blur-md opacity-0 group-hover:opacity-100 transition" title="Wskaźnik Laserowy (pokaż coś znajomym na ekranie filmu)">
+                        <i data-lucide="wand-2" class="w-4 h-4"></i>
+                    </button>
+
+                    <button id="btn-stage-pip" class="p-2.5 rounded-2xl bg-black/70 hover:bg-cozy-lavender hover:text-slate-950 text-white border border-white/15 backdrop-blur-md opacity-0 group-hover:opacity-100 transition" title="Tryb Obraz-w-Obrazie (Picture-in-Picture)">
+                        <i data-lucide="picture-in-picture-2" class="w-4 h-4"></i>
                     </button>
 
                     <button id="btn-stage-expand" class="p-2.5 rounded-2xl bg-black/70 hover:bg-cozy-pink hover:text-slate-950 text-white border border-white/15 backdrop-blur-md opacity-0 group-hover:opacity-100 transition" title="Rozszerz film na 100% ekranu">
@@ -474,19 +649,19 @@
                     </button>
                 </div>
 
-                <!-- ==================== UNIFIED ON-STAGE START / STOP / SEEK CONTROL BAR ==================== -->
-                <div id="stage-overlay-controls" class="hidden absolute bottom-4 left-4 right-12 z-30 flex-col gap-2 px-4 py-3 rounded-2xl bg-black/85 backdrop-blur-xl border border-white/15 shadow-2xl opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
+                <!-- ==================== UNIFIED ON-STAGE START / STOP / SEEK / VOD CONTROL BAR ==================== -->
+                <div id="stage-overlay-controls" class="hidden absolute bottom-4 left-4 right-12 z-30 flex-col gap-2.5 px-4 py-3 rounded-2xl bg-black/85 backdrop-blur-xl border border-white/15 shadow-2xl opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
                     
                     <!-- Interactive Seekbar Row -->
-                    <div id="stage-seekbar-row" class="hidden items-center gap-3 w-full">
-                        <span id="label-current-time" class="text-[11px] font-mono text-slate-300 w-11 text-right">00:00</span>
-                        <input id="slider-stage-seek" type="range" min="0" max="100" step="0.1" value="0" class="flex-1 accent-cozy-pink h-1.5 bg-slate-700 rounded-lg cursor-pointer">
-                        <span id="label-duration-time" class="text-[11px] font-mono text-slate-400 w-11">00:00</span>
+                    <div id="stage-seekbar-row" class="flex items-center gap-3 w-full">
+                        <span id="label-current-time" class="text-[11px] font-mono text-slate-300 w-12 text-right">00:00</span>
+                        <input id="slider-stage-seek" type="range" min="0" max="100" step="1" value="0" class="flex-1 accent-cozy-pink h-1.5 bg-slate-700 rounded-lg cursor-pointer">
+                        <span id="label-duration-time" class="text-[11px] font-mono text-slate-400 w-12">00:00</span>
                     </div>
 
                     <!-- Control Buttons Row -->
                     <div class="flex flex-wrap items-center justify-between gap-2">
-                        <div class="flex items-center gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
                             <!-- Direct START / PAUSE Button -->
                             <button id="btn-stage-playpause" class="px-4 py-2 rounded-xl bg-cozy-mint hover:opacity-95 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-glow-mint transition">
                                 <i data-lucide="pause" class="w-4 h-4 fill-current"></i>
@@ -494,21 +669,35 @@
                             </button>
 
                             <!-- Rewind 10s Button -->
-                            <button id="btn-stage-rewind" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1 transition" title="Cofnij o 10 sekund">
+                            <button id="btn-stage-rewind" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1 transition" title="Cofnij o 10 sekund u wszystkich">
                                 <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                                 <span>-10s</span>
                             </button>
 
                             <!-- Forward 10s Button -->
-                            <button id="btn-stage-forward" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1 transition" title="Przewiń do przodu o 10 sekund">
+                            <button id="btn-stage-forward" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1 transition" title="Przewiń o 10 sekund do przodu u wszystkich">
                                 <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
                                 <span>+10s</span>
+                            </button>
+
+                            <!-- Playback Speed Selector -->
+                            <select id="select-stage-speed" class="bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold rounded-xl px-2.5 py-2 border border-cozy-border focus:outline-none cursor-pointer" title="Prędkość odtwarzania filmu">
+                                <option value="0.75">0.75x</option>
+                                <option value="1" selected>1.0x</option>
+                                <option value="1.25">1.25x</option>
+                                <option value="1.5">1.5x</option>
+                            </select>
+
+                            <!-- Skip Intro Button -->
+                            <button id="btn-stage-skip-intro" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-cozy-amber border border-cozy-amber/30 text-xs font-semibold flex items-center gap-1.5 transition" title="Kliknij przycisk 'Pomiń Intro' na karcie Netflix / Disney+ / Max">
+                                <i data-lucide="fast-forward" class="w-3.5 h-3.5"></i>
+                                <span class="hidden sm:inline">Pomiń Intro</span>
                             </button>
 
                             <!-- Change Source / Open Platform Hub -->
                             <button id="btn-stage-change-source" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition">
                                 <i data-lucide="tv-2" class="w-3.5 h-3.5 text-cozy-lavender"></i>
-                                <span class="hidden sm:inline">Zmień Film / Platformę</span>
+                                <span class="hidden md:inline">Zmień Film</span>
                             </button>
                         </div>
 
@@ -529,7 +718,7 @@
                             <i data-lucide="film" class="w-10 h-10 text-cozy-pink"></i>
                         </div>
                         <span class="absolute -bottom-1 -right-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-cozy-mint text-slate-950">
-                            Sync Start/Stop
+                            Pełna Kontrola
                         </span>
                     </div>
 
@@ -537,7 +726,7 @@
                         Gotowi na Wspólny Wieczór Filmowy? 🍿
                     </h2>
                     <p class="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
-                        Otwórz <strong>Hub Platform i Odtwarzacza</strong>, aby oglądać <span class="text-red-400 font-semibold">YouTube</span> lub <span class="text-cozy-mint font-semibold">filmy MP4</span> ze wspólnym sterowaniem Start/Stop bezpośrednio na tym ekranie, albo połącz <span class="text-rose-400 font-semibold">Netflix</span>, <span class="text-sky-400 font-semibold">Disney+</span> i <span class="text-indigo-400 font-semibold">Max</span>!
+                        Wybierz <strong>Netflix / Disney+ / YouTube Hub</strong>, aby oglądać <span class="text-red-400 font-semibold">YouTube</span> lub <span class="text-cozy-mint font-semibold">filmy MP4</span> bezpośrednio tutaj, albo zainstaluj wtyczkę dla <span class="text-rose-400 font-semibold">Netflix</span>, <span class="text-sky-400 font-semibold">Disney+</span> i <span class="text-indigo-400 font-semibold">Max</span>!
                     </p>
 
                     <div class="flex flex-wrap items-center justify-center gap-2.5">
@@ -545,9 +734,13 @@
                             <i data-lucide="tv-2" class="w-4 h-4 stroke-[2.2]"></i>
                             <span>Netflix / Disney+ / YouTube Hub</span>
                         </button>
+                        <button id="btn-hero-extension" class="px-4 py-3 rounded-2xl bg-amber-400/20 hover:bg-amber-400 hover:text-slate-950 text-amber-300 border border-amber-400/50 font-bold text-xs sm:text-sm flex items-center gap-2 transition">
+                            <i data-lucide="puzzle" class="w-4 h-4"></i>
+                            <span>Zainstaluj Wtyczkę VOD</span>
+                        </button>
                         <button id="btn-hero-share" class="px-4 py-3 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border font-semibold text-xs sm:text-sm flex items-center gap-2 transition">
                             <i data-lucide="monitor-up" class="w-4 h-4 text-cozy-pink"></i>
-                            <span>Udostępnij Ekran / Kartę</span>
+                            <span>Udostępnij Ekran</span>
                         </button>
                         <button id="btn-hero-file" class="px-4 py-3 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border font-semibold text-xs sm:text-sm flex items-center gap-2 transition">
                             <i data-lucide="folder-video" class="w-4 h-4 text-cozy-lavender"></i>
@@ -583,33 +776,37 @@
 
                     <button id="btn-dock-platforms" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender border border-cozy-lavender/30 flex items-center gap-1.5 text-xs font-semibold transition">
                         <i data-lucide="play-square" class="w-4 h-4"></i>
-                        <span class="hidden md:inline">Hub Filmowy</span>
+                        <span class="hidden md:inline">Co Oglądamy</span>
                     </button>
                 </div>
 
                 <!-- Center: Quick Floating Emoji Reactions -->
                 <div class="flex items-center gap-1.5 bg-cozy-bg/80 px-2.5 py-1.5 rounded-2xl border border-cozy-border">
-                    <button data-emoji="💖" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition">💖</button>
-                    <button data-emoji="😂" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition">😂</button>
-                    <button data-emoji="😱" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition">😱</button>
-                    <button data-emoji="🍿" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition">🍿</button>
-                    <button data-emoji="🔥" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition">🔥</button>
-                    <button data-emoji="🥺" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition">🥺</button>
+                    <button data-emoji="💖" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Serduszko">💖</button>
+                    <button data-emoji="😂" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Śmiech">😂</button>
+                    <button data-emoji="😱" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Szok">😱</button>
+                    <button data-emoji="🍿" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Popcorn">🍿</button>
+                    <button data-emoji="🔥" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Ogień">🔥</button>
+                    <button data-emoji="🥺" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Wzruszenie">🥺</button>
                 </div>
 
-                <!-- Right: Auto-Duck, Volume, Fullscreen Expand -->
+                <!-- Right: Auto-Duck, SFX, Volume, Fullscreen Expand -->
                 <div class="flex items-center gap-2">
-                    <button id="btn-toggle-autoduck" class="px-3 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-mint border border-cozy-mint/30 flex items-center gap-1.5 text-xs font-semibold transition" title="Auto-Ducking: Automatycznie ścisza film, gdy ktoś mówi">
+                    <button id="btn-toggle-autoduck" class="px-3 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-mint border border-cozy-mint/30 flex items-center gap-1.5 text-xs font-semibold transition" title="Auto-Ducking: Automatycznie ścisza film, gdy ktoś mówi na czacie głosowym">
                         <i data-lucide="ear" class="w-4 h-4"></i>
                         <span class="hidden xl:inline">Auto-Duck</span>
                     </button>
 
-                    <div class="hidden sm:flex items-center gap-2 bg-cozy-bg/80 px-3 py-2 rounded-2xl border border-cozy-border">
+                    <button id="btn-toggle-sfx" class="p-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender border border-cozy-border transition" title="Dźwięki powiadomień czatu Wł./Wył.">
+                        <i data-lucide="bell" class="w-4 h-4"></i>
+                    </button>
+
+                    <div class="hidden sm:flex items-center gap-2 bg-cozy-bg/80 px-3 py-2 rounded-2xl border border-cozy-border" title="Głośność filmu">
                         <i data-lucide="volume-2" class="w-4 h-4 text-cozy-lavender"></i>
                         <input id="slider-stage-volume" type="range" min="0" max="1" step="0.05" value="1" class="w-16 accent-cozy-pink cursor-pointer">
                     </div>
 
-                    <button id="btn-fullscreen" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-pink hover:text-slate-950 text-slate-200 border border-cozy-border flex items-center gap-1.5 text-xs font-semibold transition" title="Rozszerz wideo na cały ekran">
+                    <button id="btn-fullscreen" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-pink hover:text-slate-950 text-slate-200 border border-cozy-border flex items-center gap-1.5 text-xs font-semibold transition" title="Rozszerz wideo na 100% ekranu (czat pozostaje wysuwany z boku)">
                         <i data-lucide="maximize" class="w-4 h-4"></i>
                         <span class="hidden sm:inline" id="label-fullscreen">Pełny Ekran</span>
                     </button>
@@ -627,8 +824,8 @@
                         <i data-lucide="camera" class="w-3.5 h-3.5 text-cozy-pink"></i>
                         <h3 class="font-display font-bold text-xs uppercase tracking-wider text-slate-200">Kamery i Głos</h3>
                     </div>
-                    <button id="btn-close-drawer-inside" class="text-[11px] text-slate-400 hover:text-white flex items-center gap-1">
-                        <span>Ukryj panel</span>
+                    <button id="btn-close-drawer-inside" class="text-[11px] text-slate-400 hover:text-white flex items-center gap-1 transition">
+                        <span>Schowaj panel</span>
                         <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                     </button>
                 </div>
@@ -648,7 +845,7 @@
 
                 <div id="chat-messages" class="flex-1 overflow-y-auto py-3 px-1 space-y-2.5 text-xs select-text">
                     <div class="bg-cozy-panel/60 border border-cozy-border/60 rounded-2xl p-2.5 text-center text-slate-400 text-[11px]">
-                        ✨ Witaj w VeeVee! Użyj zakładki po prawej stronie ekranu, aby w dowolnej chwili wsunąć lub wysunąć czat (również na pełnym ekranie).
+                        ✨ Witaj w VeeVee! Użyj zakładki na prawej krawędzi ekranu, aby w dowolnej chwili wsunąć lub wysunąć czat — również wtedy, gdy film wypełnia cały ekran.
                     </div>
                 </div>
 
@@ -676,12 +873,12 @@
                 </div>
 
                 <form id="chat-form" class="pt-2 flex items-center gap-1.5">
-                    <button type="button" id="btn-toggle-emoji" class="p-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender transition shrink-0">
+                    <button type="button" id="btn-toggle-emoji" class="p-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender transition shrink-0" title="Wstaw Emoji">
                         <i data-lucide="smile" class="w-4 h-4"></i>
                     </button>
-                    <input id="chat-input" type="text" maxlength="300" autocomplete="off" placeholder="Napisz wiadomość..." 
+                    <input id="chat-input" type="text" maxlength="350" autocomplete="off" placeholder="Napisz wiadomość..." 
                         class="flex-1 px-3.5 py-2.5 rounded-2xl bg-cozy-bg/90 border border-cozy-border focus:border-cozy-pink focus:outline-none text-xs text-white placeholder-slate-500">
-                    <button type="submit" class="p-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold hover:opacity-95 transition shrink-0">
+                    <button type="submit" class="p-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold hover:opacity-95 transition shrink-0" title="Wyślij">
                         <i data-lucide="send" class="w-4 h-4"></i>
                     </button>
                 </form>
@@ -693,6 +890,9 @@
     <script>
         lucide.createIcons();
 
+        /**
+         * Global VeeVee Application State
+         */
         const state = {
             peer: null,
             myPeerId: null,
@@ -711,15 +911,21 @@
             selectedPlatformName: null,
             openedPlatformWindow: null,
             extensionDetected: false,
+            remoteVodTelemetry: { currentTime: 0, duration: 0, paused: false, active: false },
             isSharingScreen: false,
             isStagePaused: false,
+            stagePlaybackSpeed: 1.0,
             ytPlayer: null,
             ytReady: false,
             ytVideoId: null,
             autoDuckEnabled: true,
+            sfxEnabled: true,
+            laserActive: false,
+            laserPoints: [],
             userStageVolume: 1.0,
             drawerOpen: true,
             isImmersiveFullscreen: false,
+            unreadCount: 0,
             activeSpeakers: new Set(),
             typingTimeout: null,
             lastTypingSent: 0,
@@ -730,10 +936,23 @@
             participants: new Map()
         };
 
+        /**
+         * Cached DOM References
+         */
         const dom = {
             lobbyModal: document.getElementById('lobby-modal'),
+            lobbyExtensionBanner: document.getElementById('lobby-extension-banner'),
+            lobbyExtTitle: document.getElementById('lobby-ext-title'),
+            lobbyExtSub: document.getElementById('lobby-ext-sub'),
+            btnLobbyInstallExt: document.getElementById('btn-lobby-install-ext'),
             platformsModal: document.getElementById('platforms-modal'),
+            extensionModal: document.getElementById('extension-modal'),
+            helpModal: document.getElementById('help-modal'),
             extensionStatusBadge: document.getElementById('extension-status-badge'),
+            topExtLabel: document.getElementById('top-ext-label'),
+            btnOpenExtensionTop: document.getElementById('btn-open-extension-top'),
+            extModalDot: document.getElementById('ext-modal-dot'),
+            modalExtStatusText: document.getElementById('modal-ext-status-text'),
             step2CaptureBox: document.getElementById('step2-capture-box'),
             step2StatusTitle: document.getElementById('step2-status-title'),
             btnStep2StartCapture: document.getElementById('btn-step2-start-capture'),
@@ -765,11 +984,16 @@
             mainScreenVideo: document.getElementById('main-screen-video'),
             ytStageWrapper: document.getElementById('yt-stage-wrapper'),
             ytClickShield: document.getElementById('yt-click-shield'),
+            laserCanvas: document.getElementById('laser-canvas'),
             stagePausedBanner: document.getElementById('stage-paused-banner'),
+            pausedBannerSubtitle: document.getElementById('paused-banner-subtitle'),
             stagePlaceholder: document.getElementById('stage-placeholder'),
             streamLiveBadge: document.getElementById('stream-live-badge'),
             streamSourceLabel: document.getElementById('stream-source-label'),
+            vodSyncBadge: document.getElementById('vod-sync-badge'),
             btnUnmuteStage: document.getElementById('btn-unmute-stage'),
+            btnStageLaser: document.getElementById('btn-stage-laser'),
+            btnStagePip: document.getElementById('btn-stage-pip'),
             btnStageExpand: document.getElementById('btn-stage-expand'),
             stageOverlayControls: document.getElementById('stage-overlay-controls'),
             stageSeekbarRow: document.getElementById('stage-seekbar-row'),
@@ -779,6 +1003,8 @@
             btnStagePlayPause: document.getElementById('btn-stage-playpause'),
             btnStageRewind: document.getElementById('btn-stage-rewind'),
             btnStageForward: document.getElementById('btn-stage-forward'),
+            selectStageSpeed: document.getElementById('select-stage-speed'),
+            btnStageSkipIntro: document.getElementById('btn-stage-skip-intro'),
             btnStageChangeSource: document.getElementById('btn-stage-change-source'),
             btnStageStop: document.getElementById('btn-stage-stop'),
             reactionsOverlay: document.getElementById('reactions-overlay'),
@@ -786,11 +1012,13 @@
             btnHeroShare: document.getElementById('btn-hero-share'),
             btnHeroFile: document.getElementById('btn-hero-file'),
             btnHeroDemo: document.getElementById('btn-hero-demo'),
+            btnHeroExtension: document.getElementById('btn-hero-extension'),
             btnToggleMic: document.getElementById('btn-toggle-mic'),
             btnToggleCam: document.getElementById('btn-toggle-cam'),
             btnShareScreen: document.getElementById('btn-share-screen'),
             btnDockPlatforms: document.getElementById('btn-dock-platforms'),
             btnToggleAutoduck: document.getElementById('btn-toggle-autoduck'),
+            btnToggleSfx: document.getElementById('btn-toggle-sfx'),
             sliderStageVolume: document.getElementById('slider-stage-volume'),
             btnFullscreen: document.getElementById('btn-fullscreen'),
             labelFullscreen: document.getElementById('label-fullscreen'),
@@ -804,7 +1032,138 @@
             toastContainer: document.getElementById('toast-container')
         };
 
-        // ==================== CHROME EXTENSION BRIDGE COMMUNICATION ====================
+        // ==================== CHROME EXTENSION SOURCE GENERATOR & BRIDGE ====================
+
+        const EXTENSION_MANIFEST_JSON = JSON.stringify({
+            manifest_version: 3,
+            name: "VeeVee Watch Party Bridge",
+            version: "2.0",
+            description: "Dwukierunkowy mostek łączący przyciski Start/Stop/Pasek Czasu/Prędkość w VeeVee z kartą Netflix, Disney+, Max, Prime Video i YouTube.",
+            permissions: ["storage"],
+            content_scripts: [
+                {
+                    matches: ["<all_urls>"],
+                    js: ["content.js"],
+                    run_at: "document_end",
+                    all_frames: true
+                }
+            ]
+        }, null, 2);
+
+        const EXTENSION_CONTENT_JS = `// VeeVee Watch Party Bridge v2.0 - Content Script
+(function() {
+    // 1. Powiadom stronę VeeVee, że wtyczka jest aktywna
+    window.postMessage({ type: 'VEEVEE_EXTENSION_READY', version: '2.0' }, '*');
+
+    // 2. Odbieraj polecenia ze strony VeeVee i zapisuj do współdzielonej pamięci Chrome
+    window.addEventListener('message', (event) => {
+        if (!event.data || typeof event.data !== 'object') return;
+
+        if (event.data.type === 'VEEVEE_EXTENSION_PING') {
+            window.postMessage({ type: 'VEEVEE_EXTENSION_READY', version: '2.0' }, '*');
+        }
+
+        if (event.data.type === 'VEEVEE_EXTENSION_COMMAND') {
+            try {
+                chrome.storage.local.set({
+                    veeveeCommand: {
+                        action: event.data.action,
+                        value: event.data.value,
+                        timestamp: Date.now() + Math.random()
+                    }
+                });
+            } catch (err) {}
+        }
+    });
+
+    // 3. Funkcja sterująca odtwarzaczem na karcie VOD (Netflix, Disney+, Max, Prime, HTML5)
+    function executeVodAction(cmd) {
+        const videoEl = document.querySelector('video');
+        if (!videoEl) return;
+
+        if (cmd.action === 'play') {
+            videoEl.play().catch(() => {});
+        } else if (cmd.action === 'pause') {
+            videoEl.pause();
+        } else if (cmd.action === 'rewind') {
+            const offset = Number(cmd.value) || 10;
+            videoEl.currentTime = Math.max(0, videoEl.currentTime - offset);
+        } else if (cmd.action === 'forward') {
+            const offset = Number(cmd.value) || 10;
+            videoEl.currentTime = Math.min(videoEl.duration || Infinity, videoEl.currentTime + offset);
+        } else if (cmd.action === 'seekTo' && typeof cmd.value === 'number') {
+            videoEl.currentTime = cmd.value;
+        } else if (cmd.action === 'speed' && typeof cmd.value === 'number') {
+            videoEl.playbackRate = cmd.value;
+        } else if (cmd.action === 'skipIntro') {
+            const skipSelectors = [
+                '[data-uia="player-skip-intro"]',
+                '[data-uia="player-skip-recap"]',
+                '.skip__button',
+                '[data-testid="skip-button"]',
+                '.atvwebplayersdk-skipelement-button'
+            ];
+            for (const sel of skipSelectors) {
+                const btn = document.querySelector(sel);
+                if (btn) { btn.click(); break; }
+            }
+        }
+    }
+
+    // 4. Nasłuchuj komend w pamięci Chrome i wykonuj na karcie z filmem
+    try {
+        chrome.storage.onChanged.addListener((changes, areaName) => {
+            if (areaName !== 'local') return;
+
+            if (changes.veeveeCommand && changes.veeveeCommand.newValue) {
+                if (document.getElementById('main-screen-video') && document.getElementById('stage-container')) {
+                    return;
+                }
+                executeVodAction(changes.veeveeCommand.newValue);
+            }
+
+            if (changes.veeveeTelemetry && changes.veeveeTelemetry.newValue) {
+                if (document.getElementById('stage-container')) {
+                    window.postMessage({
+                        type: 'VEEVEE_EXTENSION_TELEMETRY',
+                        telemetry: changes.veeveeTelemetry.newValue
+                    }, '*');
+                }
+            }
+        });
+    } catch (e) {}
+
+    // 5. Co 700ms raportuj czas trwania i pozycję filmu z karty VOD do VeeVee
+    setInterval(() => {
+        if (document.getElementById('stage-container')) return;
+        const videoEl = document.querySelector('video');
+        if (!videoEl || !videoEl.duration || isNaN(videoEl.duration)) return;
+
+        try {
+            chrome.storage.local.set({
+                veeveeTelemetry: {
+                    currentTime: videoEl.currentTime || 0,
+                    duration: videoEl.duration || 0,
+                    paused: videoEl.paused,
+                    hostname: location.hostname,
+                    timestamp: Date.now()
+                }
+            });
+        } catch (e) {}
+    }, 700);
+})();`;
+
+        function downloadTextFile(filename, content) {
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
 
         function sendExtensionCommand(action, value = null) {
             window.postMessage({
@@ -815,28 +1174,110 @@
             }, '*');
         }
 
+        function markExtensionActive() {
+            state.extensionDetected = true;
+
+            // Update Hub Badge
+            if (dom.extensionStatusBadge) {
+                dom.extensionStatusBadge.innerHTML = `<i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i><span>Wtyczka VOD: Aktywna ✓</span>`;
+                dom.extensionStatusBadge.className = 'text-[11px] px-3 py-1 rounded-xl bg-cozy-mint/20 text-cozy-mint border border-cozy-mint/40 font-bold flex items-center gap-1.5';
+                lucide.createIcons({ nodes: [dom.extensionStatusBadge] });
+            }
+
+            // Update Top Navbar Button
+            if (dom.btnOpenExtensionTop) {
+                dom.btnOpenExtensionTop.className = 'px-3 py-2 rounded-2xl bg-cozy-mint/15 border border-cozy-mint/40 text-cozy-mint text-xs font-bold flex items-center gap-1.5 transition';
+            }
+            if (dom.topExtLabel) {
+                dom.topExtLabel.textContent = 'Wtyczka Aktywna ✓';
+            }
+
+            // Update Lobby Banner
+            if (dom.lobbyExtensionBanner) {
+                dom.lobbyExtensionBanner.className = 'mb-4 p-3.5 rounded-2xl bg-cozy-mint/15 border border-cozy-mint/40 flex items-center justify-between gap-3';
+                dom.lobbyExtTitle.textContent = 'Wtyczka VeeVee Bridge Aktywna ✓';
+                dom.lobbyExtSub.textContent = 'Sterowanie Netflix / Disney+ / Max jest gotowe!';
+                dom.lobbyExtSub.className = 'text-[11px] text-cozy-mint';
+                dom.btnLobbyInstallExt.textContent = 'Gotowe ✓';
+                dom.btnLobbyInstallExt.className = 'px-3 py-1.5 rounded-xl bg-cozy-mint text-slate-950 font-bold text-xs shrink-0';
+            }
+
+            // Update Extension Installer Modal
+            if (dom.extModalDot) {
+                dom.extModalDot.className = 'w-3 h-3 rounded-full bg-cozy-mint shrink-0';
+            }
+            if (dom.modalExtStatusText) {
+                dom.modalExtStatusText.textContent = '✅ Wtyczka VeeVee Bridge została wykryta i działa poprawnie!';
+                dom.modalExtStatusText.className = 'text-[11px] text-cozy-mint font-bold';
+            }
+        }
+
         window.addEventListener('message', (event) => {
-            if (!event.data) return;
+            if (!event.data || typeof event.data !== 'object') return;
+
             if (event.data.type === 'VEEVEE_EXTENSION_READY') {
-                state.extensionDetected = true;
-                if (dom.extensionStatusBadge) {
-                    dom.extensionStatusBadge.textContent = 'Wtyczka: Aktywna ✓';
-                    dom.extensionStatusBadge.className = 'text-[10px] px-2.5 py-0.5 rounded-full bg-cozy-mint/20 text-cozy-mint border border-cozy-mint/40 font-semibold';
+                markExtensionActive();
+            }
+
+            if (event.data.type === 'VEEVEE_EXTENSION_TELEMETRY' && event.data.telemetry) {
+                const tel = event.data.telemetry;
+                state.remoteVodTelemetry = {
+                    currentTime: tel.currentTime || 0,
+                    duration: tel.duration || 0,
+                    paused: !!tel.paused,
+                    active: true
+                };
+                if (state.stageMode === 'screen') {
+                    dom.vodSyncBadge.classList.remove('hidden');
                 }
             }
         });
 
-        // Ping extension on load
+        // AUTO-CHECK AND AUTO-POPUP EXTENSION INSTALLER ON PAGE LOAD
         setTimeout(() => {
             window.postMessage({ type: 'VEEVEE_EXTENSION_PING' }, '*');
             setTimeout(() => {
-                if (!state.extensionDetected && dom.extensionStatusBadge) {
-                    dom.extensionStatusBadge.textContent = 'Wtyczka: Nie wykryto (Opcjonalna)';
+                if (!state.extensionDetected) {
+                    // Automatically pop up the extension installer modal so the user immediately sees where to download and install it!
+                    dom.extensionModal.classList.remove('hidden');
+                    dom.extensionModal.classList.add('flex');
+                    showToast('🧩 Zainstaluj wtyczkę VeeVee z wyskakującego okienka, aby sterować Netflixem i Disney+!', 'warning');
                 }
-            }, 1200);
-        }, 500);
+            }, 900);
+        }, 300);
 
-        // ==================== HELPERS ====================
+        // ==================== SOUND EFFECTS (WebAudio Synthesizer) ====================
+
+        function playNotificationSound(type = 'chat') {
+            if (!state.sfxEnabled) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                const now = ctx.currentTime;
+                if (type === 'join') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.14);
+                    gain.gain.setValueAtTime(0.06, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.26);
+                } else {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(587.33, now);
+                    gain.gain.setValueAtTime(0.04, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+                    osc.start(now);
+                    osc.stop(now + 0.13);
+                }
+            } catch (e) {}
+        }
+
+        // ==================== UI HELPER FUNCTIONS ====================
 
         function generateShortRoomId() {
             const chars = 'abcdefghjkmnpqrstuvwxyz23456789';
@@ -847,9 +1288,13 @@
 
         function formatSeconds(sec) {
             if (!sec || isNaN(sec) || sec < 0) return '00:00';
-            const m = Math.floor(sec / 60);
+            const hrs = Math.floor(sec / 3600);
+            const mins = Math.floor((sec % 3600) / 60);
             const s = Math.floor(sec % 60);
-            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            if (hrs > 0) {
+                return `${hrs}:${String(mins).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            }
+            return `${String(mins).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         }
 
         function extractYouTubeId(url) {
@@ -933,7 +1378,8 @@
                 }
             }
 
-            if (state.drawerOpen && dom.unreadChatDot) {
+            if (state.drawerOpen) {
+                state.unreadCount = 0;
                 dom.unreadChatDot.classList.add('hidden');
             }
 
@@ -955,7 +1401,7 @@
                 if (!document.fullscreenElement) {
                     document.documentElement.requestFullscreen().catch(() => {});
                 }
-                showToast('Pełny ekran aktywny! Użyj przycisku "Otwórz Czat" przy prawej krawędzi, aby wysuwać czat.', 'info');
+                showToast('Pełny ekran (100%) aktywny! Kliknij zakładkę "Otwórz Czat" na prawej krawędzi, aby wsuwać i wysuwać czat.', 'info');
             } else {
                 state.drawerOpen = true;
                 if (document.fullscreenElement) {
@@ -981,6 +1427,61 @@
             }
         });
 
+        // ==================== INTERACTIVE LASER POINTER ON STAGE ====================
+
+        function initLaserPointer() {
+            const canvas = dom.laserCanvas;
+            const ctx = canvas.getContext('2d');
+
+            function resizeLaser() {
+                const rect = dom.stageContainer.getBoundingClientRect();
+                canvas.width = rect.width || 1280;
+                canvas.height = rect.height || 720;
+            }
+            window.addEventListener('resize', resizeLaser);
+            resizeLaser();
+
+            dom.stageContainer.addEventListener('mousemove', (e) => {
+                if (!state.laserActive) return;
+                const rect = dom.stageContainer.getBoundingClientRect();
+                const nx = (e.clientX - rect.left) / rect.width;
+                const ny = (e.clientY - rect.top) / rect.height;
+
+                addLaserPoint(nx, ny, state.avatarColor);
+                broadcastData({
+                    type: 'laser-point',
+                    x: nx,
+                    y: ny,
+                    color: state.avatarColor
+                });
+            });
+
+            function renderLaserLoop() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const now = Date.now();
+                state.laserPoints = state.laserPoints.filter(p => now - p.time < 650);
+
+                for (const pt of state.laserPoints) {
+                    const age = (now - pt.time) / 650;
+                    const radius = (1 - age) * 11 + 3;
+                    ctx.beginPath();
+                    ctx.arc(pt.x * canvas.width, pt.y * canvas.height, radius, 0, Math.PI * 2);
+                    ctx.fillStyle = pt.color || '#F472B6';
+                    ctx.shadowColor = pt.color || '#F472B6';
+                    ctx.shadowBlur = 14;
+                    ctx.fill();
+                }
+                requestAnimationFrame(renderLaserLoop);
+            }
+            renderLaserLoop();
+        }
+
+        function addLaserPoint(nx, ny, color) {
+            state.laserPoints.push({ x: nx, y: ny, color: color, time: Date.now() });
+        }
+
+        initLaserPointer();
+
         // ==================== YOUTUBE IFRAME API INTEGRATION ====================
 
         window.onYouTubeIframeAPIReady = function () {
@@ -1005,8 +1506,6 @@
 
             dom.stageOverlayControls.classList.remove('hidden');
             dom.stageOverlayControls.classList.add('flex');
-            dom.stageSeekbarRow.classList.remove('hidden');
-            dom.stageSeekbarRow.classList.add('flex');
 
             updateStagePlayPauseUI();
             updateShareButtonUI();
@@ -1054,6 +1553,7 @@
             }
         }
 
+        // Periodic Seekbar & Time UI updater
         setInterval(() => {
             if (state.stageMode === 'youtube' && state.ytPlayer && typeof state.ytPlayer.getCurrentTime === 'function') {
                 const cur = state.ytPlayer.getCurrentTime() || 0;
@@ -1073,6 +1573,13 @@
                     dom.labelCurrentTime.textContent = formatSeconds(cur);
                     dom.labelDurationTime.textContent = formatSeconds(dur);
                 }
+            } else if (state.stageMode === 'screen' && state.remoteVodTelemetry.active && state.remoteVodTelemetry.duration > 0) {
+                const cur = state.remoteVodTelemetry.currentTime;
+                const dur = state.remoteVodTelemetry.duration;
+                dom.sliderStageSeek.max = dur;
+                dom.sliderStageSeek.value = cur;
+                dom.labelCurrentTime.textContent = formatSeconds(cur);
+                dom.labelDurationTime.textContent = formatSeconds(dur);
             }
         }, 500);
 
@@ -1148,6 +1655,7 @@
                 state.localCamStream = createAvatarFallbackStream(state.username, state.avatarColor);
                 state.micEnabled = false;
                 state.camEnabled = false;
+                showToast('Dołączono z awatarem (brak kamery/mikrofonu)', 'warning');
             }
 
             updateMediaButtonsUI();
@@ -1276,8 +1784,24 @@
                 tile.appendChild(badge);
 
                 if (!isLocal) {
+                    const controlsWrap = document.createElement('div');
+                    controlsWrap.className = 'absolute top-1.5 right-1.5 flex items-center gap-1 bg-black/75 backdrop-blur-md px-1.5 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition z-10';
+
+                    const volSlider = document.createElement('input');
+                    volSlider.type = 'range';
+                    volSlider.min = '0';
+                    volSlider.max = '1';
+                    volSlider.step = '0.05';
+                    volSlider.value = '1';
+                    volSlider.className = 'w-12 accent-cozy-mint cursor-pointer';
+                    volSlider.title = 'Głośność rozmówcy';
+                    volSlider.addEventListener('input', (e) => {
+                        video.volume = parseFloat(e.target.value);
+                        video.muted = video.volume === 0;
+                    });
+
                     const muteBtn = document.createElement('button');
-                    muteBtn.className = 'absolute top-1.5 right-1.5 p-1.5 rounded-lg bg-black/65 hover:bg-cozy-pink hover:text-slate-950 text-white opacity-0 group-hover:opacity-100 transition z-10';
+                    muteBtn.className = 'p-1 rounded hover:text-cozy-pink text-white transition';
                     muteBtn.title = 'Wycisz / Włącz dźwięk uczestnika';
                     muteBtn.innerHTML = `<i data-lucide="volume-2" class="w-3 h-3"></i>`;
                     muteBtn.addEventListener('click', () => {
@@ -1285,7 +1809,10 @@
                         muteBtn.innerHTML = `<i data-lucide="${video.muted ? 'volume-x' : 'volume-2'}" class="w-3 h-3 ${video.muted ? 'text-rose-400' : ''}"></i>`;
                         lucide.createIcons({ nodes: [muteBtn] });
                     });
-                    tile.appendChild(muteBtn);
+
+                    controlsWrap.appendChild(volSlider);
+                    controlsWrap.appendChild(muteBtn);
+                    tile.appendChild(controlsWrap);
                     lucide.createIcons({ nodes: [muteBtn] });
                 }
 
@@ -1331,8 +1858,6 @@
                 const screenStream = await navigator.mediaDevices.getDisplayMedia(getSelectedMediaConstraints());
                 cleanupLocalStageStreams();
                 state.stageMode = 'screen';
-                dom.stageSeekbarRow.classList.add('hidden');
-                dom.stageSeekbarRow.classList.remove('flex');
 
                 activateSharedStageStream(screenStream, customLabel || `Ekran • ${state.username}`, false);
 
@@ -1364,8 +1889,6 @@
 
             dom.stageOverlayControls.classList.remove('hidden');
             dom.stageOverlayControls.classList.add('flex');
-            dom.stageSeekbarRow.classList.remove('hidden');
-            dom.stageSeekbarRow.classList.add('flex');
 
             dom.mainScreenVideo.play().catch(() => {});
             updateStagePlayPauseUI();
@@ -1395,9 +1918,6 @@
             dom.mainScreenVideo.muted = false;
             dom.mainScreenVideo.volume = state.userStageVolume;
 
-            dom.stageSeekbarRow.classList.remove('hidden');
-            dom.stageSeekbarRow.classList.add('flex');
-
             dom.mainScreenVideo.onloadedmetadata = () => {
                 dom.mainScreenVideo.play().then(() => {
                     const capturedStream = dom.mainScreenVideo.captureStream
@@ -1414,8 +1934,6 @@
         function startDemoStream() {
             cleanupLocalStageStreams();
             state.stageMode = 'demo';
-            dom.stageSeekbarRow.classList.add('hidden');
-            dom.stageSeekbarRow.classList.remove('flex');
 
             const canvas = document.createElement('canvas');
             canvas.width = 1280;
@@ -1511,7 +2029,6 @@
                 });
             }
 
-            // Send command to Chrome Extension Bridge (controls Netflix, Disney+, Max, Prime Video in adjacent tab)
             sendExtensionCommand(state.isStagePaused ? 'pause' : 'play');
 
             updateStagePlayPauseUI();
@@ -1534,7 +2051,6 @@
                 const target = Math.max(0, (dom.mainScreenVideo.currentTime || 0) + offsetSeconds);
                 seekStageVideo(target, broadcast);
             } else {
-                // Screen share / VOD tab controlled via Extension
                 sendExtensionCommand(offsetSeconds < 0 ? 'rewind' : 'forward', Math.abs(offsetSeconds));
                 if (broadcast) {
                     broadcastData({
@@ -1549,7 +2065,7 @@
         function seekStageVideo(targetSeconds, broadcast = true) {
             if (state.stageMode === 'youtube' && state.ytPlayer && typeof state.ytPlayer.seekTo === 'function') {
                 state.ytPlayer.seekTo(targetSeconds, true);
-            } else if (!dom.mainScreenVideo.classList.contains('hidden')) {
+            } else if (state.stageMode === 'file' || state.stageMode === 'url') {
                 dom.mainScreenVideo.currentTime = targetSeconds;
             }
 
@@ -1559,6 +2075,27 @@
                 broadcastData({
                     type: 'stage-seek',
                     currentTime: targetSeconds,
+                    sender: state.username
+                });
+            }
+        }
+
+        function changeStagePlaybackSpeed(speedVal, broadcast = true) {
+            state.stagePlaybackSpeed = speedVal;
+            dom.selectStageSpeed.value = String(speedVal);
+
+            if (state.stageMode === 'youtube' && state.ytPlayer && typeof state.ytPlayer.setPlaybackRate === 'function') {
+                state.ytPlayer.setPlaybackRate(speedVal);
+            } else if (!dom.mainScreenVideo.classList.contains('hidden')) {
+                dom.mainScreenVideo.playbackRate = speedVal;
+            }
+
+            sendExtensionCommand('speed', speedVal);
+
+            if (broadcast) {
+                broadcastData({
+                    type: 'stage-speed',
+                    speed: speedVal,
                     sender: state.username
                 });
             }
@@ -1587,6 +2124,7 @@
             state.isSharingScreen = false;
             state.isStagePaused = false;
             state.stageMode = 'none';
+            state.remoteVodTelemetry.active = false;
 
             for (const [, call] of state.screenCalls.entries()) {
                 try { call.close(); } catch (e) {}
@@ -1615,6 +2153,7 @@
             dom.stagePlaceholder.classList.remove('hidden');
             dom.streamLiveBadge.classList.add('hidden');
             dom.streamLiveBadge.classList.remove('flex');
+            dom.vodSyncBadge.classList.add('hidden');
             dom.btnUnmuteStage.classList.add('hidden');
             dom.stageOverlayControls.classList.add('hidden');
             dom.stageOverlayControls.classList.remove('flex');
@@ -1807,6 +2346,7 @@
                     }
 
                     if (isNew) {
+                        playNotificationSound('join');
                         appendSystemMessage(`👋 ${data.username} dołączył(a) do pokoju!`);
                         showToast(`${data.username} dołączył(a) do Watch Party!`, 'info');
                     }
@@ -1849,7 +2389,6 @@
                         if (state.isStagePaused) dom.mainScreenVideo.pause();
                         else dom.mainScreenVideo.play().catch(() => {});
                     }
-                    // Also trigger Chrome Extension on Host/Guest side so remote pause pauses Netflix/Disney+
                     sendExtensionCommand(state.isStagePaused ? 'pause' : 'play');
                     updateStagePlayPauseUI();
                     appendSystemMessage(`${state.isStagePaused ? '⏸️' : '▶️'} ${data.sender} ${state.isStagePaused ? 'wstrzymał(a)' : 'wznowił(a)'} film.`);
@@ -1863,12 +2402,27 @@
                     sendExtensionCommand(data.action, 10);
                     break;
                 }
+                case 'stage-speed': {
+                    changeStagePlaybackSpeed(data.speed, false);
+                    appendSystemMessage(`⏩ ${data.sender} zmienił(a) prędkość odtwarzania na ${data.speed}x.`);
+                    break;
+                }
+                case 'stage-skip-intro': {
+                    sendExtensionCommand('skipIntro');
+                    appendSystemMessage(`⏭️ ${data.sender} pominął(ęła) intro.`);
+                    break;
+                }
+                case 'laser-point': {
+                    addLaserPoint(data.x, data.y, data.color);
+                    break;
+                }
                 case 'screen-status': {
                     if (!data.active) stopAllStageStreams(false);
                     break;
                 }
                 case 'chat': {
                     dom.typingIndicator.classList.add('hidden');
+                    playNotificationSound('chat');
                     appendChatMessage({
                         sender: data.sender,
                         color: data.color,
@@ -1877,6 +2431,8 @@
                         isSelf: false
                     });
                     if (!state.drawerOpen && dom.unreadChatDot) {
+                        state.unreadCount++;
+                        dom.unreadChatDot.textContent = state.unreadCount;
                         dom.unreadChatDot.classList.remove('hidden');
                     }
                     break;
@@ -1957,12 +2513,36 @@
 
         // ==================== EVENT LISTENERS ====================
 
+        // Drawer & Fullscreen
         dom.btnFloatingDrawer.addEventListener('click', () => toggleDrawer());
         dom.btnCloseDrawerInside.addEventListener('click', () => toggleDrawer(false));
-
         dom.btnFullscreen.addEventListener('click', toggleImmersiveFullscreen);
         dom.btnStageExpand.addEventListener('click', toggleImmersiveFullscreen);
 
+        // Laser Pointer & Picture-in-Picture
+        dom.btnStageLaser.addEventListener('click', () => {
+            state.laserActive = !state.laserActive;
+            dom.btnStageLaser.classList.toggle('bg-cozy-pink', state.laserActive);
+            dom.btnStageLaser.classList.toggle('text-slate-950', state.laserActive);
+            dom.stageContainer.classList.toggle('cursor-crosshair', state.laserActive);
+            showToast(state.laserActive ? 'Wskaźnik laserowy WŁĄCZONY! Poruszaj myszką po filmie.' : 'Wskaźnik laserowy wyłączony.', 'info');
+        });
+
+        dom.btnStagePip.addEventListener('click', async () => {
+            try {
+                if (document.pictureInPictureElement) {
+                    await document.exitPictureInPicture();
+                } else if (!dom.mainScreenVideo.classList.contains('hidden')) {
+                    await dom.mainScreenVideo.requestPictureInPicture();
+                } else {
+                    showToast('Tryb Obraz-w-Obrazie działa dla udostępniania ekranu oraz plików MP4.', 'info');
+                }
+            } catch (e) {
+                showToast('Twoja przeglądarka nie obsługuje Picture-in-Picture dla tego źródła.', 'warning');
+            }
+        });
+
+        // Modals Open/Close
         function openPlatformsModal() {
             dom.platformsModal.classList.remove('hidden');
             dom.platformsModal.classList.add('flex');
@@ -1972,12 +2552,78 @@
             dom.platformsModal.classList.add('hidden');
             dom.platformsModal.classList.remove('flex');
         }
+        function openExtensionModal() {
+            closePlatformsModal();
+            dom.extensionModal.classList.remove('hidden');
+            dom.extensionModal.classList.add('flex');
+            window.postMessage({ type: 'VEEVEE_EXTENSION_PING' }, '*');
+        }
+        function closeExtensionModal() {
+            dom.extensionModal.classList.add('hidden');
+            dom.extensionModal.classList.remove('flex');
+        }
 
         document.getElementById('btn-open-platforms-top').addEventListener('click', openPlatformsModal);
         dom.btnHeroPlatforms.addEventListener('click', openPlatformsModal);
         dom.btnDockPlatforms.addEventListener('click', openPlatformsModal);
         dom.btnStageChangeSource.addEventListener('click', openPlatformsModal);
         document.getElementById('btn-close-platforms').addEventListener('click', closePlatformsModal);
+
+        // Every Extension badge / button opens the Extension Installer Modal!
+        dom.btnOpenExtensionTop.addEventListener('click', openExtensionModal);
+        dom.extensionStatusBadge.addEventListener('click', openExtensionModal);
+        dom.btnLobbyInstallExt.addEventListener('click', openExtensionModal);
+        dom.btnHeroExtension.addEventListener('click', openExtensionModal);
+        document.getElementById('btn-close-extension-modal').addEventListener('click', closeExtensionModal);
+        document.getElementById('btn-skip-extension-modal').addEventListener('click', closeExtensionModal);
+
+        // Extension File Downloads (1-Click Both + Individual)
+        document.getElementById('btn-download-both-ext').addEventListener('click', () => {
+            downloadTextFile('manifest.json', EXTENSION_MANIFEST_JSON);
+            setTimeout(() => {
+                downloadTextFile('content.js', EXTENSION_CONTENT_JS);
+            }, 350);
+            showToast('Pobrano oba pliki (manifest.json oraz content.js)! Wrzuć je do jednego folderu.', 'success');
+        });
+        document.getElementById('btn-download-manifest').addEventListener('click', () => {
+            downloadTextFile('manifest.json', EXTENSION_MANIFEST_JSON);
+            showToast('Pobrano plik manifest.json!', 'success');
+        });
+        document.getElementById('btn-download-contentjs').addEventListener('click', () => {
+            downloadTextFile('content.js', EXTENSION_CONTENT_JS);
+            showToast('Pobrano plik content.js!', 'success');
+        });
+        document.getElementById('btn-copy-ext-url').addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText('chrome://extensions');
+                showToast('Skopiowano adres chrome://extensions! Wklej go w nowej karcie.', 'success');
+            } catch (e) {}
+        });
+        document.getElementById('btn-test-extension-ping').addEventListener('click', () => {
+            window.postMessage({ type: 'VEEVEE_EXTENSION_PING' }, '*');
+            setTimeout(() => {
+                if (state.extensionDetected) {
+                    showToast('Wtyczka VeeVee Watch Party Bridge działa poprawnie! ✅', 'success');
+                    closeExtensionModal();
+                } else {
+                    showToast('Jeszcze nie wykryto wtyczki. Załaduj folder w chrome://extensions i odśwież tę stronę (F5).', 'warning');
+                }
+            }, 300);
+        });
+
+        // Help Modal
+        document.getElementById('btn-open-help').addEventListener('click', () => {
+            dom.helpModal.classList.remove('hidden');
+            dom.helpModal.classList.add('flex');
+        });
+        document.getElementById('btn-close-help').addEventListener('click', () => {
+            dom.helpModal.classList.add('hidden');
+            dom.helpModal.classList.remove('flex');
+        });
+        document.getElementById('btn-got-it-help').addEventListener('click', () => {
+            dom.helpModal.classList.add('hidden');
+            dom.helpModal.classList.remove('flex');
+        });
 
         // Load YouTube or Direct MP4 URL inside VeeVee
         dom.btnLoadUrl.addEventListener('click', () => {
@@ -2023,17 +2669,27 @@
             startScreenShare(label);
         });
 
-        // Stage Direct Start / Pause / Rewind / Forward / Seek / Stop
+        // Stage Direct Start / Pause / Rewind / Forward / Speed / Skip Intro / Seek / Stop
         dom.btnStagePlayPause.addEventListener('click', () => toggleStagePlayPause(true));
         dom.mainScreenVideo.addEventListener('click', () => {
-            if (state.stageMode !== 'none') toggleStagePlayPause(true);
+            if (state.stageMode !== 'none' && !state.laserActive) toggleStagePlayPause(true);
         });
         dom.ytClickShield.addEventListener('click', () => {
-            if (state.stageMode === 'youtube') toggleStagePlayPause(true);
+            if (state.stageMode === 'youtube' && !state.laserActive) toggleStagePlayPause(true);
         });
 
         dom.btnStageRewind.addEventListener('click', () => seekStageByOffset(-10, true));
         dom.btnStageForward.addEventListener('click', () => seekStageByOffset(10, true));
+
+        dom.selectStageSpeed.addEventListener('change', (e) => {
+            changeStagePlaybackSpeed(parseFloat(e.target.value), true);
+        });
+
+        dom.btnStageSkipIntro.addEventListener('click', () => {
+            sendExtensionCommand('skipIntro');
+            broadcastData({ type: 'stage-skip-intro', sender: state.username });
+            showToast('Wysłano polecenie "Pomiń Intro" do odtwarzacza VOD!', 'info');
+        });
 
         dom.sliderStageSeek.addEventListener('input', (e) => {
             seekStageVideo(parseFloat(e.target.value), true);
@@ -2116,6 +2772,13 @@
             dom.btnToggleAutoduck.classList.toggle('text-cozy-mint', state.autoDuckEnabled);
             dom.btnToggleAutoduck.classList.toggle('text-slate-400', !state.autoDuckEnabled);
             showToast(state.autoDuckEnabled ? 'Auto-Ducking włączony' : 'Auto-Ducking wyłączony', 'info');
+        });
+
+        dom.btnToggleSfx.addEventListener('click', () => {
+            state.sfxEnabled = !state.sfxEnabled;
+            dom.btnToggleSfx.innerHTML = `<i data-lucide="${state.sfxEnabled ? 'bell' : 'bell-off'}" class="w-4 h-4 ${state.sfxEnabled ? 'text-cozy-lavender' : 'text-slate-500'}"></i>`;
+            lucide.createIcons({ nodes: [dom.btnToggleSfx] });
+            showToast(state.sfxEnabled ? 'Dźwięki powiadomień włączone 🔔' : 'Dźwięki powiadomień wyciszone 🔕', 'info');
         });
 
         dom.sliderStageVolume.addEventListener('input', (e) => {
