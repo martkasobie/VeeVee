@@ -133,6 +133,9 @@
 </head>
 <body class="h-screen w-screen overflow-hidden flex flex-col select-none">
 
+    <!-- Hidden File Input for Local Video Watch Party -->
+    <input type="file" id="input-local-video" accept="video/mp4,video/webm,video/ogg" class="hidden">
+
     <!-- ==================== TOAST NOTIFICATIONS ==================== -->
     <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
 
@@ -237,7 +240,7 @@
                     <div class="p-2 rounded-xl bg-cozy-lavender/20 text-cozy-lavender">
                         <i data-lucide="help-circle" class="w-5 h-5"></i>
                     </div>
-                    <h3 class="font-display text-lg font-bold text-white">How to Watch Netflix, Max, Disney+ or YouTube Together?</h3>
+                    <h3 class="font-display text-lg font-bold text-white">How to Watch Together?</h3>
                 </div>
                 <button id="btn-close-help" class="p-1.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition">
                     <i data-lucide="x" class="w-4 h-4"></i>
@@ -245,16 +248,16 @@
             </div>
             <div class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
                 <div class="p-3 rounded-2xl bg-cozy-bg/80 border border-cozy-border">
-                    <p class="font-semibold text-cozy-pink mb-1">1. Open the streaming platform in another browser tab</p>
-                    <p class="text-xs text-slate-400">Use Chrome, Edge, or Brave and open Netflix, Disney+, Max, or YouTube in an adjacent tab.</p>
+                    <p class="font-semibold text-cozy-pink mb-1">1. Open Netflix, Disney+, Max or YouTube in another tab</p>
+                    <p class="text-xs text-slate-400">Use Chrome, Edge, or Brave and open your streaming site, or pick a local MP4 file directly from your computer.</p>
                 </div>
                 <div class="p-3 rounded-2xl bg-cozy-bg/80 border border-cozy-border">
-                    <p class="font-semibold text-cozy-lavender mb-1">2. Click "Share Screen / Tab" at the bottom</p>
-                    <p class="text-xs text-slate-400">Select the <strong>"Browser Tab"</strong> option and make sure to enable <strong>"Also share tab audio"</strong> in the bottom-left corner of the popup.</p>
+                    <p class="font-semibold text-cozy-lavender mb-1">2. Click "Share Screen / Tab" & control right from the video</p>
+                    <p class="text-xs text-slate-400">Enable <strong>"Also share tab audio"</strong>. Hover over the video stage anytime to <strong>Pause/Resume</strong>, <strong>Change Source</strong>, or <strong>Stop Sharing</strong>!</p>
                 </div>
                 <div class="p-3 rounded-2xl bg-cozy-bg/80 border border-cozy-border">
                     <p class="font-semibold text-cozy-mint mb-1">3. Seeing a black screen on Netflix / Disney+?</p>
-                    <p class="text-xs text-slate-400">Disable <em>"Use graphics acceleration when available"</em> in your browser settings (Settings → System) — this prevents DRM black screens when sharing tabs!</p>
+                    <p class="text-xs text-slate-400">Disable <em>"Use graphics acceleration when available"</em> in your browser settings (Settings → System) — this prevents DRM black screens.</p>
                 </div>
             </div>
             <button id="btn-got-it-help" class="mt-5 w-full py-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs">
@@ -294,14 +297,20 @@
             </button>
         </div>
 
-        <!-- Right: Participants Counter & Help -->
-        <div class="flex items-center gap-2.5">
+        <!-- Right: Quality, Participants Counter & Help -->
+        <div class="flex items-center gap-2">
+            <!-- Stream Quality Selector -->
+            <select id="select-stream-quality" class="hidden sm:block bg-cozy-card border border-cozy-border text-slate-200 text-xs rounded-2xl px-3 py-2 focus:outline-none focus:border-cozy-pink cursor-pointer" title="Screen Share Quality">
+                <option value="1080p60">HD 1080p • 60fps</option>
+                <option value="720p30">Smooth 720p • 30fps</option>
+            </select>
+
             <!-- Mobile Copy Link Button -->
             <button id="btn-copy-invite-mobile" class="md:hidden p-2.5 rounded-2xl bg-cozy-card border border-cozy-border text-cozy-pink hover:bg-cozy-panel transition" title="Copy Invite Link">
                 <i data-lucide="share-2" class="w-4 h-4"></i>
             </button>
 
-            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-cozy-card border border-cozy-border text-xs font-semibold text-slate-200">
+            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-cozy-card border border-cozy-border text-xs font-semibold text-slate-200" title="Connected Participants">
                 <i data-lucide="users" class="w-3.5 h-3.5 text-cozy-mint"></i>
                 <span id="participant-count">1</span>
             </div>
@@ -312,11 +321,11 @@
         </div>
     </header>
 
-    <!-- ==================== MAIN WORKSPACE (75% LEFT / 25% RIGHT) ==================== -->
+    <!-- ==================== MAIN WORKSPACE ==================== -->
     <main class="flex-1 flex flex-col lg:flex-row gap-3.5 p-3 sm:p-4 overflow-hidden min-h-0">
         
-        <!-- ========== LEFT COLUMN: 75% MAIN STAGE & CONTROLS ========== -->
-        <section class="w-full lg:w-3/4 flex flex-col gap-3 min-h-0 flex-1">
+        <!-- ========== LEFT COLUMN: MAIN STAGE & CONTROLS ========== -->
+        <section id="main-stage-column" class="w-full lg:w-3/4 flex flex-col gap-3 min-h-0 flex-1 transition-all duration-300">
             
             <!-- Main Video Stage Container -->
             <div id="stage-container" class="relative flex-1 rounded-3xl bg-cozy-card border border-cozy-border overflow-hidden shadow-2xl flex items-center justify-center group min-h-[240px]">
@@ -324,20 +333,53 @@
                 <!-- Main Shared Stream Video Element -->
                 <video id="main-screen-video" autoplay playsinline class="w-full h-full object-contain bg-black hidden"></video>
 
+                <!-- Paused Overlay Indicator -->
+                <div id="stage-paused-banner" class="hidden absolute inset-0 bg-black/60 backdrop-blur-sm z-20 flex-col items-center justify-center pointer-events-none">
+                    <div class="w-16 h-16 rounded-full bg-cozy-pink/20 border border-cozy-pink flex items-center justify-center mb-3">
+                        <i data-lucide="pause" class="w-8 h-8 text-cozy-pink"></i>
+                    </div>
+                    <span class="font-display font-bold text-lg text-white">Stream Paused</span>
+                    <span class="text-xs text-slate-300 mt-1">Click Play on the stage controls to resume</span>
+                </div>
+
                 <!-- Floating Emoji Overlay Container -->
                 <div id="reactions-overlay" class="absolute inset-0 pointer-events-none overflow-hidden z-30"></div>
 
                 <!-- Stream Info Badge (Top Left on Video) -->
-                <div id="stream-live-badge" class="hidden absolute top-4 left-4 z-20 items-center gap-2 px-3 py-1.5 rounded-2xl bg-black/65 backdrop-blur-md border border-white/10 text-xs">
-                    <span class="w-2 h-2 rounded-full bg-rose-500 pulse-dot"></span>
+                <div id="stream-live-badge" class="hidden absolute top-4 left-4 z-20 items-center gap-2 px-3 py-1.5 rounded-2xl bg-black/70 backdrop-blur-md border border-white/10 text-xs">
+                    <span id="live-dot-indicator" class="w-2 h-2 rounded-full bg-rose-500 pulse-dot"></span>
                     <span id="stream-source-label" class="font-semibold text-white">LIVE • Screen Share</span>
                 </div>
 
                 <!-- Volume / Audio Unmute Prompt for Guests -->
-                <button id="btn-unmute-stage" class="hidden absolute top-4 right-4 z-20 items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-cozy-pink text-slate-950 font-bold text-xs shadow-glow-pink hover:scale-105 transition">
+                <button id="btn-unmute-stage" class="hidden absolute top-4 right-4 z-30 items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-cozy-pink text-slate-950 font-bold text-xs shadow-glow-pink hover:scale-105 transition">
                     <i data-lucide="volume-2" class="w-4 h-4"></i>
                     <span>Click to Enable Stream Audio</span>
                 </button>
+
+                <!-- ON-STAGE INTERACTIVE OVERLAY BAR (Hover over video when streaming) -->
+                <div id="stage-overlay-controls" class="hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-30 items-center gap-2 px-4 py-2.5 rounded-2xl bg-black/80 backdrop-blur-xl border border-white/15 shadow-2xl opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
+                    <!-- Play / Pause Stream Button -->
+                    <button id="btn-stage-playpause" class="px-3.5 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-white text-xs font-semibold flex items-center gap-1.5 transition" title="Pause or Resume Stream">
+                        <i data-lucide="pause" class="w-4 h-4 text-cozy-amber"></i>
+                        <span>Pause</span>
+                    </button>
+
+                    <!-- Host-Only Direct Stage Controls -->
+                    <div id="host-stage-actions" class="hidden items-center gap-2">
+                        <!-- Switch Shared Screen/Tab -->
+                        <button id="btn-stage-reshare" class="px-3.5 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition" title="Change Shared Window or Tab">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-cozy-lavender"></i>
+                            <span class="hidden sm:inline">Change Source</span>
+                        </button>
+
+                        <!-- Stop Sharing Directly from Stage -->
+                        <button id="btn-stage-stop" class="px-3.5 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transition" title="Stop Sharing Immediately">
+                            <i data-lucide="square" class="w-3.5 h-3.5 fill-current"></i>
+                            <span>Stop Stream</span>
+                        </button>
+                    </div>
+                </div>
 
                 <!-- Cozy Empty Placeholder (When no screen is currently shared) -->
                 <div id="stage-placeholder" class="flex flex-col items-center justify-center text-center p-6 max-w-lg mx-auto z-10">
@@ -354,17 +396,21 @@
                         Ready for a Cozy Movie Night? 🍿
                     </h2>
                     <p class="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
-                        Share a browser tab with <span class="text-rose-400 font-semibold">Netflix</span>, <span class="text-purple-400 font-semibold">Max</span>, <span class="text-sky-400 font-semibold">Disney+</span>, or <span class="text-red-400 font-semibold">YouTube</span> (remember to check <em>"Share tab audio"</em>), or launch the built-in Demo Stream to test right away!
+                        Share a browser tab with <span class="text-rose-400 font-semibold">Netflix</span>, <span class="text-purple-400 font-semibold">Max</span>, <span class="text-sky-400 font-semibold">Disney+</span>, or <span class="text-red-400 font-semibold">YouTube</span> (check <em>"Share tab audio"</em>), pick a local <strong>MP4 file</strong>, or launch the Demo Stream!
                     </p>
 
-                    <div class="flex flex-wrap items-center justify-center gap-3">
+                    <div class="flex flex-wrap items-center justify-center gap-2.5">
                         <button id="btn-hero-share" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender hover:opacity-95 text-slate-950 font-bold text-xs sm:text-sm shadow-glow-pink flex items-center gap-2 transition">
                             <i data-lucide="monitor-up" class="w-4 h-4 stroke-[2.2]"></i>
                             <span>Share Screen / Tab</span>
                         </button>
+                        <button id="btn-hero-file" class="px-4 py-3 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border font-semibold text-xs sm:text-sm flex items-center gap-2 transition">
+                            <i data-lucide="folder-video" class="w-4 h-4 text-cozy-lavender"></i>
+                            <span>Play Local MP4</span>
+                        </button>
                         <button id="btn-hero-demo" class="px-4 py-3 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border font-semibold text-xs sm:text-sm flex items-center gap-2 transition">
                             <i data-lucide="sparkles" class="w-4 h-4 text-cozy-mint"></i>
-                            <span>Launch Demo Stream</span>
+                            <span>Demo Stream</span>
                         </button>
                     </div>
                 </div>
@@ -374,23 +420,23 @@
             <div class="glass-card rounded-3xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
                 
                 <!-- Left: Media & Screen Controls -->
-                <div class="flex items-center gap-2">
+                <div class="flex items-center flex-wrap gap-2">
                     <!-- Toggle Microphone -->
                     <button id="btn-toggle-mic" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border flex items-center gap-2 text-xs font-semibold transition" title="Mute / Unmute Microphone">
-                        <i id="icon-mic" data-lucide="mic" class="w-4 h-4 text-cozy-mint"></i>
-                        <span class="hidden sm:inline" id="label-mic">Mic On</span>
+                        <i data-lucide="mic" class="w-4 h-4 text-cozy-mint"></i>
+                        <span class="hidden sm:inline">Mic On</span>
                     </button>
 
                     <!-- Toggle Camera -->
                     <button id="btn-toggle-cam" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border flex items-center gap-2 text-xs font-semibold transition" title="Turn Camera On / Off">
-                        <i id="icon-cam" data-lucide="video" class="w-4 h-4 text-cozy-mint"></i>
-                        <span class="hidden sm:inline" id="label-cam">Cam On</span>
+                        <i data-lucide="video" class="w-4 h-4 text-cozy-mint"></i>
+                        <span class="hidden sm:inline">Cam On</span>
                     </button>
 
-                    <!-- Share Screen / Tab -->
+                    <!-- Share Screen / Stop Share Button -->
                     <button id="btn-share-screen" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs shadow-glow-pink flex items-center gap-2 hover:opacity-95 transition">
                         <i data-lucide="screen-share" class="w-4 h-4 stroke-[2.2]"></i>
-                        <span id="label-share-screen">Share Screen</span>
+                        <span>Share Screen</span>
                     </button>
                 </div>
 
@@ -405,13 +451,26 @@
                     <button data-emoji="🥺" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Emotional">🥺</button>
                 </div>
 
-                <!-- Right: Volume & Fullscreen -->
+                <!-- Right: Auto-Duck, Volume, Cinema Mode & Fullscreen -->
                 <div class="flex items-center gap-2">
+                    <!-- Auto-Ducking Toggle -->
+                    <button id="btn-toggle-autoduck" class="px-3 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-mint border border-cozy-mint/30 flex items-center gap-1.5 text-xs font-semibold transition" title="Auto-Ducking: Automatically lower movie volume when someone speaks">
+                        <i data-lucide="ear" class="w-4 h-4"></i>
+                        <span class="hidden md:inline">Auto-Duck</span>
+                    </button>
+
+                    <!-- Stage Volume Slider -->
                     <div class="hidden sm:flex items-center gap-2 bg-cozy-bg/80 px-3 py-2 rounded-2xl border border-cozy-border">
                         <i data-lucide="volume-2" class="w-4 h-4 text-cozy-lavender"></i>
                         <input id="slider-stage-volume" type="range" min="0" max="1" step="0.05" value="1" class="w-16 accent-cozy-pink cursor-pointer">
                     </div>
 
+                    <!-- Cinema Mode Toggle (Hides Sidebar) -->
+                    <button id="btn-cinema-mode" class="p-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border transition" title="Toggle Cinema Mode (Hide/Show Sidebar)">
+                        <i data-lucide="panel-right-close" class="w-4 h-4"></i>
+                    </button>
+
+                    <!-- Fullscreen Toggle -->
                     <button id="btn-fullscreen" class="p-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border transition" title="Fullscreen Mode">
                         <i data-lucide="maximize" class="w-4 h-4"></i>
                     </button>
@@ -419,8 +478,8 @@
             </div>
         </section>
 
-        <!-- ========== RIGHT COLUMN: 25% CAMERAS & LIVE CHAT ========== -->
-        <aside class="w-full lg:w-1/4 flex flex-col gap-3 min-h-0 h-[360px] lg:h-auto shrink-0">
+        <!-- ========== RIGHT COLUMN: CAMERAS & LIVE CHAT ========== -->
+        <aside id="sidebar-column" class="w-full lg:w-1/4 flex flex-col gap-3 min-h-0 h-[360px] lg:h-auto shrink-0 transition-all duration-300">
             
             <!-- Top Section: Participant Webcams Grid -->
             <div class="glass-card rounded-3xl p-3 flex flex-col border border-cozy-border max-h-[42%] min-h-[145px]">
@@ -429,7 +488,7 @@
                         <i data-lucide="camera" class="w-3.5 h-3.5 text-cozy-pink"></i>
                         <h3 class="font-display font-bold text-xs uppercase tracking-wider text-slate-200">Cameras & Voice</h3>
                     </div>
-                    <span id="cams-active-badge" class="text-[10px] text-cozy-mint font-semibold">P2P Live</span>
+                    <span class="text-[10px] text-cozy-mint font-semibold">Voice Detection On</span>
                 </div>
 
                 <!-- Webcams Grid Container -->
@@ -451,13 +510,17 @@
 
                 <!-- Messages List -->
                 <div id="chat-messages" class="flex-1 overflow-y-auto py-3 px-1 space-y-2.5 text-xs select-text">
-                    <!-- Welcome System Message -->
                     <div class="bg-cozy-panel/60 border border-cozy-border/60 rounded-2xl p-2.5 text-center text-slate-400 text-[11px]">
                         ✨ Welcome to VeeVee! Copy the invite link at the top and share it with friends to watch together.
                     </div>
                 </div>
 
-                <!-- Emoji Picker Drawer (Hidden by default) -->
+                <!-- Typing Indicator -->
+                <div id="typing-indicator" class="hidden px-2 py-1 text-[11px] text-cozy-lavender italic animate-pulse">
+                    Someone is typing...
+                </div>
+
+                <!-- Emoji Picker Drawer -->
                 <div id="emoji-drawer" class="hidden absolute bottom-16 left-3 right-3 p-2.5 rounded-2xl bg-cozy-card/95 backdrop-blur-xl border border-cozy-border shadow-2xl z-30">
                     <div class="grid grid-cols-7 gap-1 text-base text-center">
                         <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">😊</button>
@@ -494,7 +557,6 @@
 
     <!-- ==================== APPLICATION JAVASCRIPT ==================== -->
     <script>
-        // Initialize Lucide icons
         lucide.createIcons();
 
         /**
@@ -509,16 +571,24 @@
             avatarColor: '#F472B6',
             localCamStream: null,
             localScreenStream: null,
+            localFileUrl: null,
             demoCanvasInterval: null,
             demoAudioCtx: null,
             micEnabled: true,
             camEnabled: true,
             isSharingScreen: false,
+            isStagePaused: false,
+            autoDuckEnabled: true,
+            userStageVolume: 1.0,
+            cinemaMode: false,
+            activeSpeakers: new Set(),
+            typingTimeout: null,
+            lastTypingSent: 0,
             // Connected peers storage
-            dataConnections: new Map(), // peerId -> DataConnection
-            camCalls: new Map(),        // peerId -> MediaConnection (webcam)
-            screenCalls: new Map(),     // peerId -> MediaConnection (screen share)
-            participants: new Map()     // peerId -> { username, color, isHost }
+            dataConnections: new Map(),
+            camCalls: new Map(),
+            screenCalls: new Map(),
+            participants: new Map()
         };
 
         // DOM Elements Cache
@@ -527,6 +597,7 @@
             helpModal: document.getElementById('help-modal'),
             inputUsername: document.getElementById('input-username'),
             inputRoomId: document.getElementById('input-room-id'),
+            inputLocalVideo: document.getElementById('input-local-video'),
             toggleInitialMedia: document.getElementById('toggle-initial-media'),
             btnCreateRoom: document.getElementById('btn-create-room'),
             btnJoinRoom: document.getElementById('btn-join-room'),
@@ -534,30 +605,38 @@
             connectionDot: document.getElementById('connection-dot'),
             connectionStatusText: document.getElementById('connection-status-text'),
             displayRoomId: document.getElementById('display-room-id'),
+            selectStreamQuality: document.getElementById('select-stream-quality'),
             participantCount: document.getElementById('participant-count'),
             btnCopyInvite: document.getElementById('btn-copy-invite'),
             btnCopyInviteMobile: document.getElementById('btn-copy-invite-mobile'),
+            mainStageColumn: document.getElementById('main-stage-column'),
+            sidebarColumn: document.getElementById('sidebar-column'),
             stageContainer: document.getElementById('stage-container'),
             mainScreenVideo: document.getElementById('main-screen-video'),
+            stagePausedBanner: document.getElementById('stage-paused-banner'),
             stagePlaceholder: document.getElementById('stage-placeholder'),
             streamLiveBadge: document.getElementById('stream-live-badge'),
             streamSourceLabel: document.getElementById('stream-source-label'),
             btnUnmuteStage: document.getElementById('btn-unmute-stage'),
+            stageOverlayControls: document.getElementById('stage-overlay-controls'),
+            btnStagePlayPause: document.getElementById('btn-stage-playpause'),
+            hostStageActions: document.getElementById('host-stage-actions'),
+            btnStageReshare: document.getElementById('btn-stage-reshare'),
+            btnStageStop: document.getElementById('btn-stage-stop'),
             reactionsOverlay: document.getElementById('reactions-overlay'),
             btnHeroShare: document.getElementById('btn-hero-share'),
+            btnHeroFile: document.getElementById('btn-hero-file'),
             btnHeroDemo: document.getElementById('btn-hero-demo'),
             btnToggleMic: document.getElementById('btn-toggle-mic'),
-            iconMic: document.getElementById('icon-mic'),
-            labelMic: document.getElementById('label-mic'),
             btnToggleCam: document.getElementById('btn-toggle-cam'),
-            iconCam: document.getElementById('icon-cam'),
-            labelCam: document.getElementById('label-cam'),
             btnShareScreen: document.getElementById('btn-share-screen'),
-            labelShareScreen: document.getElementById('label-share-screen'),
+            btnToggleAutoduck: document.getElementById('btn-toggle-autoduck'),
             sliderStageVolume: document.getElementById('slider-stage-volume'),
+            btnCinemaMode: document.getElementById('btn-cinema-mode'),
             btnFullscreen: document.getElementById('btn-fullscreen'),
             camerasGrid: document.getElementById('cameras-grid'),
             chatMessages: document.getElementById('chat-messages'),
+            typingIndicator: document.getElementById('typing-indicator'),
             chatForm: document.getElementById('chat-form'),
             chatInput: document.getElementById('chat-input'),
             btnToggleEmoji: document.getElementById('btn-toggle-emoji'),
@@ -631,12 +710,15 @@
             dom.participantCount.textContent = state.participants.size;
         }
 
+        function saveProfilePreferences() {
+            try {
+                localStorage.setItem('veevee_username', state.username);
+                localStorage.setItem('veevee_color', state.avatarColor);
+            } catch (e) {}
+        }
+
         // ==================== LOCAL CAMERA / AVATAR FALLBACK ====================
 
-        /**
-         * Creates a live Canvas + silent audio stream when the user has no physical camera
-         * or denies permission, so WebRTC peer calls still establish cleanly.
-         */
         function createAvatarFallbackStream(username, bgColor) {
             const canvas = document.createElement('canvas');
             canvas.width = 480;
@@ -648,25 +730,21 @@
 
             function drawFrame() {
                 angle += 0.03;
-                // Cozy dark background
                 ctx.fillStyle = '#181523';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // Subtle animated glow circle
                 const radius = 68 + Math.sin(angle) * 4;
                 ctx.beginPath();
                 ctx.arc(canvas.width / 2, canvas.height / 2 - 10, radius, 0, Math.PI * 2);
                 ctx.fillStyle = bgColor || '#F472B6';
                 ctx.fill();
 
-                // Initials
                 ctx.fillStyle = '#13111C';
                 ctx.font = 'bold 48px Quicksand, sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(initials, canvas.width / 2, canvas.height / 2 - 8);
 
-                // Username label
                 ctx.fillStyle = '#E2E8F0';
                 ctx.font = '600 20px Plus Jakarta Sans, sans-serif';
                 ctx.fillText(username, canvas.width / 2, canvas.height - 42);
@@ -676,7 +754,6 @@
             const intervalId = setInterval(drawFrame, 100);
             const videoStream = canvas.captureStream(15);
 
-            // Add a silent audio track so PeerJS carries both audio & video descriptions
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const dst = audioCtx.createMediaStreamDestination();
@@ -685,9 +762,7 @@
                     audioTrack.enabled = false;
                     videoStream.addTrack(audioTrack);
                 }
-            } catch (e) {
-                // Ignore if AudioContext is blocked
-            }
+            } catch (e) {}
 
             videoStream._avatarInterval = intervalId;
             return videoStream;
@@ -725,33 +800,116 @@
         }
 
         function updateMediaButtonsUI() {
-            // Microphone Button
-            if (state.micEnabled) {
-                dom.btnToggleMic.classList.remove('bg-rose-500/20', 'border-rose-500/40', 'text-rose-300');
-                dom.iconMic.setAttribute('data-lucide', 'mic');
-                dom.iconMic.className = 'w-4 h-4 text-cozy-mint';
-                dom.labelMic.textContent = 'Mic On';
-            } else {
-                dom.btnToggleMic.classList.add('bg-rose-500/20', 'border-rose-500/40', 'text-rose-300');
-                dom.iconMic.setAttribute('data-lucide', 'mic-off');
-                dom.iconMic.className = 'w-4 h-4 text-rose-400';
-                dom.labelMic.textContent = 'Muted';
-            }
+            // Re-render Microphone button with fresh <i> tag for Lucide
+            dom.btnToggleMic.classList.toggle('bg-rose-500/20', !state.micEnabled);
+            dom.btnToggleMic.classList.toggle('border-rose-500/40', !state.micEnabled);
+            dom.btnToggleMic.classList.toggle('text-rose-300', !state.micEnabled);
+            dom.btnToggleMic.innerHTML = `
+                <i data-lucide="${state.micEnabled ? 'mic' : 'mic-off'}" class="w-4 h-4 ${state.micEnabled ? 'text-cozy-mint' : 'text-rose-400'}"></i>
+                <span class="hidden sm:inline">${state.micEnabled ? 'Mic On' : 'Muted'}</span>
+            `;
 
-            // Camera Button
-            if (state.camEnabled) {
-                dom.btnToggleCam.classList.remove('bg-rose-500/20', 'border-rose-500/40', 'text-rose-300');
-                dom.iconCam.setAttribute('data-lucide', 'video');
-                dom.iconCam.className = 'w-4 h-4 text-cozy-mint';
-                dom.labelCam.textContent = 'Cam On';
-            } else {
-                dom.btnToggleCam.classList.add('bg-rose-500/20', 'border-rose-500/40', 'text-rose-300');
-                dom.iconCam.setAttribute('data-lucide', 'video-off');
-                dom.iconCam.className = 'w-4 h-4 text-rose-400';
-                dom.labelCam.textContent = 'Cam Off';
-            }
+            // Re-render Camera button with fresh <i> tag for Lucide
+            dom.btnToggleCam.classList.toggle('bg-rose-500/20', !state.camEnabled);
+            dom.btnToggleCam.classList.toggle('border-rose-500/40', !state.camEnabled);
+            dom.btnToggleCam.classList.toggle('text-rose-300', !state.camEnabled);
+            dom.btnToggleCam.innerHTML = `
+                <i data-lucide="${state.camEnabled ? 'video' : 'video-off'}" class="w-4 h-4 ${state.camEnabled ? 'text-cozy-mint' : 'text-rose-400'}"></i>
+                <span class="hidden sm:inline">${state.camEnabled ? 'Cam On' : 'Cam Off'}</span>
+            `;
 
             lucide.createIcons({ nodes: [dom.btnToggleMic, dom.btnToggleCam] });
+        }
+
+        function updateShareButtonUI() {
+            if (state.isSharingScreen) {
+                dom.btnShareScreen.className = 'px-4 py-2.5 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 transition';
+                dom.btnShareScreen.innerHTML = `
+                    <i data-lucide="square" class="w-4 h-4 fill-current"></i>
+                    <span>Stop Sharing</span>
+                `;
+            } else {
+                dom.btnShareScreen.className = 'px-4 py-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs shadow-glow-pink flex items-center gap-2 hover:opacity-95 transition';
+                dom.btnShareScreen.innerHTML = `
+                    <i data-lucide="screen-share" class="w-4 h-4 stroke-[2.2]"></i>
+                    <span>Share Screen</span>
+                `;
+            }
+            lucide.createIcons({ nodes: [dom.btnShareScreen] });
+        }
+
+        function updateStagePlayPauseUI() {
+            if (state.isStagePaused) {
+                dom.btnStagePlayPause.innerHTML = `
+                    <i data-lucide="play" class="w-4 h-4 text-cozy-mint fill-current"></i>
+                    <span>Resume</span>
+                `;
+                dom.stagePausedBanner.classList.remove('hidden');
+                dom.stagePausedBanner.classList.add('flex');
+            } else {
+                dom.btnStagePlayPause.innerHTML = `
+                    <i data-lucide="pause" class="w-4 h-4 text-cozy-amber"></i>
+                    <span>Pause</span>
+                `;
+                dom.stagePausedBanner.classList.add('hidden');
+                dom.stagePausedBanner.classList.remove('flex');
+            }
+            lucide.createIcons({ nodes: [dom.btnStagePlayPause] });
+        }
+
+        // ==================== VOICE ACTIVITY DETECTION & AUTO-DUCKING ====================
+
+        function attachVoiceDetector(peerId, stream) {
+            if (!stream || stream.getAudioTracks().length === 0) return;
+
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioCtx.createMediaStreamSource(stream);
+                const analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 256;
+                source.connect(analyser);
+
+                const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+                function checkAudioLevel() {
+                    const tile = document.getElementById(`cam-tile-${peerId}`);
+                    if (!tile) {
+                        state.activeSpeakers.delete(peerId);
+                        audioCtx.close().catch(() => {});
+                        return;
+                    }
+
+                    analyser.getByteFrequencyData(dataArray);
+                    let sum = 0;
+                    for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+                    const avg = sum / dataArray.length;
+
+                    const isSpeaking = avg > 16 && (peerId !== 'local' || state.micEnabled);
+
+                    tile.classList.toggle('ring-2', isSpeaking);
+                    tile.classList.toggle('ring-cozy-mint', isSpeaking);
+
+                    if (isSpeaking) {
+                        state.activeSpeakers.add(peerId);
+                    } else {
+                        state.activeSpeakers.delete(peerId);
+                    }
+
+                    // Auto-Ducking: gently lower stage video volume when someone speaks
+                    if (state.autoDuckEnabled && !dom.mainScreenVideo.muted && !state.isSharingScreen) {
+                        const targetVol = state.activeSpeakers.size > 0
+                            ? Math.max(0.12, state.userStageVolume * 0.3)
+                            : state.userStageVolume;
+                        dom.mainScreenVideo.volume += (targetVol - dom.mainScreenVideo.volume) * 0.2;
+                    }
+
+                    requestAnimationFrame(checkAudioLevel);
+                }
+
+                checkAudioLevel();
+            } catch (e) {
+                console.warn('Voice activity detection skipped:', e);
+            }
         }
 
         // ==================== WEBCAM TILE RENDERING ====================
@@ -761,13 +919,13 @@
             if (!tile) {
                 tile = document.createElement('div');
                 tile.id = `cam-tile-${peerId}`;
-                tile.className = 'relative rounded-2xl overflow-hidden bg-cozy-bg border border-cozy-border aspect-video group shadow-md';
+                tile.className = 'relative rounded-2xl overflow-hidden bg-cozy-bg border border-cozy-border aspect-video group shadow-md transition-shadow';
                 
                 const video = document.createElement('video');
                 video.autoplay = true;
                 video.playsInline = true;
                 if (isLocal) {
-                    video.muted = true; // Never play own mic back locally
+                    video.muted = true;
                     video.classList.add('mirror-video');
                 }
                 video.className += ' w-full h-full object-cover';
@@ -781,6 +939,22 @@
 
                 tile.appendChild(video);
                 tile.appendChild(badge);
+
+                // Per-user Mute Toggle Button for Remote Participants
+                if (!isLocal) {
+                    const muteBtn = document.createElement('button');
+                    muteBtn.className = 'absolute top-1.5 right-1.5 p-1.5 rounded-lg bg-black/65 hover:bg-cozy-pink hover:text-slate-950 text-white opacity-0 group-hover:opacity-100 transition z-10';
+                    muteBtn.title = 'Mute / Unmute Participant';
+                    muteBtn.innerHTML = `<i data-lucide="volume-2" class="w-3 h-3"></i>`;
+                    muteBtn.addEventListener('click', () => {
+                        video.muted = !video.muted;
+                        muteBtn.innerHTML = `<i data-lucide="${video.muted ? 'volume-x' : 'volume-2'}" class="w-3 h-3 ${video.muted ? 'text-rose-400' : ''}"></i>`;
+                        lucide.createIcons({ nodes: [muteBtn] });
+                    });
+                    tile.appendChild(muteBtn);
+                    lucide.createIcons({ nodes: [muteBtn] });
+                }
+
                 dom.camerasGrid.appendChild(tile);
             }
 
@@ -788,6 +962,7 @@
             if (videoEl && videoEl.srcObject !== stream) {
                 videoEl.srcObject = stream;
                 videoEl.play().catch(() => {});
+                attachVoiceDetector(peerId, stream);
             }
 
             const labelSpan = tile.querySelector('.cam-label span');
@@ -797,35 +972,41 @@
         }
 
         function removeCameraTile(peerId) {
+            state.activeSpeakers.delete(peerId);
             const tile = document.getElementById(`cam-tile-${peerId}`);
             if (tile) tile.remove();
         }
 
-        // ==================== SCREEN SHARING & DEMO STREAM ====================
+        // ==================== SCREEN SHARING, LOCAL MP4 & DEMO STREAM ====================
 
-        async function startScreenShare() {
-            if (state.isSharingScreen) {
+        function getSelectedMediaConstraints() {
+            const quality = dom.selectStreamQuality.value;
+            if (quality === '720p30') {
+                return {
+                    video: { cursor: 'always', width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30, max: 30 } },
+                    audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+                };
+            }
+            return {
+                video: { cursor: 'always', width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 60, max: 60 } },
+                audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+            };
+        }
+
+        async function startScreenShare(forceReshare = false) {
+            if (state.isSharingScreen && !forceReshare) {
                 stopScreenShare();
                 return;
             }
 
             try {
-                // Request Screen or Browser Tab with Audio
-                const screenStream = await navigator.mediaDevices.getDisplayMedia({
-                    video: {
-                        cursor: 'always',
-                        frameRate: { ideal: 60, max: 60 }
-                    },
-                    audio: {
-                        echoCancellation: false,
-                        noiseSuppression: false,
-                        autoGainControl: false
-                    }
-                });
+                const screenStream = await navigator.mediaDevices.getDisplayMedia(getSelectedMediaConstraints());
+                if (state.isSharingScreen) {
+                    cleanupLocalStageStreams();
+                }
 
-                activateSharedStageStream(screenStream, `${state.username}'s Screen`);
+                activateSharedStageStream(screenStream, `${state.username}'s Screen`, false);
 
-                // Handle user clicking browser's native "Stop sharing" button
                 const videoTrack = screenStream.getVideoTracks()[0];
                 if (videoTrack) {
                     videoTrack.onended = () => {
@@ -834,17 +1015,48 @@
                 }
             } catch (err) {
                 console.warn('getDisplayMedia cancelled or unavailable:', err);
-                showToast('Could not start screen sharing. You can also try the Demo Stream!', 'warning');
+                if (!state.isSharingScreen) {
+                    showToast('Screen share cancelled. You can also play a local MP4 or launch the Demo Stream!', 'warning');
+                }
             }
         }
 
-        /**
-         * Built-in Cozy Cinema Demo Stream (Canvas + WebAudio melody)
-         * Ideal for testing P2P streaming inside restricted previews or without opening a second tab
-         */
+        function startLocalFileStream(file) {
+            if (!file) return;
+            if (state.isSharingScreen) {
+                cleanupLocalStageStreams();
+            }
+
+            const fileUrl = URL.createObjectURL(file);
+            state.localFileUrl = fileUrl;
+
+            dom.mainScreenVideo.srcObject = null;
+            dom.mainScreenVideo.src = fileUrl;
+            dom.mainScreenVideo.controls = true;
+            dom.mainScreenVideo.muted = false;
+            dom.mainScreenVideo.volume = state.userStageVolume;
+
+            dom.mainScreenVideo.onloadedmetadata = () => {
+                dom.mainScreenVideo.play().then(() => {
+                    const capturedStream = dom.mainScreenVideo.captureStream
+                        ? dom.mainScreenVideo.captureStream()
+                        : dom.mainScreenVideo.mozCaptureStream ? dom.mainScreenVideo.mozCaptureStream() : null;
+
+                    if (capturedStream) {
+                        activateSharedStageStream(capturedStream, `🎬 ${file.name}`, true);
+                        showToast(`Streaming local file: ${file.name}`, 'success');
+                    } else {
+                        showToast('Your browser does not support captureStream for local files.', 'error');
+                    }
+                }).catch(err => {
+                    console.warn('File play failed:', err);
+                });
+            };
+        }
+
         function startDemoStream() {
             if (state.isSharingScreen) {
-                stopScreenShare();
+                cleanupLocalStageStreams();
             }
 
             const canvas = document.createElement('canvas');
@@ -861,8 +1073,8 @@
             }));
 
             state.demoCanvasInterval = setInterval(() => {
+                if (state.isStagePaused) return;
                 frame++;
-                // Night sky gradient
                 const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
                 grad.addColorStop(0, '#13111C');
                 grad.addColorStop(0.5, '#251D3A');
@@ -870,7 +1082,6 @@
                 ctx.fillStyle = grad;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // Twinkling stars
                 stars.forEach(st => {
                     st.y -= st.s;
                     if (st.y < 0) st.y = canvas.height;
@@ -880,7 +1091,6 @@
                     ctx.fill();
                 });
 
-                // Animated cozy moon / orb
                 const orbY = canvas.height / 2 - 40 + Math.sin(frame * 0.04) * 18;
                 ctx.beginPath();
                 ctx.arc(canvas.width / 2, orbY, 95, 0, Math.PI * 2);
@@ -892,7 +1102,6 @@
                 ctx.fillStyle = '#F472B6';
                 ctx.fill();
 
-                // Cinema Titles
                 ctx.fillStyle = '#FFFFFF';
                 ctx.font = 'bold 44px Quicksand, sans-serif';
                 ctx.textAlign = 'center';
@@ -906,7 +1115,6 @@
 
             const demoStream = canvas.captureStream(30);
 
-            // Add gentle ambient chord audio track so guests can test audio sync
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const dest = audioCtx.createMediaStreamDestination();
@@ -914,45 +1122,51 @@
                 const gain = audioCtx.createGain();
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(220, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
                 osc.connect(gain);
                 gain.connect(dest);
                 osc.start();
                 state.demoAudioCtx = audioCtx;
                 const audioTrack = dest.stream.getAudioTracks()[0];
                 if (audioTrack) demoStream.addTrack(audioTrack);
-            } catch (e) {
-                console.warn('WebAudio Demo skipped:', e);
-            }
+            } catch (e) {}
 
-            activateSharedStageStream(demoStream, `Demo Cinema • ${state.username}`);
+            activateSharedStageStream(demoStream, `Demo Cinema • ${state.username}`, false);
             showToast('Launched built-in Demo Stream! 🎬', 'success');
         }
 
-        function activateSharedStageStream(stream, labelText) {
+        function activateSharedStageStream(stream, labelText, isLocalFile = false) {
             state.localScreenStream = stream;
             state.isSharingScreen = true;
+            state.isStagePaused = false;
 
-            // Show on local main player (muted locally to prevent echo)
-            dom.mainScreenVideo.srcObject = stream;
-            dom.mainScreenVideo.muted = true;
+            if (!isLocalFile) {
+                dom.mainScreenVideo.src = '';
+                dom.mainScreenVideo.controls = false;
+                dom.mainScreenVideo.srcObject = stream;
+                dom.mainScreenVideo.muted = true; // Prevent echo when sharing screen/tab
+            }
+
             dom.mainScreenVideo.classList.remove('hidden');
             dom.stagePlaceholder.classList.add('hidden');
             dom.streamLiveBadge.classList.remove('hidden');
             dom.streamLiveBadge.classList.add('flex');
             dom.streamSourceLabel.textContent = `LIVE • ${labelText}`;
 
-            // Update share button look
-            dom.labelShareScreen.textContent = 'Stop Sharing';
-            dom.btnShareScreen.classList.remove('from-cozy-pink', 'to-cozy-lavender');
-            dom.btnShareScreen.classList.add('bg-rose-500', 'text-white');
+            // Show on-stage overlay controls
+            dom.stageOverlayControls.classList.remove('hidden');
+            dom.stageOverlayControls.classList.add('flex');
+            dom.hostStageActions.classList.remove('hidden');
+            dom.hostStageActions.classList.add('flex');
 
-            // Call all connected peers with the screen stream
+            updateStagePlayPauseUI();
+            updateShareButtonUI();
+
+            // Stream to all connected peers
             for (const [peerId] of state.dataConnections.entries()) {
                 callPeerWithScreen(peerId, stream, labelText);
             }
 
-            // Broadcast stream status over DataChannel
             broadcastData({
                 type: 'screen-status',
                 active: true,
@@ -963,10 +1177,39 @@
             appendSystemMessage(`🎬 ${state.username} started streaming: ${labelText}`);
         }
 
-        function stopScreenShare() {
+        function toggleStagePlayPause() {
+            state.isStagePaused = !state.isStagePaused;
+
+            if (state.isStagePaused) {
+                dom.mainScreenVideo.pause();
+            } else {
+                dom.mainScreenVideo.play().catch(() => {});
+            }
+
+            // If we are sharing our screen, also pause/enable outgoing tracks
+            if (state.isSharingScreen && state.localScreenStream) {
+                state.localScreenStream.getTracks().forEach(track => {
+                    track.enabled = !state.isStagePaused;
+                });
+            }
+
+            updateStagePlayPauseUI();
+
+            broadcastData({
+                type: 'stage-playback',
+                paused: state.isStagePaused,
+                sender: state.username
+            });
+        }
+
+        function cleanupLocalStageStreams() {
             if (state.localScreenStream) {
                 state.localScreenStream.getTracks().forEach(track => track.stop());
                 state.localScreenStream = null;
+            }
+            if (state.localFileUrl) {
+                URL.revokeObjectURL(state.localFileUrl);
+                state.localFileUrl = null;
             }
             if (state.demoCanvasInterval) {
                 clearInterval(state.demoCanvasInterval);
@@ -976,20 +1219,20 @@
                 state.demoAudioCtx.close().catch(() => {});
                 state.demoAudioCtx = null;
             }
+        }
 
+        function stopScreenShare() {
+            cleanupLocalStageStreams();
             state.isSharingScreen = false;
+            state.isStagePaused = false;
 
-            // Close outgoing screen calls
             for (const [, call] of state.screenCalls.entries()) {
                 try { call.close(); } catch (e) {}
             }
             state.screenCalls.clear();
 
             resetStageToPlaceholder();
-
-            dom.labelShareScreen.textContent = 'Share Screen';
-            dom.btnShareScreen.classList.remove('bg-rose-500', 'text-white');
-            dom.btnShareScreen.classList.add('from-cozy-pink', 'to-cozy-lavender');
+            updateShareButtonUI();
 
             broadcastData({
                 type: 'screen-status',
@@ -997,30 +1240,48 @@
                 sender: state.username
             });
 
-            appendSystemMessage(`⏹️ ${state.username} ended the screen share.`);
+            appendSystemMessage(`⏹️ ${state.username} ended the stream.`);
+            showToast('Stream stopped.', 'info');
         }
 
         function resetStageToPlaceholder() {
             dom.mainScreenVideo.pause();
             dom.mainScreenVideo.srcObject = null;
+            dom.mainScreenVideo.src = '';
+            dom.mainScreenVideo.controls = false;
             dom.mainScreenVideo.classList.add('hidden');
             dom.stagePlaceholder.classList.remove('hidden');
             dom.streamLiveBadge.classList.add('hidden');
             dom.streamLiveBadge.classList.remove('flex');
             dom.btnUnmuteStage.classList.add('hidden');
+            dom.stageOverlayControls.classList.add('hidden');
+            dom.stageOverlayControls.classList.remove('flex');
+            dom.hostStageActions.classList.add('hidden');
+            dom.hostStageActions.classList.remove('flex');
+            dom.stagePausedBanner.classList.add('hidden');
+            dom.stagePausedBanner.classList.remove('flex');
         }
 
         function displayRemoteScreenStream(stream, labelText) {
+            state.isStagePaused = false;
+            dom.mainScreenVideo.src = '';
+            dom.mainScreenVideo.controls = false;
             dom.mainScreenVideo.srcObject = stream;
             dom.mainScreenVideo.muted = false;
-            dom.mainScreenVideo.volume = parseFloat(dom.sliderStageVolume.value || '1');
+            dom.mainScreenVideo.volume = state.userStageVolume;
             dom.mainScreenVideo.classList.remove('hidden');
             dom.stagePlaceholder.classList.add('hidden');
             dom.streamLiveBadge.classList.remove('hidden');
             dom.streamLiveBadge.classList.add('flex');
             dom.streamSourceLabel.textContent = `LIVE • ${labelText || 'Shared Screen'}`;
 
-            // Attempt autoplay with sound; if browser blocks unmuted autoplay, show unmute button
+            // Show Play/Pause overlay for guest (hide Host-only Stop/Reshare buttons)
+            dom.stageOverlayControls.classList.remove('hidden');
+            dom.stageOverlayControls.classList.add('flex');
+            dom.hostStageActions.classList.add('hidden');
+            dom.hostStageActions.classList.remove('flex');
+            updateStagePlayPauseUI();
+
             dom.mainScreenVideo.play().catch(() => {
                 dom.mainScreenVideo.muted = true;
                 dom.mainScreenVideo.play().catch(() => {});
@@ -1052,11 +1313,9 @@
                 state.myPeerId = id;
                 state.roomId = isCreatingHost ? id : customRoomId;
 
-                // Update URL with ?room=ID so user can easily copy address bar too
                 const newUrl = `${window.location.pathname}?room=${encodeURIComponent(state.roomId)}`;
                 window.history.replaceState({}, '', newUrl);
 
-                // Register self in participants map
                 state.participants.set(id, {
                     username: state.username,
                     color: state.avatarColor,
@@ -1064,12 +1323,10 @@
                 });
                 updateParticipantsCounter();
 
-                // Update top bar UI
                 dom.displayRoomId.textContent = state.roomId;
                 dom.roleBadge.textContent = state.isHost ? '👑 Room Host' : '✨ Guest';
                 updateConnectionUI('connected', state.isHost ? 'Room Active (P2P)' : 'Connected to Room');
 
-                // Hide lobby modal
                 dom.lobbyModal.classList.add('opacity-0', 'pointer-events-none');
                 setTimeout(() => dom.lobbyModal.classList.add('hidden'), 300);
 
@@ -1080,18 +1337,15 @@
                 }
             });
 
-            // Incoming DataConnection
             peer.on('connection', (conn) => {
                 setupDataConnection(conn);
             });
 
-            // Incoming MediaCall (Webcam or Screen Share)
             peer.on('call', (call) => {
                 const callType = call.metadata?.type || 'camera';
                 const callerName = call.metadata?.username || 'Participant';
 
                 if (callType === 'screen') {
-                    // Answer screen share stream (receive-only)
                     call.answer();
                     call.on('stream', (remoteScreenStream) => {
                         displayRemoteScreenStream(remoteScreenStream, call.metadata?.label || `${callerName}'s Screen`);
@@ -1101,7 +1355,6 @@
                     });
                     state.screenCalls.set(call.peer, call);
                 } else {
-                    // Answer webcam call with our local camera stream
                     call.answer(state.localCamStream);
                     call.on('stream', (remoteCamStream) => {
                         renderCameraTile(call.peer, remoteCamStream, callerName, false);
@@ -1113,6 +1366,11 @@
                 }
             });
 
+            peer.on('disconnected', () => {
+                updateConnectionUI('connecting', 'Reconnecting...');
+                peer.reconnect();
+            });
+
             peer.on('error', (err) => {
                 console.error('PeerJS Error:', err);
                 if (err.type === 'unavailable-id') {
@@ -1122,7 +1380,7 @@
                     updateConnectionUI('error', 'Room not found');
                     showToast('Could not find a room with that code. Make sure the Host is online!', 'error');
                 } else {
-                    showToast(`WebRTC Announcement: ${err.type}`, 'warning');
+                    showToast(`WebRTC Status: ${err.type}`, 'warning');
                 }
             });
         }
@@ -1139,8 +1397,6 @@
             });
 
             setupDataConnection(conn);
-
-            // Also initiate a webcam call to the Host
             callPeerWithCamera(hostRoomId);
         }
 
@@ -1148,7 +1404,6 @@
             conn.on('open', () => {
                 state.dataConnections.set(conn.peer, conn);
 
-                // Send our profile introduction
                 conn.send({
                     type: 'hello',
                     peerId: state.myPeerId,
@@ -1157,7 +1412,6 @@
                     isHost: state.isHost
                 });
 
-                // If we are Host, send known peer list so new guest can mesh with others
                 if (state.isHost) {
                     const peerList = Array.from(state.participants.keys()).filter(
                         id => id !== state.myPeerId && id !== conn.peer
@@ -1168,9 +1422,8 @@
                     });
                 }
 
-                // If we are currently sharing our screen, immediately stream it to this newly connected peer
                 if (state.isSharingScreen && state.localScreenStream) {
-                    callPeerWithScreen(conn.peer, state.localScreenStream, `${state.username}'s Screen`);
+                    callPeerWithScreen(conn.peer, state.localScreenStream, dom.streamSourceLabel.textContent.replace('LIVE • ', ''));
                 }
             });
 
@@ -1236,7 +1489,6 @@
                     });
                     updateParticipantsCounter();
 
-                    // Update existing camera tile label if already rendered
                     const existingTile = document.getElementById(`cam-tile-${fromPeerId}`);
                     if (existingTile) {
                         const span = existingTile.querySelector('.cam-label span');
@@ -1251,7 +1503,6 @@
                 }
 
                 case 'peer-list': {
-                    // Connect to other guests in the room for full P2P mesh
                     if (Array.isArray(data.peers)) {
                         data.peers.forEach(otherPeerId => {
                             if (otherPeerId !== state.myPeerId && !state.dataConnections.has(otherPeerId)) {
@@ -1265,6 +1516,7 @@
                 }
 
                 case 'chat': {
+                    dom.typingIndicator.classList.add('hidden');
                     appendChatMessage({
                         sender: data.sender,
                         color: data.color,
@@ -1275,15 +1527,37 @@
                     break;
                 }
 
+                case 'typing': {
+                    dom.typingIndicator.textContent = `✍️ ${data.sender} is typing...`;
+                    dom.typingIndicator.classList.remove('hidden');
+                    clearTimeout(state.typingTimeout);
+                    state.typingTimeout = setTimeout(() => {
+                        dom.typingIndicator.classList.add('hidden');
+                    }, 2200);
+                    break;
+                }
+
                 case 'reaction': {
                     spawnFloatingReaction(data.emoji, data.sender);
+                    break;
+                }
+
+                case 'stage-playback': {
+                    state.isStagePaused = !!data.paused;
+                    if (state.isStagePaused) {
+                        dom.mainScreenVideo.pause();
+                    } else {
+                        dom.mainScreenVideo.play().catch(() => {});
+                    }
+                    updateStagePlayPauseUI();
+                    appendSystemMessage(`${state.isStagePaused ? '⏸️' : '▶️'} ${data.sender} ${state.isStagePaused ? 'paused' : 'resumed'} the stream.`);
                     break;
                 }
 
                 case 'screen-status': {
                     if (!data.active) {
                         resetStageToPlaceholder();
-                        appendSystemMessage(`⏹️ ${data.sender} ended the screen share.`);
+                        appendSystemMessage(`⏹️ ${data.sender} ended the stream.`);
                     } else {
                         appendSystemMessage(`🎬 ${data.sender} started streaming: ${data.label || 'Screen'}`);
                     }
@@ -1350,7 +1624,6 @@
         function spawnFloatingReaction(emoji, senderName) {
             const el = document.createElement('div');
             el.className = 'floating-reaction flex flex-col items-center';
-            // Random horizontal position between 12% and 85%
             const randomLeft = Math.floor(Math.random() * 73) + 12;
             el.style.left = `${randomLeft}%`;
 
@@ -1366,15 +1639,20 @@
         // ==================== EVENT LISTENERS ====================
 
         // Color Swatch Selection in Lobby
+        function selectColorSwatch(colorHex) {
+            state.avatarColor = colorHex;
+            document.querySelectorAll('.color-swatch').forEach(b => {
+                const isMatch = b.getAttribute('data-color') === colorHex;
+                b.classList.toggle('ring-2', isMatch);
+                b.classList.toggle('ring-white', isMatch);
+                b.classList.toggle('scale-105', isMatch);
+                b.classList.toggle('opacity-75', !isMatch);
+            });
+        }
+
         document.querySelectorAll('.color-swatch').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.color-swatch').forEach(b => {
-                    b.classList.remove('ring-2', 'ring-white', 'scale-105');
-                    b.classList.add('opacity-75');
-                });
-                btn.classList.add('ring-2', 'ring-white', 'scale-105');
-                btn.classList.remove('opacity-75');
-                state.avatarColor = btn.getAttribute('data-color') || '#F472B6';
+                selectColorSwatch(btn.getAttribute('data-color') || '#F472B6');
             });
         });
 
@@ -1382,8 +1660,9 @@
         dom.btnCreateRoom.addEventListener('click', async () => {
             const nameVal = dom.inputUsername.value.trim();
             state.username = nameVal || `CozyHost_${Math.floor(Math.random() * 90 + 10)}`;
-            const wantMedia = dom.toggleInitialMedia.checked;
+            saveProfilePreferences();
 
+            const wantMedia = dom.toggleInitialMedia.checked;
             dom.btnCreateRoom.disabled = true;
             dom.btnCreateRoom.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Opening room...</span>`;
             lucide.createIcons({ nodes: [dom.btnCreateRoom] });
@@ -1403,8 +1682,9 @@
             }
             const nameVal = dom.inputUsername.value.trim();
             state.username = nameVal || `CozyGuest_${Math.floor(Math.random() * 90 + 10)}`;
-            const wantMedia = dom.toggleInitialMedia.checked;
+            saveProfilePreferences();
 
+            const wantMedia = dom.toggleInitialMedia.checked;
             dom.btnJoinRoom.disabled = true;
             await initLocalMedia(wantMedia);
             initPeerSession(false, targetRoom);
@@ -1434,10 +1714,22 @@
             showToast(state.camEnabled ? 'Camera turned on 📷' : 'Camera turned off', 'info');
         });
 
-        // Screen Share Buttons
-        dom.btnShareScreen.addEventListener('click', startScreenShare);
-        dom.btnHeroShare.addEventListener('click', startScreenShare);
+        // Screen Share / Local File / Demo Buttons
+        dom.btnShareScreen.addEventListener('click', () => startScreenShare(false));
+        dom.btnHeroShare.addEventListener('click', () => startScreenShare(false));
         dom.btnHeroDemo.addEventListener('click', startDemoStream);
+        dom.btnHeroFile.addEventListener('click', () => dom.inputLocalVideo.click());
+
+        dom.inputLocalVideo.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) startLocalFileStream(file);
+            e.target.value = '';
+        });
+
+        // On-Stage Interactive Overlay Controls
+        dom.btnStagePlayPause.addEventListener('click', toggleStagePlayPause);
+        dom.btnStageReshare.addEventListener('click', () => startScreenShare(true));
+        dom.btnStageStop.addEventListener('click', stopScreenShare);
 
         // Unmute Remote Stage Button
         dom.btnUnmuteStage.addEventListener('click', () => {
@@ -1447,18 +1739,40 @@
             dom.btnUnmuteStage.classList.remove('flex');
         });
 
+        // Auto-Ducking Toggle
+        dom.btnToggleAutoduck.addEventListener('click', () => {
+            state.autoDuckEnabled = !state.autoDuckEnabled;
+            dom.btnToggleAutoduck.classList.toggle('text-cozy-mint', state.autoDuckEnabled);
+            dom.btnToggleAutoduck.classList.toggle('border-cozy-mint/30', state.autoDuckEnabled);
+            dom.btnToggleAutoduck.classList.toggle('text-slate-400', !state.autoDuckEnabled);
+            dom.btnToggleAutoduck.classList.toggle('border-cozy-border', !state.autoDuckEnabled);
+            showToast(state.autoDuckEnabled ? 'Auto-Ducking enabled (lowers movie volume when speaking)' : 'Auto-Ducking disabled', 'info');
+        });
+
         // Stage Volume Slider
         dom.sliderStageVolume.addEventListener('input', (e) => {
-            dom.mainScreenVideo.volume = parseFloat(e.target.value);
-            if (dom.mainScreenVideo.volume > 0 && dom.mainScreenVideo.muted && !state.isSharingScreen) {
+            state.userStageVolume = parseFloat(e.target.value);
+            dom.mainScreenVideo.volume = state.userStageVolume;
+            if (state.userStageVolume > 0 && dom.mainScreenVideo.muted && !state.isSharingScreen) {
                 dom.mainScreenVideo.muted = false;
             }
         });
 
-        // Fullscreen Toggle
+        // Cinema Mode Toggle (Hide/Show Right Sidebar)
+        dom.btnCinemaMode.addEventListener('click', () => {
+            state.cinemaMode = !state.cinemaMode;
+            dom.sidebarColumn.classList.toggle('hidden', state.cinemaMode);
+            dom.mainStageColumn.classList.toggle('lg:w-3/4', !state.cinemaMode);
+            dom.mainStageColumn.classList.toggle('lg:w-full', state.cinemaMode);
+
+            dom.btnCinemaMode.innerHTML = `<i data-lucide="${state.cinemaMode ? 'panel-right-open' : 'panel-right-close'}" class="w-4 h-4 ${state.cinemaMode ? 'text-cozy-pink' : ''}"></i>`;
+            lucide.createIcons({ nodes: [dom.btnCinemaMode] });
+        });
+
+        // Fullscreen Toggle (Whole Application so Chat & Reactions stay accessible)
         dom.btnFullscreen.addEventListener('click', () => {
             if (!document.fullscreenElement) {
-                dom.stageContainer.requestFullscreen().catch(() => {
+                document.documentElement.requestFullscreen().catch(() => {
                     showToast('Fullscreen mode is blocked by your browser.', 'warning');
                 });
             } else {
@@ -1466,17 +1780,21 @@
             }
         });
 
-        // Copy Invite Link
-        function copyInviteLink() {
+        // Modern Clipboard API Copy Invite Link
+        async function copyInviteLink() {
             const roomId = state.roomId || dom.inputRoomId.value.trim() || 'veevee-room';
             const inviteUrl = `${window.location.origin}${window.location.pathname}?room=${encodeURIComponent(roomId)}`;
 
-            const tempInput = document.createElement('textarea');
-            tempInput.value = inviteUrl;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            tempInput.remove();
+            try {
+                await navigator.clipboard.writeText(inviteUrl);
+            } catch (err) {
+                const tempInput = document.createElement('textarea');
+                tempInput.value = inviteUrl;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                tempInput.remove();
+            }
 
             showToast('Invite link copied to clipboard! 🔗✨', 'success');
         }
@@ -1495,6 +1813,18 @@
                     sender: state.username
                 });
             });
+        });
+
+        // Typing Indicator Broadcast
+        dom.chatInput.addEventListener('input', () => {
+            const now = Date.now();
+            if (now - state.lastTypingSent > 1200) {
+                state.lastTypingSent = now;
+                broadcastData({
+                    type: 'typing',
+                    sender: state.username
+                });
+            }
         });
 
         // Chat Submission
@@ -1551,17 +1881,23 @@
             dom.helpModal.classList.remove('flex');
         });
 
-        // Pre-fill Room ID if URL contains ?room=XXXX
+        // Initialize Saved Profile & Room Parameter on Load
         window.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
             const roomParam = params.get('room');
             if (roomParam) {
                 dom.inputRoomId.value = roomParam.trim();
-                showToast(`Invite to room "${roomParam}" detected! Enter your nickname and click "Join".`, 'info');
+                showToast(`Invite to room "${roomParam}" detected! Click "Join".`, 'info');
             }
-            // Random cute default nickname
-            const cuteNames = ['CozyPanda', 'StarryFox', 'MochiCat', 'LunaBunny', 'velvetOwl', 'SweetPeach'];
-            dom.inputUsername.value = cuteNames[Math.floor(Math.random() * cuteNames.length)];
+
+            const savedName = localStorage.getItem('veevee_username');
+            const savedColor = localStorage.getItem('veevee_color');
+            const cuteNames = ['CozyPanda', 'StarryFox', 'MochiCat', 'LunaBunny', 'VelvetOwl', 'SweetPeach'];
+
+            dom.inputUsername.value = savedName || cuteNames[Math.floor(Math.random() * cuteNames.length)];
+            if (savedColor) {
+                selectColorSwatch(savedColor);
+            }
         });
     </script>
 </body>
