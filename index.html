@@ -1,1 +1,1568 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeeVee ✨ Watch Party Together</title>
+    
+    <!-- Google Fonts: Quicksand & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- PeerJS (WebRTC P2P Library) CDN -->
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 
+    <!-- Tailwind Theme Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        display: ['"Quicksand"', 'sans-serif'],
+                    },
+                    colors: {
+                        cozy: {
+                            bg: '#13111C',
+                            card: '#1C1929',
+                            panel: '#252136',
+                            border: '#352F4B',
+                            pink: '#F472B6',
+                            lavender: '#C084FC',
+                            mint: '#34D399',
+                            amber: '#FBBF24'
+                        }
+                    },
+                    boxShadow: {
+                        'glow-pink': '0 0 25px -5px rgba(244, 114, 182, 0.45)',
+                        'glow-lavender': '0 0 25px -5px rgba(192, 132, 252, 0.45)',
+                        'glow-mint': '0 0 20px -5px rgba(52, 211, 153, 0.4)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #13111C;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(192, 132, 252, 0.14) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(244, 114, 182, 0.12) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(52, 211, 153, 0.05) 0px, transparent 60%);
+            color: #F8FAFC;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(28, 25, 41, 0.6);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(192, 132, 252, 0.35);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(244, 114, 182, 0.6);
+        }
+
+        /* Floating Reaction Animation */
+        @keyframes floatUpReaction {
+            0% {
+                transform: translateY(0) scale(0.5) rotate(0deg);
+                opacity: 0;
+            }
+            15% {
+                transform: translateY(-30px) scale(1.25) rotate(-8deg);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-140px) scale(1.1) rotate(8deg);
+                opacity: 0.95;
+            }
+            100% {
+                transform: translateY(-290px) scale(0.85) rotate(-5deg);
+                opacity: 0;
+            }
+        }
+
+        .floating-reaction {
+            position: absolute;
+            bottom: 90px;
+            pointer-events: none;
+            z-index: 40;
+            animation: floatUpReaction 2.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45));
+        }
+
+        /* Pulse Ring for Live Status */
+        @keyframes softPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.55; transform: scale(1.12); }
+        }
+        .pulse-dot {
+            animation: softPulse 2s infinite ease-in-out;
+        }
+
+        /* Mirror local webcam */
+        .mirror-video {
+            transform: scaleX(-1);
+        }
+
+        /* Glassmorphism utility */
+        .glass-card {
+            background: rgba(28, 25, 41, 0.78);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col select-none">
+
+    <!-- ==================== TOAST NOTIFICATIONS ==================== -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+    <!-- ==================== LOBBY / WELCOME MODAL ==================== -->
+    <div id="lobby-modal" class="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md transition-opacity duration-300">
+        <div class="glass-card rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-cozy-border relative overflow-hidden">
+            <!-- Decorative Glow -->
+            <div class="absolute -top-20 -right-20 w-44 h-44 bg-cozy-pink/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-44 h-44 bg-cozy-lavender/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Brand Header -->
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cozy-pink to-cozy-lavender flex items-center justify-center shadow-glow-pink">
+                        <i data-lucide="popcorn" class="w-6 h-6 text-slate-950 stroke-[2.2]"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-display text-2xl font-bold tracking-tight bg-gradient-to-r from-white via-pink-200 to-cozy-lavender bg-clip-text text-transparent">
+                            VeeVee
+                        </h1>
+                        <p class="text-xs text-slate-400">Cozy P2P Online Cinema • No Sign-up Required</p>
+                    </div>
+                </div>
+                <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-cozy-mint/15 text-cozy-mint border border-cozy-mint/30">
+                    100% WebRTC
+                </span>
+            </div>
+
+            <!-- User Profile Setup -->
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5 ml-1">
+                        Your Nickname ✨
+                    </label>
+                    <div class="relative">
+                        <i data-lucide="smile-plus" class="w-4 h-4 text-cozy-lavender absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                        <input id="input-username" type="text" maxlength="20" placeholder="e.g. CozyPanda" 
+                            class="w-full pl-10 pr-4 py-3 rounded-2xl bg-cozy-bg/90 border border-cozy-border focus:border-cozy-pink focus:outline-none text-sm text-white placeholder-slate-500 transition">
+                    </div>
+                </div>
+
+                <!-- Avatar Color Picker -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5 ml-1">
+                        Choose Your Vibe Color
+                    </label>
+                    <div class="flex items-center gap-2.5" id="color-picker">
+                        <button type="button" data-color="#F472B6" class="color-swatch w-8 h-8 rounded-xl bg-[#F472B6] ring-2 ring-white scale-105 transition"></button>
+                        <button type="button" data-color="#C084FC" class="color-swatch w-8 h-8 rounded-xl bg-[#C084FC] opacity-75 hover:opacity-100 transition"></button>
+                        <button type="button" data-color="#34D399" class="color-swatch w-8 h-8 rounded-xl bg-[#34D399] opacity-75 hover:opacity-100 transition"></button>
+                        <button type="button" data-color="#FBBF24" class="color-swatch w-8 h-8 rounded-xl bg-[#FBBF24] opacity-75 hover:opacity-100 transition"></button>
+                        <button type="button" data-color="#60A5FA" class="color-swatch w-8 h-8 rounded-xl bg-[#60A5FA] opacity-75 hover:opacity-100 transition"></button>
+                    </div>
+                </div>
+
+                <!-- Camera & Mic Pre-toggle -->
+                <div class="p-3.5 rounded-2xl bg-cozy-bg/70 border border-cozy-border/70 flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <i data-lucide="video" class="w-4 h-4 text-cozy-pink"></i>
+                        <span class="text-xs text-slate-300">Join with Camera & Microphone</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggle-initial-media" class="sr-only peer" checked>
+                        <div class="w-10 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-cozy-pink"></div>
+                    </label>
+                </div>
+
+                <!-- Divider -->
+                <div class="relative py-2 flex items-center">
+                    <div class="flex-grow border-t border-cozy-border"></div>
+                    <span class="flex-shrink mx-3 text-[11px] uppercase tracking-wider text-slate-400">Create or Join</span>
+                    <div class="flex-grow border-t border-cozy-border"></div>
+                </div>
+
+                <!-- Create New Room Button -->
+                <button id="btn-create-room" class="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender hover:opacity-95 active:scale-[0.99] text-slate-950 font-bold text-sm shadow-glow-pink flex items-center justify-center gap-2 transition">
+                    <i data-lucide="sparkles" class="w-4 h-4 stroke-[2.5]"></i>
+                    <span>Create New Watch Party (Host)</span>
+                </button>
+
+                <!-- Join Existing Room Input + Button -->
+                <div class="pt-1">
+                    <label class="block text-xs text-slate-400 mb-1.5 ml-1">Have an invite code or link?</label>
+                    <div class="flex gap-2">
+                        <input id="input-room-id" type="text" placeholder="Paste Room ID (e.g. veevee-xxxx)" 
+                            class="flex-1 px-3.5 py-2.5 rounded-2xl bg-cozy-bg/90 border border-cozy-border focus:border-cozy-lavender focus:outline-none text-xs text-white placeholder-slate-500 font-mono">
+                        <button id="btn-join-room" class="px-4 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender border border-cozy-lavender/30 font-semibold text-xs flex items-center gap-1.5 transition shrink-0">
+                            <i data-lucide="log-in" class="w-4 h-4"></i>
+                            <span>Join</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== HELP MODAL (HOW TO SHARE STREAMING PLATFORMS) ==================== -->
+    <div id="help-modal" class="fixed inset-0 z-40 hidden items-center justify-center p-4 bg-black/75 backdrop-blur-md">
+        <div class="glass-card rounded-3xl max-w-lg w-full p-6 sm:p-7 border border-cozy-border shadow-2xl">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="p-2 rounded-xl bg-cozy-lavender/20 text-cozy-lavender">
+                        <i data-lucide="help-circle" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="font-display text-lg font-bold text-white">How to Watch Netflix, Max, Disney+ or YouTube Together?</h3>
+                </div>
+                <button id="btn-close-help" class="p-1.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                <div class="p-3 rounded-2xl bg-cozy-bg/80 border border-cozy-border">
+                    <p class="font-semibold text-cozy-pink mb-1">1. Open the streaming platform in another browser tab</p>
+                    <p class="text-xs text-slate-400">Use Chrome, Edge, or Brave and open Netflix, Disney+, Max, or YouTube in an adjacent tab.</p>
+                </div>
+                <div class="p-3 rounded-2xl bg-cozy-bg/80 border border-cozy-border">
+                    <p class="font-semibold text-cozy-lavender mb-1">2. Click "Share Screen / Tab" at the bottom</p>
+                    <p class="text-xs text-slate-400">Select the <strong>"Browser Tab"</strong> option and make sure to enable <strong>"Also share tab audio"</strong> in the bottom-left corner of the popup.</p>
+                </div>
+                <div class="p-3 rounded-2xl bg-cozy-bg/80 border border-cozy-border">
+                    <p class="font-semibold text-cozy-mint mb-1">3. Seeing a black screen on Netflix / Disney+?</p>
+                    <p class="text-xs text-slate-400">Disable <em>"Use graphics acceleration when available"</em> in your browser settings (Settings → System) — this prevents DRM black screens when sharing tabs!</p>
+                </div>
+            </div>
+            <button id="btn-got-it-help" class="mt-5 w-full py-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs">
+                Got it, let's watch! 🍿
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== TOP NAVIGATION BAR ==================== -->
+    <header class="h-16 px-4 sm:px-6 border-b border-cozy-border/80 bg-cozy-bg/80 backdrop-blur-xl flex items-center justify-between shrink-0 z-20">
+        <!-- Left: Logo & Room Status -->
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cozy-pink to-cozy-lavender flex items-center justify-center shadow-glow-pink">
+                <i data-lucide="tv" class="w-5 h-5 text-slate-950 stroke-[2.3]"></i>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="font-display font-bold text-lg tracking-tight text-white">VeeVee</span>
+                    <span id="role-badge" class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-cozy-lavender/20 text-cozy-lavender border border-cozy-lavender/30">
+                        Lobby
+                    </span>
+                </div>
+                <div class="flex items-center gap-1.5 text-[11px] text-slate-400">
+                    <span id="connection-dot" class="w-2 h-2 rounded-full bg-amber-400 pulse-dot"></span>
+                    <span id="connection-status-text">Waiting for room...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center: Room ID & Copy Invite Link -->
+        <div class="hidden md:flex items-center gap-2 bg-cozy-card px-3 py-1.5 rounded-2xl border border-cozy-border">
+            <span class="text-xs text-slate-400">Room:</span>
+            <code id="display-room-id" class="text-xs font-mono font-semibold text-cozy-pink px-1.5">---</code>
+            <button id="btn-copy-invite" class="px-3 py-1.5 rounded-xl bg-cozy-panel hover:bg-cozy-pink hover:text-slate-950 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition" title="Copy Invite Link">
+                <i data-lucide="link" class="w-3.5 h-3.5"></i>
+                <span>Copy Invite Link</span>
+            </button>
+        </div>
+
+        <!-- Right: Participants Counter & Help -->
+        <div class="flex items-center gap-2.5">
+            <!-- Mobile Copy Link Button -->
+            <button id="btn-copy-invite-mobile" class="md:hidden p-2.5 rounded-2xl bg-cozy-card border border-cozy-border text-cozy-pink hover:bg-cozy-panel transition" title="Copy Invite Link">
+                <i data-lucide="share-2" class="w-4 h-4"></i>
+            </button>
+
+            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-cozy-card border border-cozy-border text-xs font-semibold text-slate-200">
+                <i data-lucide="users" class="w-3.5 h-3.5 text-cozy-mint"></i>
+                <span id="participant-count">1</span>
+            </div>
+
+            <button id="btn-open-help" class="p-2.5 rounded-2xl bg-cozy-card hover:bg-cozy-panel border border-cozy-border text-slate-300 hover:text-white transition" title="Screen Sharing Guide">
+                <i data-lucide="help-circle" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- ==================== MAIN WORKSPACE (75% LEFT / 25% RIGHT) ==================== -->
+    <main class="flex-1 flex flex-col lg:flex-row gap-3.5 p-3 sm:p-4 overflow-hidden min-h-0">
+        
+        <!-- ========== LEFT COLUMN: 75% MAIN STAGE & CONTROLS ========== -->
+        <section class="w-full lg:w-3/4 flex flex-col gap-3 min-h-0 flex-1">
+            
+            <!-- Main Video Stage Container -->
+            <div id="stage-container" class="relative flex-1 rounded-3xl bg-cozy-card border border-cozy-border overflow-hidden shadow-2xl flex items-center justify-center group min-h-[240px]">
+                
+                <!-- Main Shared Stream Video Element -->
+                <video id="main-screen-video" autoplay playsinline class="w-full h-full object-contain bg-black hidden"></video>
+
+                <!-- Floating Emoji Overlay Container -->
+                <div id="reactions-overlay" class="absolute inset-0 pointer-events-none overflow-hidden z-30"></div>
+
+                <!-- Stream Info Badge (Top Left on Video) -->
+                <div id="stream-live-badge" class="hidden absolute top-4 left-4 z-20 items-center gap-2 px-3 py-1.5 rounded-2xl bg-black/65 backdrop-blur-md border border-white/10 text-xs">
+                    <span class="w-2 h-2 rounded-full bg-rose-500 pulse-dot"></span>
+                    <span id="stream-source-label" class="font-semibold text-white">LIVE • Screen Share</span>
+                </div>
+
+                <!-- Volume / Audio Unmute Prompt for Guests -->
+                <button id="btn-unmute-stage" class="hidden absolute top-4 right-4 z-20 items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-cozy-pink text-slate-950 font-bold text-xs shadow-glow-pink hover:scale-105 transition">
+                    <i data-lucide="volume-2" class="w-4 h-4"></i>
+                    <span>Click to Enable Stream Audio</span>
+                </button>
+
+                <!-- Cozy Empty Placeholder (When no screen is currently shared) -->
+                <div id="stage-placeholder" class="flex flex-col items-center justify-center text-center p-6 max-w-lg mx-auto z-10">
+                    <div class="relative mb-5">
+                        <div class="w-20 h-20 rounded-3xl bg-gradient-to-tr from-cozy-pink/20 via-cozy-lavender/20 to-cozy-mint/20 border border-cozy-border flex items-center justify-center">
+                            <i data-lucide="film" class="w-10 h-10 text-cozy-pink"></i>
+                        </div>
+                        <span class="absolute -bottom-1 -right-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-cozy-mint text-slate-950">
+                            HD 60fps
+                        </span>
+                    </div>
+
+                    <h2 class="font-display text-xl sm:text-2xl font-bold text-white mb-2">
+                        Ready for a Cozy Movie Night? 🍿
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
+                        Share a browser tab with <span class="text-rose-400 font-semibold">Netflix</span>, <span class="text-purple-400 font-semibold">Max</span>, <span class="text-sky-400 font-semibold">Disney+</span>, or <span class="text-red-400 font-semibold">YouTube</span> (remember to check <em>"Share tab audio"</em>), or launch the built-in Demo Stream to test right away!
+                    </p>
+
+                    <div class="flex flex-wrap items-center justify-center gap-3">
+                        <button id="btn-hero-share" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender hover:opacity-95 text-slate-950 font-bold text-xs sm:text-sm shadow-glow-pink flex items-center gap-2 transition">
+                            <i data-lucide="monitor-up" class="w-4 h-4 stroke-[2.2]"></i>
+                            <span>Share Screen / Tab</span>
+                        </button>
+                        <button id="btn-hero-demo" class="px-4 py-3 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border font-semibold text-xs sm:text-sm flex items-center gap-2 transition">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-cozy-mint"></i>
+                            <span>Launch Demo Stream</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Control Dock -->
+            <div class="glass-card rounded-3xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
+                
+                <!-- Left: Media & Screen Controls -->
+                <div class="flex items-center gap-2">
+                    <!-- Toggle Microphone -->
+                    <button id="btn-toggle-mic" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border flex items-center gap-2 text-xs font-semibold transition" title="Mute / Unmute Microphone">
+                        <i id="icon-mic" data-lucide="mic" class="w-4 h-4 text-cozy-mint"></i>
+                        <span class="hidden sm:inline" id="label-mic">Mic On</span>
+                    </button>
+
+                    <!-- Toggle Camera -->
+                    <button id="btn-toggle-cam" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border flex items-center gap-2 text-xs font-semibold transition" title="Turn Camera On / Off">
+                        <i id="icon-cam" data-lucide="video" class="w-4 h-4 text-cozy-mint"></i>
+                        <span class="hidden sm:inline" id="label-cam">Cam On</span>
+                    </button>
+
+                    <!-- Share Screen / Tab -->
+                    <button id="btn-share-screen" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs shadow-glow-pink flex items-center gap-2 hover:opacity-95 transition">
+                        <i data-lucide="screen-share" class="w-4 h-4 stroke-[2.2]"></i>
+                        <span id="label-share-screen">Share Screen</span>
+                    </button>
+                </div>
+
+                <!-- Center: Quick Floating Emoji Reactions -->
+                <div class="flex items-center gap-1.5 bg-cozy-bg/80 px-2.5 py-1.5 rounded-2xl border border-cozy-border">
+                    <span class="text-[11px] text-slate-400 hidden xl:inline mr-1">Reactions:</span>
+                    <button data-emoji="💖" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Send Heart">💖</button>
+                    <button data-emoji="😂" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Laugh">😂</button>
+                    <button data-emoji="😱" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Shocked">😱</button>
+                    <button data-emoji="🍿" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Popcorn">🍿</button>
+                    <button data-emoji="🔥" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Fire">🔥</button>
+                    <button data-emoji="🥺" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Emotional">🥺</button>
+                </div>
+
+                <!-- Right: Volume & Fullscreen -->
+                <div class="flex items-center gap-2">
+                    <div class="hidden sm:flex items-center gap-2 bg-cozy-bg/80 px-3 py-2 rounded-2xl border border-cozy-border">
+                        <i data-lucide="volume-2" class="w-4 h-4 text-cozy-lavender"></i>
+                        <input id="slider-stage-volume" type="range" min="0" max="1" step="0.05" value="1" class="w-16 accent-cozy-pink cursor-pointer">
+                    </div>
+
+                    <button id="btn-fullscreen" class="p-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border transition" title="Fullscreen Mode">
+                        <i data-lucide="maximize" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== RIGHT COLUMN: 25% CAMERAS & LIVE CHAT ========== -->
+        <aside class="w-full lg:w-1/4 flex flex-col gap-3 min-h-0 h-[360px] lg:h-auto shrink-0">
+            
+            <!-- Top Section: Participant Webcams Grid -->
+            <div class="glass-card rounded-3xl p-3 flex flex-col border border-cozy-border max-h-[42%] min-h-[145px]">
+                <div class="flex items-center justify-between mb-2 px-1">
+                    <div class="flex items-center gap-1.5">
+                        <i data-lucide="camera" class="w-3.5 h-3.5 text-cozy-pink"></i>
+                        <h3 class="font-display font-bold text-xs uppercase tracking-wider text-slate-200">Cameras & Voice</h3>
+                    </div>
+                    <span id="cams-active-badge" class="text-[10px] text-cozy-mint font-semibold">P2P Live</span>
+                </div>
+
+                <!-- Webcams Grid Container -->
+                <div id="cameras-grid" class="grid grid-cols-2 gap-2 overflow-y-auto pr-0.5 flex-1">
+                    <!-- Local & Remote Camera Cards injected dynamically -->
+                </div>
+            </div>
+
+            <!-- Bottom Section: Cozy Chat & Emoji Drawer -->
+            <div class="glass-card rounded-3xl p-3.5 flex-1 flex flex-col border border-cozy-border min-h-0 relative">
+                <!-- Chat Header -->
+                <div class="flex items-center justify-between pb-2.5 border-b border-cozy-border/70">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="message-circle-heart" class="w-4 h-4 text-cozy-lavender"></i>
+                        <h3 class="font-display font-bold text-xs uppercase tracking-wider text-slate-200">Room Chat</h3>
+                    </div>
+                    <span class="text-[11px] text-slate-400">Encrypted P2P</span>
+                </div>
+
+                <!-- Messages List -->
+                <div id="chat-messages" class="flex-1 overflow-y-auto py-3 px-1 space-y-2.5 text-xs select-text">
+                    <!-- Welcome System Message -->
+                    <div class="bg-cozy-panel/60 border border-cozy-border/60 rounded-2xl p-2.5 text-center text-slate-400 text-[11px]">
+                        ✨ Welcome to VeeVee! Copy the invite link at the top and share it with friends to watch together.
+                    </div>
+                </div>
+
+                <!-- Emoji Picker Drawer (Hidden by default) -->
+                <div id="emoji-drawer" class="hidden absolute bottom-16 left-3 right-3 p-2.5 rounded-2xl bg-cozy-card/95 backdrop-blur-xl border border-cozy-border shadow-2xl z-30">
+                    <div class="grid grid-cols-7 gap-1 text-base text-center">
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">😊</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">😂</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">🥹</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">😍</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">🍿</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">🎬</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">✨</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">🔥</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">💖</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">😭</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">😱</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">🥳</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">👀</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">💜</button>
+                    </div>
+                </div>
+
+                <!-- Chat Input Form -->
+                <form id="chat-form" class="pt-2 flex items-center gap-1.5">
+                    <button type="button" id="btn-toggle-emoji" class="p-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender transition shrink-0" title="Insert Emoji">
+                        <i data-lucide="smile" class="w-4 h-4"></i>
+                    </button>
+                    <input id="chat-input" type="text" maxlength="300" autocomplete="off" placeholder="Write a message..." 
+                        class="flex-1 px-3.5 py-2.5 rounded-2xl bg-cozy-bg/90 border border-cozy-border focus:border-cozy-pink focus:outline-none text-xs text-white placeholder-slate-500">
+                    <button type="submit" class="p-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold hover:opacity-95 transition shrink-0" title="Send">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                    </button>
+                </form>
+            </div>
+        </aside>
+    </main>
+
+    <!-- ==================== APPLICATION JAVASCRIPT ==================== -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        /**
+         * Main VeeVee Application State
+         */
+        const state = {
+            peer: null,
+            myPeerId: null,
+            roomId: null,
+            isHost: false,
+            username: 'CozyPanda',
+            avatarColor: '#F472B6',
+            localCamStream: null,
+            localScreenStream: null,
+            demoCanvasInterval: null,
+            demoAudioCtx: null,
+            micEnabled: true,
+            camEnabled: true,
+            isSharingScreen: false,
+            // Connected peers storage
+            dataConnections: new Map(), // peerId -> DataConnection
+            camCalls: new Map(),        // peerId -> MediaConnection (webcam)
+            screenCalls: new Map(),     // peerId -> MediaConnection (screen share)
+            participants: new Map()     // peerId -> { username, color, isHost }
+        };
+
+        // DOM Elements Cache
+        const dom = {
+            lobbyModal: document.getElementById('lobby-modal'),
+            helpModal: document.getElementById('help-modal'),
+            inputUsername: document.getElementById('input-username'),
+            inputRoomId: document.getElementById('input-room-id'),
+            toggleInitialMedia: document.getElementById('toggle-initial-media'),
+            btnCreateRoom: document.getElementById('btn-create-room'),
+            btnJoinRoom: document.getElementById('btn-join-room'),
+            roleBadge: document.getElementById('role-badge'),
+            connectionDot: document.getElementById('connection-dot'),
+            connectionStatusText: document.getElementById('connection-status-text'),
+            displayRoomId: document.getElementById('display-room-id'),
+            participantCount: document.getElementById('participant-count'),
+            btnCopyInvite: document.getElementById('btn-copy-invite'),
+            btnCopyInviteMobile: document.getElementById('btn-copy-invite-mobile'),
+            stageContainer: document.getElementById('stage-container'),
+            mainScreenVideo: document.getElementById('main-screen-video'),
+            stagePlaceholder: document.getElementById('stage-placeholder'),
+            streamLiveBadge: document.getElementById('stream-live-badge'),
+            streamSourceLabel: document.getElementById('stream-source-label'),
+            btnUnmuteStage: document.getElementById('btn-unmute-stage'),
+            reactionsOverlay: document.getElementById('reactions-overlay'),
+            btnHeroShare: document.getElementById('btn-hero-share'),
+            btnHeroDemo: document.getElementById('btn-hero-demo'),
+            btnToggleMic: document.getElementById('btn-toggle-mic'),
+            iconMic: document.getElementById('icon-mic'),
+            labelMic: document.getElementById('label-mic'),
+            btnToggleCam: document.getElementById('btn-toggle-cam'),
+            iconCam: document.getElementById('icon-cam'),
+            labelCam: document.getElementById('label-cam'),
+            btnShareScreen: document.getElementById('btn-share-screen'),
+            labelShareScreen: document.getElementById('label-share-screen'),
+            sliderStageVolume: document.getElementById('slider-stage-volume'),
+            btnFullscreen: document.getElementById('btn-fullscreen'),
+            camerasGrid: document.getElementById('cameras-grid'),
+            chatMessages: document.getElementById('chat-messages'),
+            chatForm: document.getElementById('chat-form'),
+            chatInput: document.getElementById('chat-input'),
+            btnToggleEmoji: document.getElementById('btn-toggle-emoji'),
+            emojiDrawer: document.getElementById('emoji-drawer'),
+            toastContainer: document.getElementById('toast-container')
+        };
+
+        // ==================== UI HELPER FUNCTIONS ====================
+
+        function generateShortRoomId() {
+            const chars = 'abcdefghjkmnpqrstuvwxyz23456789';
+            let code = 'veevee-';
+            for (let i = 0; i < 6; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            const borderColors = {
+                info: 'border-cozy-lavender/50',
+                success: 'border-cozy-mint/50',
+                warning: 'border-cozy-amber/50',
+                error: 'border-rose-500/60'
+            };
+            const icons = {
+                info: 'sparkles',
+                success: 'check-circle-2',
+                warning: 'alert-circle',
+                error: 'shield-alert'
+            };
+
+            toast.className = `glass-card pointer-events-auto px-4 py-3 rounded-2xl border ${borderColors[type] || borderColors.info} shadow-xl flex items-center gap-3 text-xs text-white transition-all duration-300 opacity-0 translate-y-2`;
+            toast.innerHTML = `
+                <i data-lucide="${icons[type] || 'sparkles'}" class="w-4 h-4 text-cozy-pink shrink-0"></i>
+                <span class="flex-1 leading-snug">${escapeHtml(message)}</span>
+            `;
+            dom.toastContainer.appendChild(toast);
+            lucide.createIcons({ nodes: [toast] });
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('opacity-0', 'translate-y-2');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3800);
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/[&<>"']/g, s => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[s]));
+        }
+
+        function updateConnectionUI(status, text) {
+            dom.connectionStatusText.textContent = text;
+            dom.connectionDot.className = 'w-2 h-2 rounded-full pulse-dot ';
+            if (status === 'connected') {
+                dom.connectionDot.classList.add('bg-cozy-mint');
+            } else if (status === 'connecting') {
+                dom.connectionDot.classList.add('bg-amber-400');
+            } else {
+                dom.connectionDot.classList.add('bg-rose-500');
+            }
+        }
+
+        function updateParticipantsCounter() {
+            dom.participantCount.textContent = state.participants.size;
+        }
+
+        // ==================== LOCAL CAMERA / AVATAR FALLBACK ====================
+
+        /**
+         * Creates a live Canvas + silent audio stream when the user has no physical camera
+         * or denies permission, so WebRTC peer calls still establish cleanly.
+         */
+        function createAvatarFallbackStream(username, bgColor) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 480;
+            canvas.height = 360;
+            const ctx = canvas.getContext('2d');
+
+            const initials = (username || 'VV').slice(0, 2).toUpperCase();
+            let angle = 0;
+
+            function drawFrame() {
+                angle += 0.03;
+                // Cozy dark background
+                ctx.fillStyle = '#181523';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Subtle animated glow circle
+                const radius = 68 + Math.sin(angle) * 4;
+                ctx.beginPath();
+                ctx.arc(canvas.width / 2, canvas.height / 2 - 10, radius, 0, Math.PI * 2);
+                ctx.fillStyle = bgColor || '#F472B6';
+                ctx.fill();
+
+                // Initials
+                ctx.fillStyle = '#13111C';
+                ctx.font = 'bold 48px Quicksand, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(initials, canvas.width / 2, canvas.height / 2 - 8);
+
+                // Username label
+                ctx.fillStyle = '#E2E8F0';
+                ctx.font = '600 20px Plus Jakarta Sans, sans-serif';
+                ctx.fillText(username, canvas.width / 2, canvas.height - 42);
+            }
+
+            drawFrame();
+            const intervalId = setInterval(drawFrame, 100);
+            const videoStream = canvas.captureStream(15);
+
+            // Add a silent audio track so PeerJS carries both audio & video descriptions
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const dst = audioCtx.createMediaStreamDestination();
+                const audioTrack = dst.stream.getAudioTracks()[0];
+                if (audioTrack) {
+                    audioTrack.enabled = false;
+                    videoStream.addTrack(audioTrack);
+                }
+            } catch (e) {
+                // Ignore if AudioContext is blocked
+            }
+
+            videoStream._avatarInterval = intervalId;
+            return videoStream;
+        }
+
+        async function initLocalMedia(enableMediaInitially) {
+            if (!enableMediaInitially) {
+                state.micEnabled = false;
+                state.camEnabled = false;
+                state.localCamStream = createAvatarFallbackStream(state.username, state.avatarColor);
+                updateMediaButtonsUI();
+                renderCameraTile('local', state.localCamStream, `${state.username} (You)`, true);
+                return;
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: { ideal: 640 }, height: { ideal: 360 }, facingMode: 'user' },
+                    audio: { echoCancellation: true, noiseSuppression: true }
+                });
+                state.localCamStream = stream;
+                state.micEnabled = true;
+                state.camEnabled = true;
+                showToast('Camera & microphone active ✨', 'success');
+            } catch (err) {
+                console.warn('Could not access camera/microphone, using cozy avatar fallback:', err);
+                state.localCamStream = createAvatarFallbackStream(state.username, state.avatarColor);
+                state.micEnabled = false;
+                state.camEnabled = false;
+                showToast('Joined with cozy avatar (no camera/mic detected)', 'warning');
+            }
+
+            updateMediaButtonsUI();
+            renderCameraTile('local', state.localCamStream, `${state.username} (You)`, true);
+        }
+
+        function updateMediaButtonsUI() {
+            // Microphone Button
+            if (state.micEnabled) {
+                dom.btnToggleMic.classList.remove('bg-rose-500/20', 'border-rose-500/40', 'text-rose-300');
+                dom.iconMic.setAttribute('data-lucide', 'mic');
+                dom.iconMic.className = 'w-4 h-4 text-cozy-mint';
+                dom.labelMic.textContent = 'Mic On';
+            } else {
+                dom.btnToggleMic.classList.add('bg-rose-500/20', 'border-rose-500/40', 'text-rose-300');
+                dom.iconMic.setAttribute('data-lucide', 'mic-off');
+                dom.iconMic.className = 'w-4 h-4 text-rose-400';
+                dom.labelMic.textContent = 'Muted';
+            }
+
+            // Camera Button
+            if (state.camEnabled) {
+                dom.btnToggleCam.classList.remove('bg-rose-500/20', 'border-rose-500/40', 'text-rose-300');
+                dom.iconCam.setAttribute('data-lucide', 'video');
+                dom.iconCam.className = 'w-4 h-4 text-cozy-mint';
+                dom.labelCam.textContent = 'Cam On';
+            } else {
+                dom.btnToggleCam.classList.add('bg-rose-500/20', 'border-rose-500/40', 'text-rose-300');
+                dom.iconCam.setAttribute('data-lucide', 'video-off');
+                dom.iconCam.className = 'w-4 h-4 text-rose-400';
+                dom.labelCam.textContent = 'Cam Off';
+            }
+
+            lucide.createIcons({ nodes: [dom.btnToggleMic, dom.btnToggleCam] });
+        }
+
+        // ==================== WEBCAM TILE RENDERING ====================
+
+        function renderCameraTile(peerId, stream, label, isLocal = false) {
+            let tile = document.getElementById(`cam-tile-${peerId}`);
+            if (!tile) {
+                tile = document.createElement('div');
+                tile.id = `cam-tile-${peerId}`;
+                tile.className = 'relative rounded-2xl overflow-hidden bg-cozy-bg border border-cozy-border aspect-video group shadow-md';
+                
+                const video = document.createElement('video');
+                video.autoplay = true;
+                video.playsInline = true;
+                if (isLocal) {
+                    video.muted = true; // Never play own mic back locally
+                    video.classList.add('mirror-video');
+                }
+                video.className += ' w-full h-full object-cover';
+
+                const badge = document.createElement('div');
+                badge.className = 'cam-label absolute bottom-1.5 left-2 right-2 flex items-center justify-between px-2 py-0.5 rounded-lg bg-black/65 backdrop-blur-sm text-[10px] text-white font-medium truncate';
+                badge.innerHTML = `
+                    <span class="truncate">${escapeHtml(label)}</span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-cozy-mint shrink-0 ml-1"></span>
+                `;
+
+                tile.appendChild(video);
+                tile.appendChild(badge);
+                dom.camerasGrid.appendChild(tile);
+            }
+
+            const videoEl = tile.querySelector('video');
+            if (videoEl && videoEl.srcObject !== stream) {
+                videoEl.srcObject = stream;
+                videoEl.play().catch(() => {});
+            }
+
+            const labelSpan = tile.querySelector('.cam-label span');
+            if (labelSpan) {
+                labelSpan.textContent = label;
+            }
+        }
+
+        function removeCameraTile(peerId) {
+            const tile = document.getElementById(`cam-tile-${peerId}`);
+            if (tile) tile.remove();
+        }
+
+        // ==================== SCREEN SHARING & DEMO STREAM ====================
+
+        async function startScreenShare() {
+            if (state.isSharingScreen) {
+                stopScreenShare();
+                return;
+            }
+
+            try {
+                // Request Screen or Browser Tab with Audio
+                const screenStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: {
+                        cursor: 'always',
+                        frameRate: { ideal: 60, max: 60 }
+                    },
+                    audio: {
+                        echoCancellation: false,
+                        noiseSuppression: false,
+                        autoGainControl: false
+                    }
+                });
+
+                activateSharedStageStream(screenStream, `${state.username}'s Screen`);
+
+                // Handle user clicking browser's native "Stop sharing" button
+                const videoTrack = screenStream.getVideoTracks()[0];
+                if (videoTrack) {
+                    videoTrack.onended = () => {
+                        stopScreenShare();
+                    };
+                }
+            } catch (err) {
+                console.warn('getDisplayMedia cancelled or unavailable:', err);
+                showToast('Could not start screen sharing. You can also try the Demo Stream!', 'warning');
+            }
+        }
+
+        /**
+         * Built-in Cozy Cinema Demo Stream (Canvas + WebAudio melody)
+         * Ideal for testing P2P streaming inside restricted previews or without opening a second tab
+         */
+        function startDemoStream() {
+            if (state.isSharingScreen) {
+                stopScreenShare();
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = 1280;
+            canvas.height = 720;
+            const ctx = canvas.getContext('2d');
+
+            let frame = 0;
+            const stars = Array.from({ length: 65 }, () => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                r: Math.random() * 2.5 + 0.8,
+                s: Math.random() * 0.7 + 0.2
+            }));
+
+            state.demoCanvasInterval = setInterval(() => {
+                frame++;
+                // Night sky gradient
+                const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                grad.addColorStop(0, '#13111C');
+                grad.addColorStop(0.5, '#251D3A');
+                grad.addColorStop(1, '#1A162B');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Twinkling stars
+                stars.forEach(st => {
+                    st.y -= st.s;
+                    if (st.y < 0) st.y = canvas.height;
+                    ctx.beginPath();
+                    ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(244, 114, 182, 0.75)';
+                    ctx.fill();
+                });
+
+                // Animated cozy moon / orb
+                const orbY = canvas.height / 2 - 40 + Math.sin(frame * 0.04) * 18;
+                ctx.beginPath();
+                ctx.arc(canvas.width / 2, orbY, 95, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(192, 132, 252, 0.25)';
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(canvas.width / 2, orbY, 70, 0, Math.PI * 2);
+                ctx.fillStyle = '#F472B6';
+                ctx.fill();
+
+                // Cinema Titles
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 44px Quicksand, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('🍿 VeeVee • P2P Cinema Stream', canvas.width / 2, canvas.height / 2 + 105);
+
+                ctx.fillStyle = '#34D399';
+                ctx.font = '600 22px Plus Jakarta Sans, sans-serif';
+                const timecode = new Date().toLocaleTimeString();
+                ctx.fillText(`LIVE SYNC • ${timecode} • Host: ${state.username}`, canvas.width / 2, canvas.height / 2 + 150);
+            }, 1000 / 30);
+
+            const demoStream = canvas.captureStream(30);
+
+            // Add gentle ambient chord audio track so guests can test audio sync
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const dest = audioCtx.createMediaStreamDestination();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                osc.connect(gain);
+                gain.connect(dest);
+                osc.start();
+                state.demoAudioCtx = audioCtx;
+                const audioTrack = dest.stream.getAudioTracks()[0];
+                if (audioTrack) demoStream.addTrack(audioTrack);
+            } catch (e) {
+                console.warn('WebAudio Demo skipped:', e);
+            }
+
+            activateSharedStageStream(demoStream, `Demo Cinema • ${state.username}`);
+            showToast('Launched built-in Demo Stream! 🎬', 'success');
+        }
+
+        function activateSharedStageStream(stream, labelText) {
+            state.localScreenStream = stream;
+            state.isSharingScreen = true;
+
+            // Show on local main player (muted locally to prevent echo)
+            dom.mainScreenVideo.srcObject = stream;
+            dom.mainScreenVideo.muted = true;
+            dom.mainScreenVideo.classList.remove('hidden');
+            dom.stagePlaceholder.classList.add('hidden');
+            dom.streamLiveBadge.classList.remove('hidden');
+            dom.streamLiveBadge.classList.add('flex');
+            dom.streamSourceLabel.textContent = `LIVE • ${labelText}`;
+
+            // Update share button look
+            dom.labelShareScreen.textContent = 'Stop Sharing';
+            dom.btnShareScreen.classList.remove('from-cozy-pink', 'to-cozy-lavender');
+            dom.btnShareScreen.classList.add('bg-rose-500', 'text-white');
+
+            // Call all connected peers with the screen stream
+            for (const [peerId] of state.dataConnections.entries()) {
+                callPeerWithScreen(peerId, stream, labelText);
+            }
+
+            // Broadcast stream status over DataChannel
+            broadcastData({
+                type: 'screen-status',
+                active: true,
+                label: labelText,
+                sender: state.username
+            });
+
+            appendSystemMessage(`🎬 ${state.username} started streaming: ${labelText}`);
+        }
+
+        function stopScreenShare() {
+            if (state.localScreenStream) {
+                state.localScreenStream.getTracks().forEach(track => track.stop());
+                state.localScreenStream = null;
+            }
+            if (state.demoCanvasInterval) {
+                clearInterval(state.demoCanvasInterval);
+                state.demoCanvasInterval = null;
+            }
+            if (state.demoAudioCtx) {
+                state.demoAudioCtx.close().catch(() => {});
+                state.demoAudioCtx = null;
+            }
+
+            state.isSharingScreen = false;
+
+            // Close outgoing screen calls
+            for (const [, call] of state.screenCalls.entries()) {
+                try { call.close(); } catch (e) {}
+            }
+            state.screenCalls.clear();
+
+            resetStageToPlaceholder();
+
+            dom.labelShareScreen.textContent = 'Share Screen';
+            dom.btnShareScreen.classList.remove('bg-rose-500', 'text-white');
+            dom.btnShareScreen.classList.add('from-cozy-pink', 'to-cozy-lavender');
+
+            broadcastData({
+                type: 'screen-status',
+                active: false,
+                sender: state.username
+            });
+
+            appendSystemMessage(`⏹️ ${state.username} ended the screen share.`);
+        }
+
+        function resetStageToPlaceholder() {
+            dom.mainScreenVideo.pause();
+            dom.mainScreenVideo.srcObject = null;
+            dom.mainScreenVideo.classList.add('hidden');
+            dom.stagePlaceholder.classList.remove('hidden');
+            dom.streamLiveBadge.classList.add('hidden');
+            dom.streamLiveBadge.classList.remove('flex');
+            dom.btnUnmuteStage.classList.add('hidden');
+        }
+
+        function displayRemoteScreenStream(stream, labelText) {
+            dom.mainScreenVideo.srcObject = stream;
+            dom.mainScreenVideo.muted = false;
+            dom.mainScreenVideo.volume = parseFloat(dom.sliderStageVolume.value || '1');
+            dom.mainScreenVideo.classList.remove('hidden');
+            dom.stagePlaceholder.classList.add('hidden');
+            dom.streamLiveBadge.classList.remove('hidden');
+            dom.streamLiveBadge.classList.add('flex');
+            dom.streamSourceLabel.textContent = `LIVE • ${labelText || 'Shared Screen'}`;
+
+            // Attempt autoplay with sound; if browser blocks unmuted autoplay, show unmute button
+            dom.mainScreenVideo.play().catch(() => {
+                dom.mainScreenVideo.muted = true;
+                dom.mainScreenVideo.play().catch(() => {});
+                dom.btnUnmuteStage.classList.remove('hidden');
+                dom.btnUnmuteStage.classList.add('flex');
+            });
+        }
+
+        // ==================== PEERJS WEBRTC NETWORKING ====================
+
+        function initPeerSession(isCreatingHost, customRoomId) {
+            updateConnectionUI('connecting', 'Connecting to PeerJS...');
+
+            const targetId = isCreatingHost ? customRoomId : undefined;
+            const peer = new Peer(targetId, {
+                debug: 1,
+                config: {
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:global.stun.twilio.com:3478' }
+                    ]
+                }
+            });
+
+            state.peer = peer;
+            state.isHost = isCreatingHost;
+
+            peer.on('open', (id) => {
+                state.myPeerId = id;
+                state.roomId = isCreatingHost ? id : customRoomId;
+
+                // Update URL with ?room=ID so user can easily copy address bar too
+                const newUrl = `${window.location.pathname}?room=${encodeURIComponent(state.roomId)}`;
+                window.history.replaceState({}, '', newUrl);
+
+                // Register self in participants map
+                state.participants.set(id, {
+                    username: state.username,
+                    color: state.avatarColor,
+                    isHost: state.isHost
+                });
+                updateParticipantsCounter();
+
+                // Update top bar UI
+                dom.displayRoomId.textContent = state.roomId;
+                dom.roleBadge.textContent = state.isHost ? '👑 Room Host' : '✨ Guest';
+                updateConnectionUI('connected', state.isHost ? 'Room Active (P2P)' : 'Connected to Room');
+
+                // Hide lobby modal
+                dom.lobbyModal.classList.add('opacity-0', 'pointer-events-none');
+                setTimeout(() => dom.lobbyModal.classList.add('hidden'), 300);
+
+                if (state.isHost) {
+                    showToast(`Room ${state.roomId} is ready! Copy the link and invite your friends.`, 'success');
+                } else {
+                    connectToHostPeer(state.roomId);
+                }
+            });
+
+            // Incoming DataConnection
+            peer.on('connection', (conn) => {
+                setupDataConnection(conn);
+            });
+
+            // Incoming MediaCall (Webcam or Screen Share)
+            peer.on('call', (call) => {
+                const callType = call.metadata?.type || 'camera';
+                const callerName = call.metadata?.username || 'Participant';
+
+                if (callType === 'screen') {
+                    // Answer screen share stream (receive-only)
+                    call.answer();
+                    call.on('stream', (remoteScreenStream) => {
+                        displayRemoteScreenStream(remoteScreenStream, call.metadata?.label || `${callerName}'s Screen`);
+                    });
+                    call.on('close', () => {
+                        resetStageToPlaceholder();
+                    });
+                    state.screenCalls.set(call.peer, call);
+                } else {
+                    // Answer webcam call with our local camera stream
+                    call.answer(state.localCamStream);
+                    call.on('stream', (remoteCamStream) => {
+                        renderCameraTile(call.peer, remoteCamStream, callerName, false);
+                    });
+                    call.on('close', () => {
+                        removeCameraTile(call.peer);
+                    });
+                    state.camCalls.set(call.peer, call);
+                }
+            });
+
+            peer.on('error', (err) => {
+                console.error('PeerJS Error:', err);
+                if (err.type === 'unavailable-id') {
+                    showToast('This Room ID is already taken. Generating a new one...', 'warning');
+                    initPeerSession(true, generateShortRoomId());
+                } else if (err.type === 'peer-unavailable') {
+                    updateConnectionUI('error', 'Room not found');
+                    showToast('Could not find a room with that code. Make sure the Host is online!', 'error');
+                } else {
+                    showToast(`WebRTC Announcement: ${err.type}`, 'warning');
+                }
+            });
+        }
+
+        function connectToHostPeer(hostRoomId) {
+            if (!state.peer || hostRoomId === state.myPeerId) return;
+
+            const conn = state.peer.connect(hostRoomId, {
+                reliable: true,
+                metadata: {
+                    username: state.username,
+                    color: state.avatarColor
+                }
+            });
+
+            setupDataConnection(conn);
+
+            // Also initiate a webcam call to the Host
+            callPeerWithCamera(hostRoomId);
+        }
+
+        function setupDataConnection(conn) {
+            conn.on('open', () => {
+                state.dataConnections.set(conn.peer, conn);
+
+                // Send our profile introduction
+                conn.send({
+                    type: 'hello',
+                    peerId: state.myPeerId,
+                    username: state.username,
+                    color: state.avatarColor,
+                    isHost: state.isHost
+                });
+
+                // If we are Host, send known peer list so new guest can mesh with others
+                if (state.isHost) {
+                    const peerList = Array.from(state.participants.keys()).filter(
+                        id => id !== state.myPeerId && id !== conn.peer
+                    );
+                    conn.send({
+                        type: 'peer-list',
+                        peers: peerList
+                    });
+                }
+
+                // If we are currently sharing our screen, immediately stream it to this newly connected peer
+                if (state.isSharingScreen && state.localScreenStream) {
+                    callPeerWithScreen(conn.peer, state.localScreenStream, `${state.username}'s Screen`);
+                }
+            });
+
+            conn.on('data', (data) => {
+                handleIncomingData(conn.peer, data);
+            });
+
+            conn.on('close', () => {
+                handlePeerDisconnect(conn.peer);
+            });
+
+            conn.on('error', () => {
+                handlePeerDisconnect(conn.peer);
+            });
+        }
+
+        function callPeerWithCamera(targetPeerId) {
+            if (!state.peer || !state.localCamStream || targetPeerId === state.myPeerId) return;
+            const call = state.peer.call(targetPeerId, state.localCamStream, {
+                metadata: {
+                    type: 'camera',
+                    username: state.username
+                }
+            });
+            if (!call) return;
+
+            call.on('stream', (remoteCamStream) => {
+                const peerInfo = state.participants.get(targetPeerId);
+                renderCameraTile(targetPeerId, remoteCamStream, peerInfo?.username || 'Participant', false);
+            });
+
+            call.on('close', () => {
+                removeCameraTile(targetPeerId);
+            });
+
+            state.camCalls.set(targetPeerId, call);
+        }
+
+        function callPeerWithScreen(targetPeerId, screenStream, label) {
+            if (!state.peer || !screenStream || targetPeerId === state.myPeerId) return;
+            const call = state.peer.call(targetPeerId, screenStream, {
+                metadata: {
+                    type: 'screen',
+                    username: state.username,
+                    label: label
+                }
+            });
+            if (call) {
+                state.screenCalls.set(targetPeerId, call);
+            }
+        }
+
+        function handleIncomingData(fromPeerId, data) {
+            if (!data || !data.type) return;
+
+            switch (data.type) {
+                case 'hello': {
+                    const isNew = !state.participants.has(fromPeerId);
+                    state.participants.set(fromPeerId, {
+                        username: data.username || 'Guest',
+                        color: data.color || '#C084FC',
+                        isHost: !!data.isHost
+                    });
+                    updateParticipantsCounter();
+
+                    // Update existing camera tile label if already rendered
+                    const existingTile = document.getElementById(`cam-tile-${fromPeerId}`);
+                    if (existingTile) {
+                        const span = existingTile.querySelector('.cam-label span');
+                        if (span) span.textContent = data.username;
+                    }
+
+                    if (isNew) {
+                        appendSystemMessage(`👋 ${data.username} joined the room!`);
+                        showToast(`${data.username} joined the Watch Party!`, 'info');
+                    }
+                    break;
+                }
+
+                case 'peer-list': {
+                    // Connect to other guests in the room for full P2P mesh
+                    if (Array.isArray(data.peers)) {
+                        data.peers.forEach(otherPeerId => {
+                            if (otherPeerId !== state.myPeerId && !state.dataConnections.has(otherPeerId)) {
+                                const newConn = state.peer.connect(otherPeerId, { reliable: true });
+                                setupDataConnection(newConn);
+                                callPeerWithCamera(otherPeerId);
+                            }
+                        });
+                    }
+                    break;
+                }
+
+                case 'chat': {
+                    appendChatMessage({
+                        sender: data.sender,
+                        color: data.color,
+                        text: data.text,
+                        time: data.time,
+                        isSelf: false
+                    });
+                    break;
+                }
+
+                case 'reaction': {
+                    spawnFloatingReaction(data.emoji, data.sender);
+                    break;
+                }
+
+                case 'screen-status': {
+                    if (!data.active) {
+                        resetStageToPlaceholder();
+                        appendSystemMessage(`⏹️ ${data.sender} ended the screen share.`);
+                    } else {
+                        appendSystemMessage(`🎬 ${data.sender} started streaming: ${data.label || 'Screen'}`);
+                    }
+                    break;
+                }
+            }
+        }
+
+        function handlePeerDisconnect(peerId) {
+            const peerInfo = state.participants.get(peerId);
+            state.dataConnections.delete(peerId);
+            state.camCalls.delete(peerId);
+            state.screenCalls.delete(peerId);
+            state.participants.delete(peerId);
+            removeCameraTile(peerId);
+            updateParticipantsCounter();
+
+            if (peerInfo) {
+                appendSystemMessage(`💨 ${peerInfo.username} left the room.`);
+            }
+        }
+
+        function broadcastData(payload) {
+            for (const [, conn] of state.dataConnections.entries()) {
+                if (conn && conn.open) {
+                    conn.send(payload);
+                }
+            }
+        }
+
+        // ==================== CHAT & FLOATING REACTIONS ====================
+
+        function appendChatMessage({ sender, color, text, time, isSelf }) {
+            const wrapper = document.createElement('div');
+            wrapper.className = `flex flex-col ${isSelf ? 'items-end' : 'items-start'}`;
+
+            const bubbleColor = isSelf
+                ? 'bg-gradient-to-r from-cozy-pink/25 to-cozy-lavender/25 border-cozy-pink/40 text-white'
+                : 'bg-cozy-panel/90 border-cozy-border text-slate-100';
+
+            wrapper.innerHTML = `
+                <div class="flex items-center gap-1.5 mb-1 px-1">
+                    <span class="w-2 h-2 rounded-full" style="background-color: ${escapeHtml(color || '#F472B6')}"></span>
+                    <span class="font-bold text-[11px]" style="color: ${escapeHtml(color || '#F472B6')}">${escapeHtml(sender)}</span>
+                    <span class="text-[10px] text-slate-500">${escapeHtml(time)}</span>
+                </div>
+                <div class="max-w-[90%] px-3.5 py-2 rounded-2xl border ${bubbleColor} leading-relaxed break-words shadow-sm">
+                    ${escapeHtml(text)}
+                </div>
+            `;
+
+            dom.chatMessages.appendChild(wrapper);
+            dom.chatMessages.scrollTop = dom.chatMessages.scrollHeight;
+        }
+
+        function appendSystemMessage(text) {
+            const msg = document.createElement('div');
+            msg.className = 'bg-cozy-bg/70 border border-cozy-border/60 rounded-xl px-3 py-1.5 text-center text-[11px] text-slate-400';
+            msg.textContent = text;
+            dom.chatMessages.appendChild(msg);
+            dom.chatMessages.scrollTop = dom.chatMessages.scrollHeight;
+        }
+
+        function spawnFloatingReaction(emoji, senderName) {
+            const el = document.createElement('div');
+            el.className = 'floating-reaction flex flex-col items-center';
+            // Random horizontal position between 12% and 85%
+            const randomLeft = Math.floor(Math.random() * 73) + 12;
+            el.style.left = `${randomLeft}%`;
+
+            el.innerHTML = `
+                <span class="text-3xl sm:text-4xl select-none">${escapeHtml(emoji)}</span>
+                <span class="mt-0.5 px-2 py-0.5 rounded-full bg-black/65 text-[10px] text-white font-semibold">${escapeHtml(senderName || '')}</span>
+            `;
+
+            dom.reactionsOverlay.appendChild(el);
+            setTimeout(() => el.remove(), 2600);
+        }
+
+        // ==================== EVENT LISTENERS ====================
+
+        // Color Swatch Selection in Lobby
+        document.querySelectorAll('.color-swatch').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.color-swatch').forEach(b => {
+                    b.classList.remove('ring-2', 'ring-white', 'scale-105');
+                    b.classList.add('opacity-75');
+                });
+                btn.classList.add('ring-2', 'ring-white', 'scale-105');
+                btn.classList.remove('opacity-75');
+                state.avatarColor = btn.getAttribute('data-color') || '#F472B6';
+            });
+        });
+
+        // Create Room (Host)
+        dom.btnCreateRoom.addEventListener('click', async () => {
+            const nameVal = dom.inputUsername.value.trim();
+            state.username = nameVal || `CozyHost_${Math.floor(Math.random() * 90 + 10)}`;
+            const wantMedia = dom.toggleInitialMedia.checked;
+
+            dom.btnCreateRoom.disabled = true;
+            dom.btnCreateRoom.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Opening room...</span>`;
+            lucide.createIcons({ nodes: [dom.btnCreateRoom] });
+
+            await initLocalMedia(wantMedia);
+            const customRoomId = generateShortRoomId();
+            initPeerSession(true, customRoomId);
+        });
+
+        // Join Existing Room (Guest)
+        dom.btnJoinRoom.addEventListener('click', async () => {
+            const targetRoom = dom.inputRoomId.value.trim();
+            if (!targetRoom) {
+                showToast('Enter a Room ID to join!', 'warning');
+                dom.inputRoomId.focus();
+                return;
+            }
+            const nameVal = dom.inputUsername.value.trim();
+            state.username = nameVal || `CozyGuest_${Math.floor(Math.random() * 90 + 10)}`;
+            const wantMedia = dom.toggleInitialMedia.checked;
+
+            dom.btnJoinRoom.disabled = true;
+            await initLocalMedia(wantMedia);
+            initPeerSession(false, targetRoom);
+        });
+
+        // Toggle Microphone
+        dom.btnToggleMic.addEventListener('click', () => {
+            state.micEnabled = !state.micEnabled;
+            if (state.localCamStream) {
+                state.localCamStream.getAudioTracks().forEach(track => {
+                    track.enabled = state.micEnabled;
+                });
+            }
+            updateMediaButtonsUI();
+            showToast(state.micEnabled ? 'Microphone unmuted 🎙️' : 'Microphone muted 🔇', 'info');
+        });
+
+        // Toggle Camera
+        dom.btnToggleCam.addEventListener('click', () => {
+            state.camEnabled = !state.camEnabled;
+            if (state.localCamStream) {
+                state.localCamStream.getVideoTracks().forEach(track => {
+                    track.enabled = state.camEnabled;
+                });
+            }
+            updateMediaButtonsUI();
+            showToast(state.camEnabled ? 'Camera turned on 📷' : 'Camera turned off', 'info');
+        });
+
+        // Screen Share Buttons
+        dom.btnShareScreen.addEventListener('click', startScreenShare);
+        dom.btnHeroShare.addEventListener('click', startScreenShare);
+        dom.btnHeroDemo.addEventListener('click', startDemoStream);
+
+        // Unmute Remote Stage Button
+        dom.btnUnmuteStage.addEventListener('click', () => {
+            dom.mainScreenVideo.muted = false;
+            dom.mainScreenVideo.play().catch(() => {});
+            dom.btnUnmuteStage.classList.add('hidden');
+            dom.btnUnmuteStage.classList.remove('flex');
+        });
+
+        // Stage Volume Slider
+        dom.sliderStageVolume.addEventListener('input', (e) => {
+            dom.mainScreenVideo.volume = parseFloat(e.target.value);
+            if (dom.mainScreenVideo.volume > 0 && dom.mainScreenVideo.muted && !state.isSharingScreen) {
+                dom.mainScreenVideo.muted = false;
+            }
+        });
+
+        // Fullscreen Toggle
+        dom.btnFullscreen.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                dom.stageContainer.requestFullscreen().catch(() => {
+                    showToast('Fullscreen mode is blocked by your browser.', 'warning');
+                });
+            } else {
+                document.exitFullscreen().catch(() => {});
+            }
+        });
+
+        // Copy Invite Link
+        function copyInviteLink() {
+            const roomId = state.roomId || dom.inputRoomId.value.trim() || 'veevee-room';
+            const inviteUrl = `${window.location.origin}${window.location.pathname}?room=${encodeURIComponent(roomId)}`;
+
+            const tempInput = document.createElement('textarea');
+            tempInput.value = inviteUrl;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            tempInput.remove();
+
+            showToast('Invite link copied to clipboard! 🔗✨', 'success');
+        }
+
+        dom.btnCopyInvite.addEventListener('click', copyInviteLink);
+        dom.btnCopyInviteMobile.addEventListener('click', copyInviteLink);
+
+        // Quick Floating Reactions
+        document.querySelectorAll('.reaction-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const emoji = btn.getAttribute('data-emoji');
+                spawnFloatingReaction(emoji, state.username);
+                broadcastData({
+                    type: 'reaction',
+                    emoji: emoji,
+                    sender: state.username
+                });
+            });
+        });
+
+        // Chat Submission
+        dom.chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = dom.chatInput.value.trim();
+            if (!text) return;
+
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            appendChatMessage({
+                sender: state.username,
+                color: state.avatarColor,
+                text: text,
+                time: time,
+                isSelf: true
+            });
+
+            broadcastData({
+                type: 'chat',
+                sender: state.username,
+                color: state.avatarColor,
+                text: text,
+                time: time
+            });
+
+            dom.chatInput.value = '';
+            dom.emojiDrawer.classList.add('hidden');
+        });
+
+        // Emoji Drawer in Chat
+        dom.btnToggleEmoji.addEventListener('click', () => {
+            dom.emojiDrawer.classList.toggle('hidden');
+        });
+
+        document.querySelectorAll('.emoji-pick').forEach(btn => {
+            btn.addEventListener('click', () => {
+                dom.chatInput.value += btn.textContent;
+                dom.chatInput.focus();
+            });
+        });
+
+        // Help Modal Open / Close
+        document.getElementById('btn-open-help').addEventListener('click', () => {
+            dom.helpModal.classList.remove('hidden');
+            dom.helpModal.classList.add('flex');
+        });
+        document.getElementById('btn-close-help').addEventListener('click', () => {
+            dom.helpModal.classList.add('hidden');
+            dom.helpModal.classList.remove('flex');
+        });
+        document.getElementById('btn-got-it-help').addEventListener('click', () => {
+            dom.helpModal.classList.add('hidden');
+            dom.helpModal.classList.remove('flex');
+        });
+
+        // Pre-fill Room ID if URL contains ?room=XXXX
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const roomParam = params.get('room');
+            if (roomParam) {
+                dom.inputRoomId.value = roomParam.trim();
+                showToast(`Invite to room "${roomParam}" detected! Enter your nickname and click "Join".`, 'info');
+            }
+            // Random cute default nickname
+            const cuteNames = ['CozyPanda', 'StarryFox', 'MochiCat', 'LunaBunny', 'velvetOwl', 'SweetPeach'];
+            dom.inputUsername.value = cuteNames[Math.floor(Math.random() * cuteNames.length)];
+        });
+    </script>
+</body>
+</html>
