@@ -1,28 +1,15 @@
 {
   "manifest_version": 3,
   "name": "VeeVee Watch Party Bridge",
-  "version": "1.0",
-  "description": "Zdalny mostek sterujący odtwarzaczem dla VeeVee (Netflix, Disney+, YouTube)",
+  "version": "1.1",
+  "description": "Mostek łączący przyciski Start/Stop/Przewijanie w VeeVee z kartą Netflix, Disney+, Max i Prime Video.",
   "permissions": [
-    "activeTab",
-    "scripting",
-    "tabs"
-  ],
-  "host_permissions": [
-    "https://*.netflix.com/*",
-    "https://*.disneyplus.com/*",
-    "https://*.youtube.com/*",
-    "https://*.max.com/*",
-    "http://*/*",
-    "https://*/*"
+    "storage"
   ],
   "content_scripts": [
     {
       "matches": [
-        "https://*.netflix.com/*",
-        "https://*.disneyplus.com/*",
-        "https://*.youtube.com/*",
-        "https://*.max.com/*"
+        "<all_urls>"
       ],
       "js": ["content.js"],
       "run_at": "document_end"
