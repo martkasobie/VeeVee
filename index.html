@@ -273,7 +273,7 @@
                     </div>
                     <div>
                         <h3 class="font-display text-xl font-bold text-white">Choose What to Watch Together 🍿</h3>
-                        <p class="text-xs text-slate-400">Play directly inside VeeVee with 100% synced Start/Stop or log in to your streaming service</p>
+                        <p class="text-xs text-slate-400">Play directly inside VeeVee or open your streaming service in a new tab</p>
                     </div>
                 </div>
                 <button id="btn-close-platforms" class="p-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition">
@@ -286,46 +286,47 @@
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-xs font-bold uppercase tracking-wider text-cozy-mint flex items-center gap-1.5">
                         <i data-lucide="zap" class="w-3.5 h-3.5"></i>
-                        Direct In-App Player (Start / Stop / Seek Directly on VeeVee)
+                        Opcja 1: Bezpośredni Odtwarzacz w VeeVee (Start / Stop na ekranie)
                     </span>
-                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-cozy-mint/15 text-cozy-mint font-semibold">No Tab Switching!</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-cozy-mint/15 text-cozy-mint font-semibold">Bez zmiany karty!</span>
                 </div>
                 <p class="text-xs text-slate-400 mb-3">
-                    Paste any <strong>YouTube video link</strong> or direct <strong>.mp4 / .webm URL</strong> below, or pick a movie file from your computer. Everyone in the room can Start, Stop, and Seek directly from the VeeVee video screen!
+                    Wklej link do <strong>YouTube</strong>, bezpośredni link <strong>.mp4 / .webm</strong> lub wybierz plik z dysku. Film otworzy się bezpośrednio tutaj i każdy w pokoju może klikać Start, Stop i przewijać pasek na ekranie VeeVee:
                 </p>
                 <div class="flex flex-col sm:flex-row gap-2">
-                    <input id="input-media-url" type="text" placeholder="Paste YouTube URL (e.g. https://youtu.be/...) or .mp4 link" 
+                    <input id="input-media-url" type="text" placeholder="Wklej link YouTube (np. https://youtu.be/...) lub .mp4" 
                         class="flex-1 px-3.5 py-2.5 rounded-xl bg-cozy-card border border-cozy-border focus:border-cozy-mint focus:outline-none text-xs text-white placeholder-slate-500">
                     <button id="btn-load-url" class="px-4 py-2.5 rounded-xl bg-cozy-mint hover:opacity-95 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shrink-0 transition">
                         <i data-lucide="play" class="w-4 h-4 fill-current"></i>
-                        <span>Load & Sync Now</span>
+                        <span>Włącz w VeeVee</span>
                     </button>
                     <button id="btn-modal-local-file" class="px-3.5 py-2.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border font-semibold text-xs flex items-center justify-center gap-1.5 shrink-0 transition">
                         <i data-lucide="folder-video" class="w-4 h-4 text-cozy-lavender"></i>
-                        <span>Local File</span>
+                        <span>Plik z dysku</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Section 2: Streaming Service Login & 1-Click Share -->
-            <div>
-                <div class="flex items-center justify-between mb-2.5">
-                    <span class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-                        <i data-lucide="key-round" class="w-3.5 h-3.5 text-cozy-pink"></i>
-                        Log In & Stream Your Subscription (Pop-out Login + Tab Capture)
+            <!-- Section 2: Streaming Service Login & 2-Step Tab Share -->
+            <div class="p-4 rounded-2xl bg-cozy-bg/90 border border-cozy-border">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold uppercase tracking-wider text-cozy-pink flex items-center gap-1.5">
+                        <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
+                        Opcja 2: Netflix, Disney+, Max, Prime Video (2 proste kroki)
                     </span>
                 </div>
-                <p class="text-[11px] text-slate-400 mb-3">
-                    Click a platform to open its login window and automatically start streaming it into your room (remember to check <em>"Share tab audio"</em>):
+                <p class="text-xs text-slate-400 mb-3">
+                    <strong>Krok 1:</strong> Kliknij wybraną platformę poniżej — otworzy się ona w <strong>zwykłej karcie obok</strong>, gdzie możesz spokojnie się zalogować i włączyć film.<br>
+                    <strong>Krok 2:</strong> Wróć na tę kartę i kliknij zielony przycisk <strong>„Udostępnij otwartą kartę z filmem”</strong>.
                 </p>
 
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
                     <!-- Netflix -->
                     <button data-platform="Netflix" data-url="https://www.netflix.com/browse" class="platform-launch-btn p-3.5 rounded-2xl bg-gradient-to-br from-red-950/60 to-cozy-card hover:from-red-900/70 border border-red-500/30 flex flex-col items-center gap-2 text-center group transition">
                         <div class="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center font-display font-bold text-lg text-white shadow-lg group-hover:scale-105 transition">N</div>
                         <div>
-                            <div class="font-bold text-xs text-white">Netflix</div>
-                            <div class="text-[10px] text-slate-400">Login & Share</div>
+                            <div class="font-bold text-xs text-white">1. Otwórz Netflix</div>
+                            <div class="text-[10px] text-slate-400">W nowej karcie</div>
                         </div>
                     </button>
 
@@ -333,8 +334,8 @@
                     <button data-platform="Disney+" data-url="https://www.disneyplus.com" class="platform-launch-btn p-3.5 rounded-2xl bg-gradient-to-br from-sky-950/60 to-cozy-card hover:from-sky-900/70 border border-sky-500/30 flex flex-col items-center gap-2 text-center group transition">
                         <div class="w-10 h-10 rounded-xl bg-sky-600 flex items-center justify-center font-display font-bold text-sm text-white shadow-lg group-hover:scale-105 transition">D+</div>
                         <div>
-                            <div class="font-bold text-xs text-white">Disney+</div>
-                            <div class="text-[10px] text-slate-400">Login & Share</div>
+                            <div class="font-bold text-xs text-white">1. Otwórz Disney+</div>
+                            <div class="text-[10px] text-slate-400">W nowej karcie</div>
                         </div>
                     </button>
 
@@ -342,8 +343,8 @@
                     <button data-platform="Max" data-url="https://play.max.com" class="platform-launch-btn p-3.5 rounded-2xl bg-gradient-to-br from-indigo-950/60 to-cozy-card hover:from-indigo-900/70 border border-indigo-500/30 flex flex-col items-center gap-2 text-center group transition">
                         <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-display font-bold text-xs text-white shadow-lg group-hover:scale-105 transition">MAX</div>
                         <div>
-                            <div class="font-bold text-xs text-white">HBO Max</div>
-                            <div class="text-[10px] text-slate-400">Login & Share</div>
+                            <div class="font-bold text-xs text-white">1. Otwórz Max</div>
+                            <div class="text-[10px] text-slate-400">W nowej karcie</div>
                         </div>
                     </button>
 
@@ -351,9 +352,21 @@
                     <button data-platform="Prime Video" data-url="https://www.primevideo.com" class="platform-launch-btn p-3.5 rounded-2xl bg-gradient-to-br from-cyan-950/60 to-cozy-card hover:from-cyan-900/70 border border-cyan-500/30 flex flex-col items-center gap-2 text-center group transition">
                         <div class="w-10 h-10 rounded-xl bg-cyan-600 flex items-center justify-center font-display font-bold text-xs text-white shadow-lg group-hover:scale-105 transition">PV</div>
                         <div>
-                            <div class="font-bold text-xs text-white">Prime Video</div>
-                            <div class="text-[10px] text-slate-400">Login & Share</div>
+                            <div class="font-bold text-xs text-white">1. Otwórz Prime</div>
+                            <div class="text-[10px] text-slate-400">W nowej karcie</div>
                         </div>
+                    </button>
+                </div>
+
+                <!-- Step 2 Confirmation Box (Appears or highlights when platform tab is opened) -->
+                <div id="step2-capture-box" class="p-3.5 rounded-2xl bg-cozy-mint/10 border border-cozy-mint/40 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div class="text-xs text-slate-200">
+                        <span id="step2-status-title" class="font-bold text-cozy-mint block">Krok 2: Masz już włączony film na karcie obok?</span>
+                        <span class="text-[11px] text-slate-400">Kliknij przycisk obok, w okienku wybierz kartę z filmem i zaznacz <strong>„Udostępnij też dźwięk z karty”</strong>.</span>
+                    </div>
+                    <button id="btn-step2-start-capture" class="w-full sm:w-auto px-5 py-3 rounded-xl bg-cozy-mint hover:opacity-95 text-slate-950 font-bold text-xs shadow-glow-mint flex items-center justify-center gap-2 shrink-0 transition">
+                        <i data-lucide="monitor-up" class="w-4 h-4 stroke-[2.3]"></i>
+                        <span>2. Udostępnij otwartą kartę z filmem</span>
                     </button>
                 </div>
             </div>
@@ -421,7 +434,7 @@
             <div id="stage-container" class="relative flex-1 rounded-3xl bg-black border border-cozy-border overflow-hidden shadow-2xl flex items-center justify-center group min-h-[240px]">
                 
                 <!-- 1. HTML5 Video Element (For Screen Share, Local MP4, Direct URL, or Demo) -->
-                <video id="main-screen-video" autoplay playsinline class="w-full h-full object-contain bg-black hidden"></video>
+                <video id="main-screen-video" autoplay playsinline class="w-full h-full object-contain bg-black hidden cursor-pointer"></video>
 
                 <!-- 2. Built-in YouTube Synchronized Player Container -->
                 <div id="yt-stage-wrapper" class="w-full h-full hidden relative bg-black">
@@ -436,7 +449,7 @@
                         <i data-lucide="pause" class="w-8 h-8 text-cozy-pink"></i>
                     </div>
                     <span class="font-display font-bold text-lg text-white">Paused</span>
-                    <span class="text-xs text-slate-300 mt-1">Click Start / Play below or press Spacebar to resume</span>
+                    <span class="text-xs text-slate-300 mt-1">Click Start / Resume below or click directly on the video</span>
                 </div>
 
                 <!-- Floating Emoji Overlay Container -->
@@ -517,7 +530,7 @@
                         Ready for a Cozy Movie Night? 🍿
                     </h2>
                     <p class="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
-                        Open the <strong>Streaming Platforms & Player Hub</strong> to watch <span class="text-red-400 font-semibold">YouTube</span> or <span class="text-cozy-mint font-semibold">MP4 movies</span> with direct Start/Stop controls right on this screen, or log in to <span class="text-rose-400 font-semibold">Netflix</span>, <span class="text-sky-400 font-semibold">Disney+</span> & <span class="text-indigo-400 font-semibold">Max</span>!
+                        Open the <strong>Streaming Platforms & Player Hub</strong> to watch <span class="text-red-400 font-semibold">YouTube</span> or <span class="text-cozy-mint font-semibold">MP4 movies</span> with direct Start/Stop controls right on this screen, or open <span class="text-rose-400 font-semibold">Netflix</span>, <span class="text-sky-400 font-semibold">Disney+</span> & <span class="text-indigo-400 font-semibold">Max</span>!
                     </p>
 
                     <div class="flex flex-wrap items-center justify-center gap-2.5">
@@ -687,8 +700,9 @@
             demoAudioCtx: null,
             micEnabled: true,
             camEnabled: true,
-            // Active Stage Mode: 'none' | 'screen' | 'file' | 'url' | 'youtube' | 'demo'
-            stageMode: 'none',
+            stageMode: 'none', // 'none' | 'screen' | 'file' | 'url' | 'youtube' | 'demo'
+            selectedPlatformName: null,
+            openedPlatformWindow: null,
             isSharingScreen: false,
             isStagePaused: false,
             ytPlayer: null,
@@ -711,6 +725,9 @@
         const dom = {
             lobbyModal: document.getElementById('lobby-modal'),
             platformsModal: document.getElementById('platforms-modal'),
+            step2CaptureBox: document.getElementById('step2-capture-box'),
+            step2StatusTitle: document.getElementById('step2-status-title'),
+            btnStep2StartCapture: document.getElementById('btn-step2-start-capture'),
             inputUsername: document.getElementById('input-username'),
             inputRoomId: document.getElementById('input-room-id'),
             inputLocalVideo: document.getElementById('input-local-video'),
@@ -825,7 +842,7 @@
             setTimeout(() => {
                 toast.classList.add('opacity-0', '-translate-y-2');
                 setTimeout(() => toast.remove(), 300);
-            }, 3800);
+            }, 4200);
         }
 
         function escapeHtml(str) {
@@ -859,7 +876,6 @@
             if (state.isImmersiveFullscreen) {
                 document.body.classList.add('immersive-fullscreen');
                 dom.mainStageColumn.className = 'w-screen h-screen flex flex-col';
-                // Make sidebar a floating slide-over drawer on top of the fullscreen movie
                 dom.sidebarColumn.className = `fixed top-3 bottom-3 right-3 w-80 sm:w-96 flex flex-col gap-3 z-40 transition-transform duration-300 ${
                     state.drawerOpen ? 'translate-x-0' : 'translate-x-[110%]'
                 }`;
@@ -874,11 +890,9 @@
                 }
             }
 
-            // Update Floating Tab Icon
             dom.btnFloatingDrawer.innerHTML = `
                 <i data-lucide="${state.drawerOpen ? 'panel-right-close' : 'panel-right-open'}" class="w-4 h-4 text-cozy-pink group-hover:text-slate-950 transition"></i>
                 <span class="text-[10px] font-bold tracking-wider uppercase [writing-mode:vertical-rl] rotate-180">${state.drawerOpen ? 'Hide Chat' : 'Open Chat'}</span>
-                <span id="unread-chat-dot" class="${state.drawerOpen ? 'hidden' : 'hidden'} w-2 h-2 rounded-full bg-cozy-mint animate-ping"></span>
             `;
             lucide.createIcons({ nodes: [dom.btnFloatingDrawer] });
         }
@@ -892,12 +906,11 @@
             state.isImmersiveFullscreen = !state.isImmersiveFullscreen;
 
             if (state.isImmersiveFullscreen) {
-                // Auto-hide drawer initially when expanding movie so it fills 100% screen, user can slide it out anytime
                 state.drawerOpen = false;
                 if (!document.fullscreenElement) {
                     document.documentElement.requestFullscreen().catch(() => {});
                 }
-                showToast('Full Screen Active! Use the "Open Chat" tab on the right edge anytime.', 'info');
+                showToast('Pełny ekran aktywny! Użyj przycisku "Open Chat" przy prawej krawędzi, aby wysuwać czat.', 'info');
             } else {
                 state.drawerOpen = true;
                 if (document.fullscreenElement) {
@@ -951,6 +964,7 @@
             dom.stageSeekbarRow.classList.add('flex');
 
             updateStagePlayPauseUI();
+            updateShareButtonUI();
 
             if (state.ytPlayer && typeof state.ytPlayer.loadVideoById === 'function') {
                 state.ytPlayer.loadVideoById({ videoId: videoId, startSeconds: startSeconds });
@@ -995,7 +1009,6 @@
             }
         }
 
-        // Periodic Seekbar & Time UI updater
         setInterval(() => {
             if (state.stageMode === 'youtube' && state.ytPlayer && typeof state.ytPlayer.getCurrentTime === 'function') {
                 const cur = state.ytPlayer.getCurrentTime() || 0;
@@ -1237,15 +1250,17 @@
 
         function getSelectedMediaConstraints() {
             const quality = dom.selectStreamQuality.value;
-            if (quality === '720p30') {
-                return {
-                    video: { cursor: 'always', width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30, max: 30 } },
-                    audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
-                };
-            }
+            const videoConstraints = quality === '720p30'
+                ? { cursor: 'always', width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30, max: 30 } }
+                : { cursor: 'always', width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 60, max: 60 } };
+
             return {
-                video: { cursor: 'always', width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 60, max: 60 } },
-                audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+                video: videoConstraints,
+                audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+                // Exclude VeeVee's own tab from the picker list so Netflix/Disney+ tab is front and center
+                selfBrowserSurface: 'exclude',
+                surfaceSwitching: 'include',
+                systemAudio: 'include'
             };
         }
 
@@ -1264,7 +1279,7 @@
                     videoTrack.onended = () => stopAllStageStreams();
                 }
             } catch (err) {
-                showToast('Screen capture cancelled.', 'warning');
+                showToast('Wybór karty został anulowany.', 'warning');
             }
         }
 
@@ -1432,6 +1447,16 @@
                 state.localScreenStream.getTracks().forEach(track => {
                     track.enabled = !state.isStagePaused;
                 });
+            }
+
+            // Send remote signal if companion tab is open
+            if (state.openedPlatformWindow && !state.openedPlatformWindow.closed) {
+                try {
+                    state.openedPlatformWindow.postMessage({
+                        type: 'VEEVEE_REMOTE_CONTROL',
+                        action: state.isStagePaused ? 'pause' : 'play'
+                    }, '*');
+                } catch (e) {}
             }
 
             updateStagePlayPauseUI();
@@ -1637,7 +1662,6 @@
                     conn.send({ type: 'peer-list', peers: peerList });
                 }
 
-                // Sync current active movie with newly joined friend
                 if (state.stageMode === 'youtube' && state.ytVideoId) {
                     const cur = state.ytPlayer?.getCurrentTime ? state.ytPlayer.getCurrentTime() : 0;
                     conn.send({ type: 'load-youtube', videoId: state.ytVideoId, startSeconds: cur, sender: state.username });
@@ -1824,15 +1848,12 @@
 
         // ==================== EVENT LISTENERS ====================
 
-        // Slide-Out Chat Drawer Listeners
         dom.btnFloatingDrawer.addEventListener('click', () => toggleDrawer());
         dom.btnCloseDrawerInside.addEventListener('click', () => toggleDrawer(false));
 
-        // Fullscreen / Expand Video Listeners
         dom.btnFullscreen.addEventListener('click', toggleImmersiveFullscreen);
         dom.btnStageExpand.addEventListener('click', toggleImmersiveFullscreen);
 
-        // Platforms & Built-in Player Modal Listeners
         function openPlatformsModal() {
             dom.platformsModal.classList.remove('hidden');
             dom.platformsModal.classList.add('flex');
@@ -1852,17 +1873,17 @@
         dom.btnLoadUrl.addEventListener('click', () => {
             const rawUrl = dom.inputMediaUrl.value.trim();
             if (!rawUrl) {
-                showToast('Paste a YouTube link or direct video URL first!', 'warning');
+                showToast('Najpierw wklej link do YouTube lub bezpośredni link wideo!', 'warning');
                 return;
             }
             const ytId = extractYouTubeId(rawUrl);
             closePlatformsModal();
             if (ytId) {
                 loadYouTubeStageVideo(ytId, 0, true);
-                showToast('YouTube loaded! Use Start / Pause directly on the stage.', 'success');
+                showToast('YouTube włączony! Steruj przyciskami Start / Pause bezpośrednio na ekranie.', 'success');
             } else {
                 startDirectUrlStream(rawUrl, true);
-                showToast('Video URL loaded! Use Start / Pause directly on the stage.', 'success');
+                showToast('Film włączony! Steruj przyciskami Start / Pause bezpośrednio na ekranie.', 'success');
             }
         });
 
@@ -1871,21 +1892,27 @@
             dom.inputLocalVideo.click();
         });
 
-        // Launch Netflix / Disney+ / Max Login Companion Window + Screen Share
+        // FIXED 2-STEP PLATFORM FLOW: Open in normal tab (NOT a disappearing popup), let user log in, then click Step 2 to share
         document.querySelectorAll('.platform-launch-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const platformName = btn.getAttribute('data-platform');
                 const platformUrl = btn.getAttribute('data-url');
-                closePlatformsModal();
+                state.selectedPlatformName = platformName;
 
-                // Open login/player window so user can log into their account
-                window.open(platformUrl, `${platformName}_VeeVee`, 'width=1150,height=720,menubar=no,toolbar=no,location=yes,status=no');
-                showToast(`Log in to ${platformName} in the new window, then select it in the capture prompt!`, 'info');
+                // Open as a standard browser tab ('_blank' without width/height) so it stays open and shows up in "Browser Tabs"
+                state.openedPlatformWindow = window.open(platformUrl, '_blank');
 
-                setTimeout(() => {
-                    startScreenShare(`${platformName} • ${state.username}`);
-                }, 900);
+                dom.step2StatusTitle.textContent = `Krok 2: Zaloguj się na otwartej karcie ${platformName} i włącz film, a potem kliknij przycisk obok!`;
+                dom.step2CaptureBox.classList.add('ring-2', 'ring-cozy-mint');
+                showToast(`Otwarto ${platformName} w nowej karcie! Zaloguj się tam, a po powrocie kliknij zielony przycisk Kroku 2.`, 'success');
             });
+        });
+
+        // Step 2 Button: User is back on VeeVee tab and ready to pick the Netflix/Disney+ tab
+        dom.btnStep2StartCapture.addEventListener('click', () => {
+            const label = state.selectedPlatformName ? `${state.selectedPlatformName} • ${state.username}` : `${state.username}'s Screen`;
+            closePlatformsModal();
+            startScreenShare(label);
         });
 
         // Stage Direct Start / Pause / Rewind / Seek / Stop
