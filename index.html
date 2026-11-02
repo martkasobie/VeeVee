@@ -137,24 +137,21 @@
         }
 
         /* ==================== SMART ZONE HOVER BARS (TOP vs BOTTOM) ==================== */
-        /* Top Stage Utility Bar & Badge: Hidden by default during playback, shown only when mouse is in TOP zone */
-        #stage-top-utilities,
+        /* Top Live Badge: Hidden during playback, shown only when mouse is in TOP zone */
         #stream-live-badge {
             opacity: 0;
             transform: translateY(-10px);
             pointer-events: none;
             transition: opacity 0.25s ease, transform 0.25s ease;
         }
-        #stage-container.zone-top-active #stage-top-utilities,
         #stage-container.zone-top-active #stream-live-badge,
-        #stage-top-utilities:hover,
         #stream-live-badge:hover {
             opacity: 1;
             transform: translateY(0);
             pointer-events: auto;
         }
 
-        /* Bottom Playback Bar (Start/Stop/Seek/CC): Hidden by default, shown ONLY when mouse is in BOTTOM zone */
+        /* Bottom Playback Bar (Start/Stop/Seek/Volume/CC/Hub): Hidden by default, shown ONLY when mouse is in BOTTOM zone */
         #stage-overlay-controls {
             opacity: 0;
             transform: translateY(14px);
@@ -169,10 +166,10 @@
             pointer-events: auto;
         }
 
-        /* Fullscreen Expanded Video Stage Mode:
+        /* Fullscreen Mode:
            - Movie fills 100% of screen
-           - Mic/Cam/Share Dock moves to TOP of screen and appears ONLY on Top Hover
-           - Start/Stop/Seekbar stays at BOTTOM of screen and appears ONLY on Bottom Hover */
+           - Social & Hardware Dock (Mic, Cam, Emojis, Laser, PiP, Exit Full) moves to TOP of screen and appears ONLY on Top Hover
+           - Movie Playback Bar (Start/Stop/Seek/Volume/Language/Hub) stays at BOTTOM of screen and appears ONLY on Bottom Hover */
         body.immersive-fullscreen header {
             display: none !important;
         }
@@ -207,11 +204,8 @@
             transform: translateX(-50%) translateY(0);
             pointer-events: auto;
         }
-        body.immersive-fullscreen #stage-top-utilities {
-            top: 82px !important;
-        }
         body.immersive-fullscreen #stream-live-badge {
-            top: 82px !important;
+            top: 80px !important;
         }
         body.immersive-fullscreen #stage-overlay-controls {
             bottom: 18px !important;
@@ -278,7 +272,7 @@
                     </div>
                     <div>
                         <span id="lobby-ext-title" class="text-xs font-bold text-white block">Netflix / Disney+ / Max / Prime Bridge</span>
-                        <span id="lobby-ext-sub" class="text-[11px] text-amber-200">Install 1-click .ZIP plugin v4.0 for all VOD sites!</span>
+                        <span id="lobby-ext-sub" class="text-[11px] text-amber-200">Install v5.0 .ZIP for all-platform sync & languages!</span>
                     </div>
                 </div>
                 <button type="button" id="btn-lobby-install-ext" onclick="window.veeveeOpenExtensionModal()" class="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs shrink-0 shadow-lg transition cursor-pointer">
@@ -365,9 +359,9 @@
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="px-2 py-0.5 rounded-full bg-cozy-mint/20 text-cozy-mint border border-cozy-mint/40 text-[10px] font-bold uppercase">Universal VOD + ShadowDOM • v4.0</span>
+                            <span class="px-2 py-0.5 rounded-full bg-cozy-mint/20 text-cozy-mint border border-cozy-mint/40 text-[10px] font-bold uppercase">All-Platform Audio & CC • v5.0</span>
                         </div>
-                        <h3 class="font-display text-xl font-bold text-white mt-1">Install VeeVee Watch Party Bridge v4.0 🧩</h3>
+                        <h3 class="font-display text-xl font-bold text-white mt-1">Install VeeVee Watch Party Bridge v5.0 🧩</h3>
                     </div>
                 </div>
                 <button type="button" id="btn-close-extension-modal" onclick="window.veeveeCloseExtensionModal()" class="p-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition cursor-pointer">
@@ -376,7 +370,7 @@
             </div>
 
             <p class="text-xs text-slate-300 leading-relaxed mb-4">
-                Version 4.0 supports <strong>Netflix (M7375-Safe Cadmium API)</strong> AND <strong>Disney+, HBO Max, and Prime Video</strong> (including Shadow DOM players) so you can control Start, Pause, Seekbar, Audio Language, and Subtitles directly from VeeVee:
+                Version 5.0 unlocks <strong>Start / Pause / Seekbar</strong> AND <strong>Audio Language & Subtitle (CC) switching</strong> across <strong>Netflix, Disney+, HBO Max, Prime Video, and YouTube</strong> directly from VeeVee:
             </p>
 
             <div class="space-y-3.5 text-xs text-slate-300 leading-relaxed">
@@ -384,11 +378,11 @@
                 <div class="p-4 rounded-2xl bg-cozy-bg/95 border border-cozy-pink/40">
                     <p class="font-bold text-cozy-pink mb-2.5 flex items-center gap-1.5">
                         <i data-lucide="package-check" class="w-4 h-4"></i>
-                        <span>Step 1: Download the Complete v4.0 Extension Package (.ZIP)</span>
+                        <span>Step 1: Download the Complete v5.0 Extension Package (.ZIP)</span>
                     </p>
                     <button type="button" id="btn-download-zip-ext" onclick="window.veeveeDownloadZip()" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs shadow-glow-pink flex items-center justify-center gap-2 hover:opacity-95 transition mb-2.5 cursor-pointer">
                         <i data-lucide="download" class="w-4 h-4 stroke-[2.5]"></i>
-                        <span>Download Complete Extension (veevee-bridge-v4.zip)</span>
+                        <span>Download Complete Extension (veevee-bridge-v5.zip)</span>
                     </button>
                     <div class="grid grid-cols-3 gap-2 pt-1">
                         <button type="button" id="btn-download-manifest" onclick="window.veeveeDownloadSingle('manifest')" class="py-1.5 px-2.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-300 border border-cozy-border font-semibold text-[11px] flex items-center justify-center gap-1 transition cursor-pointer">
@@ -419,8 +413,8 @@
                     </div>
                     <ol class="list-decimal list-inside space-y-1.5 text-slate-300 text-xs">
                         <li>Open <code class="text-cozy-mint bg-cozy-panel px-1.5 py-0.5 rounded font-mono">chrome://extensions</code> in a new tab and enable <strong>Developer mode</strong> (top-right).</li>
-                        <li><strong>Unzip</strong> <code class="text-cozy-pink">veevee-bridge-v4.zip</code> into your extension folder, click <strong>Load unpacked</strong> (or click the reload icon on your existing VeeVee extension).</li>
-                        <li>Refresh your open Disney+, Max, Prime Video, or Netflix tab once so v4.0 connects!</li>
+                        <li><strong>Unzip</strong> <code class="text-cozy-pink">veevee-bridge-v5.zip</code> into your extension folder, then click <strong>Load unpacked</strong> (or click the reload icon on your existing VeeVee extension).</li>
+                        <li>Refresh your open Disney+, Max, Prime Video, or Netflix tab once so v5.0 connects!</li>
                     </ol>
                 </div>
 
@@ -456,7 +450,7 @@
                     </div>
                     <div>
                         <h3 class="font-display text-lg font-bold text-white">Audio Language & Subtitles (CC) 🌍</h3>
-                        <p class="text-xs text-slate-400">Customize your personal subtitles or switch the stream's audio track</p>
+                        <p class="text-xs text-slate-400">Works across Netflix, Disney+, HBO Max, Prime Video & Personal .SRT/.VTT</p>
                     </div>
                 </div>
                 <button type="button" id="btn-close-language-modal" class="p-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition cursor-pointer">
@@ -470,12 +464,12 @@
                     <div class="flex items-center justify-between mb-2">
                         <span class="font-bold uppercase tracking-wider text-cozy-mint flex items-center gap-1.5">
                             <i data-lucide="user-check" class="w-4 h-4"></i>
-                            <span>1. Your Personal Subtitles (Independent per User)</span>
+                            <span>1. Your Personal Subtitles (Independent per Viewer)</span>
                         </span>
                         <span class="text-[10px] px-2 py-0.5 rounded-full bg-cozy-mint/15 text-cozy-mint font-semibold">Only on Your Screen</span>
                     </div>
                     <p class="text-slate-400 mb-3 leading-relaxed">
-                        Load any <strong>.SRT</strong> or <strong>.VTT</strong> subtitle file in your preferred language. It renders exclusively on your screen so you and your friend can each read subtitles in different languages!
+                        Load any <strong>.SRT</strong> or <strong>.VTT</strong> subtitle file in your own language. It displays exclusively on your screen so you and your friend can each read subtitles in different languages!
                     </p>
 
                     <div class="flex flex-wrap items-center gap-2 mb-3">
@@ -516,15 +510,15 @@
                     <div class="flex items-center justify-between mb-2">
                         <span class="font-bold uppercase tracking-wider text-cozy-pink flex items-center gap-1.5">
                             <i data-lucide="languages" class="w-4 h-4"></i>
-                            <span>2. Stream Audio & VOD Subtitle Tracks</span>
+                            <span>2. Stream Audio & Platform Subtitles (All VOD)</span>
                         </span>
-                        <button type="button" id="btn-refresh-vod-tracks" class="text-[11px] text-cozy-lavender hover:underline flex items-center gap-1 cursor-pointer">
+                        <button type="button" id="btn-refresh-vod-tracks" class="px-2.5 py-1 rounded-lg bg-cozy-panel hover:bg-cozy-border text-[11px] text-cozy-lavender font-semibold flex items-center gap-1 cursor-pointer">
                             <i data-lucide="refresh-cw" class="w-3 h-3"></i>
-                            <span>Refresh Tracks</span>
+                            <span>Scan Platform Languages</span>
                         </button>
                     </div>
                     <p class="text-slate-400 mb-3 leading-relaxed">
-                        Switch the spoken audio language (dubbing/original) or built-in subtitles directly on the active Netflix / Disney+ / Max / Prime stream:
+                        Click <strong>Scan Platform Languages</strong> to fetch all available spoken audio languages and subtitle tracks from Netflix, Disney+, HBO Max, or Prime Video:
                     </p>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -633,7 +627,7 @@
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                     <span class="text-xs font-bold uppercase tracking-wider text-cozy-pink flex items-center gap-1.5">
                         <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
-                        Option 2: Netflix, Disney+, Max, Prime Video (Universal v4.0 Bridge)
+                        Option 2: Netflix, Disney+, Max, Prime Video (Universal v5.0 Bridge)
                     </span>
                     <button type="button" id="extension-status-badge" onclick="window.veeveeOpenExtensionModal()" class="text-[11px] px-3 py-1 rounded-xl bg-amber-500/20 hover:bg-amber-400 hover:text-slate-950 text-amber-300 border border-amber-400/50 font-bold flex items-center gap-1.5 transition cursor-pointer shadow-sm">
                         <i data-lucide="download" class="w-3.5 h-3.5"></i>
@@ -642,7 +636,7 @@
                 </div>
                 <p class="text-xs text-slate-400 mb-3 leading-relaxed">
                     <strong>Step 1:</strong> Click a platform below — it opens in a normal adjacent tab where you can log in and start your movie.<br>
-                    <strong>Step 2:</strong> Return to this VeeVee tab and click the green button below. With the v4.0 Bridge extension installed, <strong>Start / Pause / Seekbar / Audio Language / Subtitles</strong> work directly from the VeeVee screen across all 4 platforms!
+                    <strong>Step 2:</strong> Return to this VeeVee tab and click the green button below. With the v5.0 Bridge extension installed, <strong>Start / Pause / Seekbar / Audio Language / Subtitles</strong> work directly from the VeeVee screen across all 4 platforms!
                 </p>
 
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
@@ -710,12 +704,12 @@
             </div>
             <div class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
                 <div class="p-3 rounded-2xl bg-cozy-bg/80 border border-cozy-border">
-                    <p class="font-semibold text-cozy-pink mb-1">1. Smart Top & Bottom Hover Bars</p>
-                    <p class="text-xs text-slate-400">While watching a movie, move your mouse to the <strong>bottom edge</strong> to reveal Start/Stop/Seekbar, or move your mouse to the <strong>top edge</strong> in Full Screen to reveal Mic/Cam/Reactions. Moving away hides all bars automatically!</p>
+                    <p class="font-semibold text-cozy-pink mb-1">1. Clean Top vs Bottom Bars (No Duplicate Buttons!)</p>
+                    <p class="text-xs text-slate-400">Hover near the <strong>bottom edge</strong> of the movie for all playback controls (Start/Pause, Seekbar, Volume, Audio & Subtitles, Watch Hub, Stop Stream). Hover near the <strong>top edge</strong> in Full Screen for Social & Hardware controls (Mic, Cam, Emojis, Laser, PiP, Exit Full).</p>
                 </div>
                 <div class="p-3 rounded-2xl bg-cozy-bg/80 border border-cozy-border">
-                    <p class="font-semibold text-cozy-lavender mb-1">2. Disney+, HBO Max, Prime Video & Netflix Sync</p>
-                    <p class="text-xs text-slate-400">Make sure you update your Chrome Extension to <strong>v4.0</strong> (click <em>Install Extension</em> at the top) and refresh your streaming tab once.</p>
+                    <p class="font-semibold text-cozy-lavender mb-1">2. Audio & Subtitles Across All Platforms (v5.0)</p>
+                    <p class="text-xs text-slate-400">Click <strong>Audio & Subtitles (CC)</strong> on the bottom video bar, then click <strong>Scan Platform Languages</strong> to remotely switch audio/subtitles on Netflix, Disney+, HBO Max, or Prime Video, or upload your own <code>.srt</code> file!</p>
                 </div>
                 <div class="p-3 rounded-2xl bg-cozy-bg/80 border border-cozy-border">
                     <p class="font-semibold text-cozy-mint mb-1">3. Camera or Microphone Not Showing?</p>
@@ -759,16 +753,11 @@
             </button>
         </div>
 
-        <!-- Right: Hub, Extension, Quality, Participants, Help -->
+        <!-- Right: Extension, Quality, Participants, Help -->
         <div class="flex items-center gap-2">
-            <button type="button" id="btn-open-platforms-top" class="px-3 py-2 rounded-2xl bg-cozy-panel hover:bg-cozy-border border border-cozy-pink/30 text-cozy-pink text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer" title="Open Streaming Platforms & Player Hub">
-                <i data-lucide="tv-2" class="w-4 h-4"></i>
-                <span class="hidden sm:inline">Watch Hub</span>
-            </button>
-
-            <button type="button" id="btn-open-extension-top" onclick="window.veeveeOpenExtensionModal()" class="px-3 py-2 rounded-2xl bg-amber-400/20 hover:bg-amber-400 hover:text-slate-950 border border-amber-400/50 text-amber-300 text-xs font-bold flex items-center gap-1.5 transition shadow-sm cursor-pointer" title="Download 1-Click .ZIP Chrome Extension v4.0">
+            <button type="button" id="btn-open-extension-top" onclick="window.veeveeOpenExtensionModal()" class="px-3 py-2 rounded-2xl bg-amber-400/20 hover:bg-amber-400 hover:text-slate-950 border border-amber-400/50 text-amber-300 text-xs font-bold flex items-center gap-1.5 transition shadow-sm cursor-pointer" title="Download 1-Click .ZIP Chrome Extension v5.0">
                 <i data-lucide="puzzle" class="w-4 h-4"></i>
-                <span id="top-ext-label">Install Extension</span>
+                <span id="top-ext-label">Install Extension v5.0</span>
             </button>
 
             <select id="select-stream-quality" class="hidden lg:block bg-cozy-card border border-cozy-border text-slate-200 text-xs rounded-2xl px-3 py-2 focus:outline-none focus:border-cozy-pink cursor-pointer" title="Screen Share Quality">
@@ -794,7 +783,7 @@
     <!-- ==================== MAIN WORKSPACE ==================== -->
     <main class="flex-1 flex flex-col lg:flex-row gap-3.5 p-3 sm:p-4 overflow-hidden min-h-0 relative">
         
-        <!-- ========== LEFT COLUMN: MAIN VIDEO STAGE & DOCK ========== -->
+        <!-- ========== LEFT COLUMN: MAIN VIDEO STAGE & SOCIAL DOCK ========== -->
         <section id="main-stage-column" class="w-full lg:w-3/4 flex flex-col gap-3 min-h-0 flex-1 transition-all duration-300">
             
             <!-- Main Video Stage Container -->
@@ -831,34 +820,16 @@
                 <div id="stream-live-badge" class="hidden absolute top-4 left-4 z-30 items-center gap-2 px-3 py-1.5 rounded-2xl bg-black/75 backdrop-blur-md border border-white/10 text-xs">
                     <span class="w-2 h-2 rounded-full bg-rose-500 pulse-dot"></span>
                     <span id="stream-source-label" class="font-semibold text-white">LIVE</span>
-                    <span id="vod-sync-badge" class="hidden px-2 py-0.5 rounded-full bg-cozy-mint/20 text-cozy-mint text-[10px] font-bold">VOD Bridge v4.0 Active</span>
+                    <span id="vod-sync-badge" class="hidden px-2 py-0.5 rounded-full bg-cozy-mint/20 text-cozy-mint text-[10px] font-bold">VOD Bridge v5.0 Active</span>
                 </div>
 
-                <!-- Top-Right Stage Utility Buttons (Appears ONLY on Top Hover Zone) -->
-                <div id="stage-top-utilities" class="absolute top-4 right-12 z-30 flex items-center gap-2">
-                    <button type="button" id="btn-unmute-stage" class="hidden items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-cozy-pink text-slate-950 font-bold text-xs shadow-glow-pink hover:scale-105 transition cursor-pointer">
-                        <i data-lucide="volume-2" class="w-4 h-4"></i>
-                        <span>Enable Stream Audio</span>
-                    </button>
+                <!-- Guest Autoplay Unmute Prompt (Only appears if browser blocks initial audio) -->
+                <button type="button" id="btn-unmute-stage" class="hidden absolute top-4 right-14 z-30 items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-cozy-pink text-slate-950 font-bold text-xs shadow-glow-pink hover:scale-105 transition cursor-pointer">
+                    <i data-lucide="volume-2" class="w-4 h-4"></i>
+                    <span>Enable Stream Audio</span>
+                </button>
 
-                    <button type="button" id="btn-stage-top-cc" class="p-2.5 rounded-2xl bg-black/75 hover:bg-cozy-lavender hover:text-slate-950 text-white border border-white/15 backdrop-blur-md transition cursor-pointer" title="Audio Language & Subtitles (CC)">
-                        <i data-lucide="subtitles" class="w-4 h-4"></i>
-                    </button>
-
-                    <button type="button" id="btn-stage-laser" class="p-2.5 rounded-2xl bg-black/75 hover:bg-cozy-pink hover:text-slate-950 text-white border border-white/15 backdrop-blur-md transition cursor-pointer" title="Laser Pointer (Highlight things on the video for friends)">
-                        <i data-lucide="wand-2" class="w-4 h-4"></i>
-                    </button>
-
-                    <button type="button" id="btn-stage-pip" class="p-2.5 rounded-2xl bg-black/75 hover:bg-cozy-lavender hover:text-slate-950 text-white border border-white/15 backdrop-blur-md transition cursor-pointer" title="Picture-in-Picture Mode">
-                        <i data-lucide="picture-in-picture-2" class="w-4 h-4"></i>
-                    </button>
-
-                    <button type="button" id="btn-stage-expand" class="p-2.5 rounded-2xl bg-black/75 hover:bg-cozy-pink hover:text-slate-950 text-white border border-white/15 backdrop-blur-md transition cursor-pointer" title="Expand Movie to Fill 100% Screen">
-                        <i data-lucide="maximize-2" class="w-4 h-4"></i>
-                    </button>
-                </div>
-
-                <!-- ==================== BOTTOM HOVER ZONE: START / STOP / SEEK / LANGUAGE BAR ==================== -->
+                <!-- ==================== BOTTOM HOVER ZONE: DEDICATED MOVIE PLAYBACK & STREAM CONTROLS ==================== -->
                 <div id="stage-overlay-controls" class="hidden absolute bottom-4 left-4 right-12 z-30 flex-col gap-2.5 px-4 py-3 rounded-2xl bg-black/85 backdrop-blur-xl border border-white/15 shadow-2xl">
                     
                     <!-- Interactive Seekbar Row -->
@@ -868,7 +839,7 @@
                         <span id="label-duration-time" class="text-[11px] font-mono text-slate-400 w-12">00:00</span>
                     </div>
 
-                    <!-- Control Buttons Row -->
+                    <!-- Control Buttons Row (All Movie Controls in ONE Place - Zero Duplication) -->
                     <div class="flex flex-wrap items-center justify-between gap-2">
                         <div class="flex flex-wrap items-center gap-2">
                             <!-- Direct START / PAUSE Button -->
@@ -878,25 +849,31 @@
                             </button>
 
                             <!-- Rewind 10s Button -->
-                            <button type="button" id="btn-stage-rewind" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1 transition cursor-pointer" title="Rewind 10 seconds for everyone">
+                            <button type="button" id="btn-stage-rewind" class="px-2.5 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1 transition cursor-pointer" title="Rewind 10 seconds">
                                 <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                                 <span>-10s</span>
                             </button>
 
                             <!-- Forward 10s Button -->
-                            <button type="button" id="btn-stage-forward" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1 transition cursor-pointer" title="Forward 10 seconds for everyone">
+                            <button type="button" id="btn-stage-forward" class="px-2.5 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1 transition cursor-pointer" title="Forward 10 seconds">
                                 <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
                                 <span>+10s</span>
                             </button>
 
-                            <!-- Audio Language & Subtitles (CC) Button -->
-                            <button type="button" id="btn-stage-language" class="px-3.5 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender border border-cozy-lavender/40 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer" title="Select Audio Language & Subtitles (CC)">
+                            <!-- Movie Volume Slider (Moved here so all movie audio controls are together) -->
+                            <div class="flex items-center gap-1.5 bg-cozy-panel px-2.5 py-1.5 rounded-xl border border-cozy-border" title="Movie Volume">
+                                <i data-lucide="volume-2" class="w-3.5 h-3.5 text-cozy-lavender"></i>
+                                <input id="slider-stage-volume" type="range" min="0" max="1" step="0.05" value="1" class="w-14 accent-cozy-pink cursor-pointer">
+                            </div>
+
+                            <!-- Audio Language & Subtitles (CC) Button (Single Unified Button) -->
+                            <button type="button" id="btn-stage-language" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender border border-cozy-lavender/40 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer" title="Select Audio Language & Subtitles (CC)">
                                 <i data-lucide="subtitles" class="w-4 h-4"></i>
                                 <span>Audio & Subtitles (CC)</span>
                             </button>
 
                             <!-- Playback Speed Selector -->
-                            <select id="select-stage-speed" class="bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold rounded-xl px-2.5 py-2 border border-cozy-border focus:outline-none cursor-pointer" title="Playback Speed">
+                            <select id="select-stage-speed" class="bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold rounded-xl px-2 py-2 border border-cozy-border focus:outline-none cursor-pointer" title="Playback Speed">
                                 <option value="0.75">0.75x</option>
                                 <option value="1" selected>1.0x</option>
                                 <option value="1.25">1.25x</option>
@@ -904,21 +881,21 @@
                             </select>
 
                             <!-- Skip Intro Button -->
-                            <button type="button" id="btn-stage-skip-intro" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-cozy-amber border border-cozy-amber/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer" title="Skip Intro on Netflix / Disney+ / Max / Prime">
+                            <button type="button" id="btn-stage-skip-intro" class="px-2.5 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-cozy-amber border border-cozy-amber/30 text-xs font-semibold flex items-center gap-1 transition cursor-pointer" title="Skip Intro on Netflix / Disney+ / Max / Prime">
                                 <i data-lucide="fast-forward" class="w-3.5 h-3.5"></i>
-                                <span class="hidden sm:inline">Skip Intro</span>
-                            </button>
-
-                            <!-- Change Source / Open Platform Hub -->
-                            <button type="button" id="btn-stage-change-source" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
-                                <i data-lucide="tv-2" class="w-3.5 h-3.5 text-cozy-pink"></i>
-                                <span class="hidden md:inline">Change Movie</span>
+                                <span class="hidden xl:inline">Skip Intro</span>
                             </button>
                         </div>
 
                         <div class="flex items-center gap-2">
+                            <!-- Watch Hub / Change Source Button -->
+                            <button type="button" id="btn-stage-change-source" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-cozy-pink border border-cozy-pink/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
+                                <i data-lucide="tv-2" class="w-3.5 h-3.5"></i>
+                                <span class="hidden sm:inline">Watch Hub</span>
+                            </button>
+
                             <!-- Direct STOP Button -->
-                            <button type="button" id="btn-stage-stop" class="px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transition cursor-pointer">
+                            <button type="button" id="btn-stage-stop" class="px-3.5 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transition cursor-pointer">
                                 <i data-lucide="square" class="w-3.5 h-3.5 fill-current"></i>
                                 <span>Stop Stream</span>
                             </button>
@@ -933,7 +910,7 @@
                             <i data-lucide="film" class="w-10 h-10 text-cozy-pink"></i>
                         </div>
                         <span class="absolute -bottom-1 -right-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-cozy-mint text-slate-950">
-                            v4.0 All-VOD Sync
+                            v5.0 All-VOD + CC
                         </span>
                     </div>
 
@@ -951,11 +928,11 @@
                         </button>
                         <button type="button" id="btn-hero-extension" onclick="window.veeveeOpenExtensionModal()" class="px-4 py-3 rounded-2xl bg-amber-400/20 hover:bg-amber-400 hover:text-slate-950 text-amber-300 border border-amber-400/50 font-bold text-xs sm:text-sm flex items-center gap-2 transition cursor-pointer">
                             <i data-lucide="puzzle" class="w-4 h-4"></i>
-                            <span>Install VOD Extension v4.0 (.ZIP)</span>
+                            <span>Install VOD Extension v5.0 (.ZIP)</span>
                         </button>
                         <button type="button" id="btn-hero-share" class="px-4 py-3 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border font-semibold text-xs sm:text-sm flex items-center gap-2 transition cursor-pointer">
                             <i data-lucide="monitor-up" class="w-4 h-4 text-cozy-pink"></i>
-                            <span>Share Screen / Tab</span>
+                            <span>Quick Screen Share</span>
                         </button>
                         <button type="button" id="btn-hero-file" class="px-4 py-3 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border font-semibold text-xs sm:text-sm flex items-center gap-2 transition cursor-pointer">
                             <i data-lucide="folder-video" class="w-4 h-4 text-cozy-lavender"></i>
@@ -969,10 +946,10 @@
                 </div>
             </div>
 
-            <!-- Media & Reactions Dock (In Full Screen mode, this dock moves to the TOP of the screen and appears ONLY when hovering at the top edge!) -->
+            <!-- ==================== SOCIAL, HARDWARE & ROOM DOCK (In Full Screen mode, sits at TOP of screen on top-edge hover — Zero Duplication with Bottom Video Bar!) ==================== -->
             <div id="bottom-dock" class="glass-card rounded-3xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
                 
-                <!-- Left: Media & Stream Controls -->
+                <!-- Left: Microphone & Camera Hardware Controls -->
                 <div class="flex items-center flex-wrap gap-2">
                     <div class="flex items-center rounded-2xl bg-cozy-panel border border-cozy-border overflow-hidden">
                         <button type="button" id="btn-toggle-mic" class="px-3.5 py-2.5 hover:bg-cozy-border text-white flex items-center gap-2 text-xs font-semibold transition cursor-pointer" title="Mute / Unmute Microphone">
@@ -988,21 +965,6 @@
                         <i data-lucide="video" class="w-4 h-4 text-cozy-mint"></i>
                         <span class="hidden sm:inline">Cam On</span>
                     </button>
-
-                    <button type="button" id="btn-share-screen" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs shadow-glow-pink flex items-center gap-2 hover:opacity-95 transition cursor-pointer">
-                        <i data-lucide="screen-share" class="w-4 h-4 stroke-[2.2]"></i>
-                        <span>Share Screen</span>
-                    </button>
-
-                    <button type="button" id="btn-dock-platforms" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-pink border border-cozy-pink/30 flex items-center gap-1.5 text-xs font-semibold transition cursor-pointer" title="Open Watch Hub">
-                        <i data-lucide="play-square" class="w-4 h-4"></i>
-                        <span class="hidden md:inline">Watch Hub</span>
-                    </button>
-
-                    <button type="button" id="btn-dock-language" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender border border-cozy-lavender/30 flex items-center gap-1.5 text-xs font-semibold transition cursor-pointer" title="Audio Language & Subtitles (CC)">
-                        <i data-lucide="subtitles" class="w-4 h-4"></i>
-                        <span class="hidden md:inline">Language & CC</span>
-                    </button>
                 </div>
 
                 <!-- Center: Quick Floating Emoji Reactions -->
@@ -1015,7 +977,7 @@
                     <button type="button" data-emoji="🥺" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition cursor-pointer" title="Touched">🥺</button>
                 </div>
 
-                <!-- Right: Auto-Duck, SFX, Volume, Fullscreen Expand -->
+                <!-- Right: Social Utilities (Auto-Duck, SFX, Laser Pointer, PiP, Fullscreen Expand) -->
                 <div class="flex items-center gap-2">
                     <button type="button" id="btn-toggle-autoduck" class="px-3 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-mint border border-cozy-mint/30 flex items-center gap-1.5 text-xs font-semibold transition cursor-pointer" title="Auto-Ducking: Automatically lowers movie volume when someone speaks">
                         <i data-lucide="ear" class="w-4 h-4"></i>
@@ -1026,12 +988,15 @@
                         <i data-lucide="bell" class="w-4 h-4"></i>
                     </button>
 
-                    <div class="hidden sm:flex items-center gap-2 bg-cozy-bg/80 px-3 py-2 rounded-2xl border border-cozy-border" title="Movie Volume">
-                        <i data-lucide="volume-2" class="w-4 h-4 text-cozy-lavender"></i>
-                        <input id="slider-stage-volume" type="range" min="0" max="1" step="0.05" value="1" class="w-16 accent-cozy-pink cursor-pointer">
-                    </div>
+                    <button type="button" id="btn-stage-laser" class="p-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border transition cursor-pointer" title="Laser Pointer (Highlight things on the video for friends)">
+                        <i data-lucide="wand-2" class="w-4 h-4"></i>
+                    </button>
 
-                    <button type="button" id="btn-fullscreen" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-pink hover:text-slate-950 text-slate-200 border border-cozy-border flex items-center gap-1.5 text-xs font-semibold transition cursor-pointer" title="Expand Video to Fill 100% Screen (Top & Bottom bars appear on edge hover)">
+                    <button type="button" id="btn-stage-pip" class="p-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border transition cursor-pointer" title="Picture-in-Picture Mode">
+                        <i data-lucide="picture-in-picture-2" class="w-4 h-4"></i>
+                    </button>
+
+                    <button type="button" id="btn-fullscreen" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-pink hover:text-slate-950 text-slate-200 border border-cozy-border flex items-center gap-1.5 text-xs font-semibold transition cursor-pointer" title="Expand Video to Fill 100% Screen">
                         <i data-lucide="maximize" class="w-4 h-4"></i>
                         <span class="hidden sm:inline" id="label-fullscreen">Full Screen</span>
                     </button>
@@ -1246,12 +1211,9 @@
             streamLiveBadge: document.getElementById('stream-live-badge'),
             streamSourceLabel: document.getElementById('stream-source-label'),
             vodSyncBadge: document.getElementById('vod-sync-badge'),
-            stageTopUtilities: document.getElementById('stage-top-utilities'),
             btnUnmuteStage: document.getElementById('btn-unmute-stage'),
-            btnStageTopCc: document.getElementById('btn-stage-top-cc'),
             btnStageLaser: document.getElementById('btn-stage-laser'),
             btnStagePip: document.getElementById('btn-stage-pip'),
-            btnStageExpand: document.getElementById('btn-stage-expand'),
             stageOverlayControls: document.getElementById('stage-overlay-controls'),
             stageSeekbarRow: document.getElementById('stage-seekbar-row'),
             sliderStageSeek: document.getElementById('slider-stage-seek'),
@@ -1274,9 +1236,6 @@
             btnToggleMic: document.getElementById('btn-toggle-mic'),
             btnOpenDevices: document.getElementById('btn-open-devices'),
             btnToggleCam: document.getElementById('btn-toggle-cam'),
-            btnShareScreen: document.getElementById('btn-share-screen'),
-            btnDockPlatforms: document.getElementById('btn-dock-platforms'),
-            btnDockLanguage: document.getElementById('btn-dock-language'),
             btnToggleAutoduck: document.getElementById('btn-toggle-autoduck'),
             btnToggleSfx: document.getElementById('btn-toggle-sfx'),
             sliderStageVolume: document.getElementById('slider-stage-volume'),
@@ -1299,13 +1258,13 @@
             selectMicDevice: document.getElementById('select-mic-device')
         };
 
-        // ==================== CHROME EXTENSION v4.0 (NETFLIX CADMIUM + DISNEY+ / MAX / PRIME SHADOW-DOM ENGINE) ====================
+        // ==================== CHROME EXTENSION v5.0 (ALL-PLATFORM AUDIO/SUBTITLES DOM + SHADOW-DOM + CADMIUM ENGINE) ====================
 
         const EXTENSION_MANIFEST_JSON = JSON.stringify({
             manifest_version: 3,
             name: "VeeVee Watch Party Bridge",
-            version: "4.0",
-            description: "Universal VOD Bridge for VeeVee Watch Party (Netflix M7375-Safe Cadmium API + Disney+, HBO Max, Prime Video Shadow-DOM Engine).",
+            version: "5.0",
+            description: "Universal VOD Bridge v5.0 for VeeVee Watch Party (Netflix Cadmium API + Disney+, HBO Max, Prime Video Audio/Subtitle DOM & Shadow-DOM Controller).",
             permissions: ["storage"],
             content_scripts: [
                 {
@@ -1324,8 +1283,11 @@
             ]
         }, null, 2);
 
-        const EXTENSION_PAGE_BRIDGE_JS = `// VeeVee Watch Party Bridge v4.0 - Universal VOD Engine (Netflix Cadmium + Disney+ / Max / Prime Shadow-DOM)
+        const EXTENSION_PAGE_BRIDGE_JS = `// VeeVee Watch Party Bridge v5.0 - Universal VOD Engine (Netflix Cadmium + Disney+ / Max / Prime Audio & Subtitle Scraper)
 (function() {
+    let cachedDomAudioTracks = [];
+    let cachedDomSubtitleTracks = [];
+
     // 1. Netflix Official Cadmium API helper (100% M7375 DRM-Safe)
     function getNetflixPlayer() {
         try {
@@ -1340,30 +1302,29 @@
         return null;
     }
 
-    // 2. Deep Shadow-DOM Video Finder (Finds active movie <video> on Disney+, HBO Max, Prime Video, etc.)
-    function findAllVideosDeep(root) {
-        let videos = [];
-        if (!root) return videos;
+    // 2. Deep Shadow-DOM Query Helper (Finds elements inside Disney+, Max, Prime Video Shadow Roots)
+    function queryAllDeep(selector, root = document) {
+        let results = [];
+        if (!root) return results;
         try {
-            const direct = root.querySelectorAll ? Array.from(root.querySelectorAll('video')) : [];
-            videos.push(...direct);
-            const allNodes = root.querySelectorAll ? root.querySelectorAll('*') : [];
-            for (let i = 0; i < allNodes.length; i++) {
-                const node = allNodes[i];
-                if (node.shadowRoot) {
-                    videos.push(...findAllVideosDeep(node.shadowRoot));
+            if (root.querySelectorAll) {
+                results.push(...Array.from(root.querySelectorAll(selector)));
+                const allNodes = root.querySelectorAll('*');
+                for (let i = 0; i < allNodes.length; i++) {
+                    if (allNodes[i].shadowRoot) {
+                        results.push(...queryAllDeep(selector, allNodes[i].shadowRoot));
+                    }
                 }
             }
         } catch (e) {}
-        return videos;
+        return results;
     }
 
     function getActiveMovieVideo() {
-        const allVideos = findAllVideosDeep(document);
+        const allVideos = queryAllDeep('video');
         if (allVideos.length === 0) return null;
         if (allVideos.length === 1) return allVideos[0];
 
-        // Score each <video> to skip hidden ad/preview/X-ray dummy videos on Prime Video, Disney+ & Max
         let bestVideo = allVideos[0];
         let bestScore = -1;
 
@@ -1382,13 +1343,120 @@
         return bestVideo;
     }
 
+    // 3. Universal DOM Audio & Subtitle Track Scanner for Disney+, HBO Max, Prime Video
+    function scanUniversalPlatformTracks(openMenuIfNeeded = false) {
+        if (location.hostname.includes('netflix.com')) return;
+
+        // Optionally click the platform's Audio/Subtitles menu button so its DOM options render
+        if (openMenuIfNeeded) {
+            const menuBtnSelectors = [
+                'button[aria-label*="Audio"]',
+                'button[aria-label*="Subtitles"]',
+                'button[aria-label*="Subtitle"]',
+                '[data-testid*="audio-subtitles"]',
+                '[data-testid*="subtitle"]',
+                '.atvwebplayersdk-subtitleaudio-button',
+                'quick-settings'
+            ];
+            for (const sel of menuBtnSelectors) {
+                const btns = queryAllDeep(sel);
+                if (btns.length > 0 && typeof btns[0].click === 'function') {
+                    try { btns[0].click(); } catch (e) {}
+                    break;
+                }
+            }
+        }
+
+        const videoEl = getActiveMovieVideo();
+        const foundAudio = [];
+        const foundSubs = [];
+
+        // Check native HTML5 audioTracks / textTracks first
+        if (videoEl) {
+            if (videoEl.audioTracks && videoEl.audioTracks.length > 0) {
+                for (let i = 0; i < videoEl.audioTracks.length; i++) {
+                    const at = videoEl.audioTracks[i];
+                    foundAudio.push({ id: 'native-audio-' + i, label: at.label || at.language || ('Audio ' + (i + 1)) });
+                }
+            }
+            if (videoEl.textTracks && videoEl.textTracks.length > 0) {
+                for (let i = 0; i < videoEl.textTracks.length; i++) {
+                    const tt = videoEl.textTracks[i];
+                    foundSubs.push({ id: 'native-sub-' + i, label: tt.label || tt.language || ('Subtitle ' + (i + 1)) });
+                }
+            }
+        }
+
+        // Scrape visible/rendered platform menu items (Disney+, HBO Max, Prime Video)
+        const candidateItems = queryAllDeep('[role="menuitemradio"], [role="option"], [data-testid*="track"], .atvwebplayersdk-audiooption-button, .atvwebplayersdk-subtitleoption-button, input[type="radio"] + label, li[role="menuitem"]');
+        const seenLabels = new Set();
+
+        candidateItems.forEach((el) => {
+            const text = (el.textContent || el.getAttribute('aria-label') || '').trim().replace(/\\s+/g, ' ');
+            if (!text || text.length > 45 || seenLabels.has(text)) return;
+            seenLabels.add(text);
+
+            const parentContext = ((el.closest('[aria-label], [data-testid], section, div')?.getAttribute('aria-label') || '') + ' ' +
+                                  (el.closest('[data-testid]')?.getAttribute('data-testid') || '') + ' ' +
+                                  (el.className || '')).toLowerCase();
+
+            if (parentContext.includes('audio') || parentContext.includes('language')) {
+                foundAudio.push({ id: 'dom-track:' + text, label: text });
+            } else if (parentContext.includes('sub') || parentContext.includes('caption') || parentContext.includes('cc')) {
+                foundSubs.push({ id: 'dom-track:' + text, label: text });
+            } else {
+                // Add to both selectors so user can click it from either dropdown
+                foundAudio.push({ id: 'dom-track:' + text, label: text });
+                foundSubs.push({ id: 'dom-track:' + text, label: text });
+            }
+        });
+
+        if (foundAudio.length > 0) cachedDomAudioTracks = foundAudio;
+        if (foundSubs.length > 0) cachedDomSubtitleTracks = foundSubs;
+    }
+
+    function applyUniversalDomTrack(trackValue) {
+        const videoEl = getActiveMovieVideo();
+        if (!trackValue) return;
+
+        if (trackValue.startsWith('native-audio-') && videoEl && videoEl.audioTracks) {
+            const idx = parseInt(trackValue.replace('native-audio-', ''), 10);
+            for (let i = 0; i < videoEl.audioTracks.length; i++) {
+                videoEl.audioTracks[i].enabled = (i === idx);
+            }
+            return;
+        }
+
+        if (trackValue.startsWith('native-sub-') && videoEl && videoEl.textTracks) {
+            const idx = parseInt(trackValue.replace('native-sub-', ''), 10);
+            for (let i = 0; i < videoEl.textTracks.length; i++) {
+                videoEl.textTracks[i].mode = (i === idx) ? 'showing' : 'disabled';
+            }
+            return;
+        }
+
+        const targetLabel = trackValue.replace('dom-track:', '').trim().toLowerCase();
+        const candidateItems = queryAllDeep('[role="menuitemradio"], [role="option"], [data-testid*="track"], button, label, li');
+        for (const el of candidateItems) {
+            const text = (el.textContent || el.getAttribute('aria-label') || '').trim().replace(/\\s+/g, ' ').toLowerCase();
+            if (text === targetLabel) {
+                try { el.click(); } catch (e) {}
+                break;
+            }
+        }
+    }
+
     window.addEventListener('message', (event) => {
         if (!event.data || event.data.type !== 'VEEVEE_MAIN_WORLD_EXEC') return;
         const cmd = event.data.cmd;
         if (!cmd) return;
 
-        // Ignore on VeeVee's own tab
         if (document.getElementById('stage-container') && document.getElementById('main-screen-video')) return;
+
+        if (cmd.action === 'scanTracks') {
+            scanUniversalPlatformTracks(true);
+            return;
+        }
 
         const isNetflix = location.hostname.includes('netflix.com');
         if (isNetflix) {
@@ -1424,7 +1492,6 @@
             return;
         }
 
-        // Universal VOD Handler for Disney+, HBO Max (play.max.com), Prime Video (primevideo.com / amazon.*), etc.
         const videoEl = getActiveMovieVideo();
         if (!videoEl) return;
 
@@ -1433,8 +1500,7 @@
                 const playPromise = videoEl.play();
                 if (playPromise && typeof playPromise.catch === 'function') {
                     playPromise.catch(() => {
-                        // Fallback UI button click if browser requires user-gesture wrapper on Disney+/Max/Prime
-                        const playBtns = document.querySelectorAll('[data-testid="player-ux-play-pause-button"], .atvwebplayersdk-playpause-button, .play-pause-icon, [aria-label="Play"], [aria-label="Odtwórz"]');
+                        const playBtns = queryAllDeep('[data-testid="player-ux-play-pause-button"], .atvwebplayersdk-playpause-button, .play-pause-icon, [aria-label="Play"], [aria-label="Odtwórz"]');
                         if (playBtns.length > 0) playBtns[0].click();
                     });
                 }
@@ -1450,28 +1516,13 @@
                 videoEl.currentTime = cmd.value;
             } else if (cmd.action === 'speed' && typeof cmd.value === 'number') {
                 videoEl.playbackRate = cmd.value;
-            } else if (cmd.action === 'setAudioTrack' && cmd.value && videoEl.audioTracks) {
-                for (let i = 0; i < videoEl.audioTracks.length; i++) {
-                    const at = videoEl.audioTracks[i];
-                    at.enabled = (at.id === cmd.value || at.language === cmd.value || at.label === cmd.value || String(i) === String(cmd.value));
-                }
-            } else if (cmd.action === 'setSubtitleTrack' && videoEl.textTracks) {
-                for (let i = 0; i < videoEl.textTracks.length; i++) {
-                    const t = videoEl.textTracks[i];
-                    t.mode = (t.label === cmd.value || t.language === cmd.value || String(i) === String(cmd.value)) ? 'showing' : 'disabled';
-                }
+            } else if (cmd.action === 'setAudioTrack' && cmd.value) {
+                applyUniversalDomTrack(cmd.value);
+            } else if (cmd.action === 'setSubtitleTrack' && cmd.value !== undefined) {
+                applyUniversalDomTrack(cmd.value);
             } else if (cmd.action === 'skipIntro') {
-                const selectors = [
-                    '.skip__button',
-                    '[data-testid="skip-button"]',
-                    '[data-testid="player-ux-skip-button"]',
-                    '.atvwebplayersdk-skipelement-button',
-                    'button[class*="skip"]'
-                ];
-                for (const s of selectors) {
-                    const b = document.querySelector(s);
-                    if (b) { b.click(); break; }
-                }
+                const skipBtns = queryAllDeep('.skip__button, [data-testid="skip-button"], [data-testid="player-ux-skip-button"], .atvwebplayersdk-skipelement-button, button[class*="skip"]');
+                if (skipBtns.length > 0) skipBtns[0].click();
             }
         } catch (e) {}
     });
@@ -1520,21 +1571,7 @@
         const videoEl = getActiveMovieVideo();
         if (!videoEl || !videoEl.duration || isNaN(videoEl.duration) || videoEl.duration < 5) return;
 
-        const audioList = [];
-        if (videoEl.audioTracks) {
-            for (let i = 0; i < videoEl.audioTracks.length; i++) {
-                const at = videoEl.audioTracks[i];
-                audioList.push({ id: String(i), label: at.label || at.language || 'Audio Track ' + (i + 1) });
-            }
-        }
-
-        const subList = [];
-        if (videoEl.textTracks) {
-            for (let i = 0; i < videoEl.textTracks.length; i++) {
-                const tr = videoEl.textTracks[i];
-                subList.push({ id: String(i), label: tr.label || tr.language || 'Subtitle ' + (i + 1) });
-            }
-        }
+        scanUniversalPlatformTracks(false);
 
         window.postMessage({
             type: 'VEEVEE_MAIN_WORLD_TELEMETRY',
@@ -1542,23 +1579,23 @@
                 currentTime: videoEl.currentTime || 0,
                 duration: videoEl.duration || 0,
                 paused: videoEl.paused,
-                audioTracks: audioList,
-                subtitleTracks: subList,
+                audioTracks: cachedDomAudioTracks,
+                subtitleTracks: cachedDomSubtitleTracks,
                 hostname: location.hostname
             }
         }, '*');
     }, 800);
 })();`;
 
-        const EXTENSION_CONTENT_JS = `// VeeVee Watch Party Bridge v4.0 - Isolated Content Script Bridge
+        const EXTENSION_CONTENT_JS = `// VeeVee Watch Party Bridge v5.0 - Isolated Content Script Bridge
 (function() {
-    window.postMessage({ type: 'VEEVEE_EXTENSION_READY', version: '4.0' }, '*');
+    window.postMessage({ type: 'VEEVEE_EXTENSION_READY', version: '5.0' }, '*');
 
     window.addEventListener('message', (event) => {
         if (!event.data || typeof event.data !== 'object') return;
 
         if (event.data.type === 'VEEVEE_EXTENSION_PING') {
-            window.postMessage({ type: 'VEEVEE_EXTENSION_READY', version: '4.0' }, '*');
+            window.postMessage({ type: 'VEEVEE_EXTENSION_READY', version: '5.0' }, '*');
         }
 
         if (event.data.type === 'VEEVEE_EXTENSION_COMMAND') {
@@ -1632,12 +1669,12 @@
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = 'veevee-bridge-v4.zip';
+                    a.download = 'veevee-bridge-v5.zip';
                     document.body.appendChild(a);
                     a.click();
                     a.remove();
                     setTimeout(() => URL.revokeObjectURL(url), 1500);
-                    showToast('Downloaded veevee-bridge-v4.zip! Unzip it into your extension folder and reload in chrome://extensions', 'success');
+                    showToast('Downloaded veevee-bridge-v5.zip! Unzip it into your extension folder and reload in chrome://extensions', 'success');
                     return;
                 }
             } catch (err) {
@@ -1675,13 +1712,13 @@
         window.veeveeDownloadSingle = function(which) {
             if (which === 'manifest') {
                 downloadTextFile('manifest.json', EXTENSION_MANIFEST_JSON);
-                showToast('Downloaded manifest.json (v4.0)!', 'success');
+                showToast('Downloaded manifest.json (v5.0)!', 'success');
             } else if (which === 'content') {
                 downloadTextFile('content.js', EXTENSION_CONTENT_JS);
-                showToast('Downloaded content.js (v4.0)!', 'success');
+                showToast('Downloaded content.js (v5.0)!', 'success');
             } else if (which === 'bridge') {
                 downloadTextFile('page-bridge.js', EXTENSION_PAGE_BRIDGE_JS);
-                showToast('Downloaded page-bridge.js (v4.0)!', 'success');
+                showToast('Downloaded page-bridge.js (v5.0)!', 'success');
             }
         };
 
@@ -1713,7 +1750,7 @@
             }, '*');
         }
 
-        function markExtensionActive(ver = '4.0') {
+        function markExtensionActive(ver = '5.0') {
             state.extensionDetected = true;
 
             if (dom.extensionStatusBadge) {
@@ -1753,13 +1790,13 @@
 
             if (audioTracks.length > 0 && dom.selectVodAudio) {
                 const currentVal = dom.selectVodAudio.value || state.remoteVodTelemetry.currentAudioId;
-                dom.selectVodAudio.innerHTML = `<option value="">-- Select Stream Audio Language --</option>` +
+                dom.selectVodAudio.innerHTML = `<option value="">-- Select Stream Audio Language (${audioTracks.length}) --</option>` +
                     audioTracks.map(t => `<option value="${escapeHtml(t.id)}" ${t.id === currentVal ? 'selected' : ''}>${escapeHtml(t.label)}</option>`).join('');
             }
 
             if (subTracks.length > 0 && dom.selectVodSubtitle) {
                 const currentSub = dom.selectVodSubtitle.value || state.remoteVodTelemetry.currentSubtitleId;
-                dom.selectVodSubtitle.innerHTML = `<option value="">-- Select Stream Subtitles --</option>` +
+                dom.selectVodSubtitle.innerHTML = `<option value="">-- Select Stream Subtitles (${subTracks.length}) --</option>` +
                     subTracks.map(t => `<option value="${escapeHtml(t.id)}" ${t.id === currentSub ? 'selected' : ''}>${escapeHtml(t.label)}</option>`).join('');
             }
         }
@@ -1768,7 +1805,7 @@
             if (!event.data || typeof event.data !== 'object') return;
 
             if (event.data.type === 'VEEVEE_EXTENSION_READY') {
-                markExtensionActive(event.data.version || '4.0');
+                markExtensionActive(event.data.version || '5.0');
             }
 
             if (event.data.type === 'VEEVEE_EXTENSION_TELEMETRY' && event.data.telemetry) {
@@ -1804,7 +1841,7 @@
                 if (!state.extensionDetected && dom.extensionModal) {
                     dom.extensionModal.classList.remove('hidden');
                     dom.extensionModal.classList.add('flex');
-                    showToast('🧩 Download the v4.0 .ZIP Extension or click "Skip for Now" to enter the room!', 'warning');
+                    showToast('🧩 Download the v5.0 .ZIP Extension or click "Skip for Now" to enter the room!', 'warning');
                 }
             }, 900);
         }, 300);
@@ -1822,7 +1859,6 @@
             if (!dom.stageContainer) return;
             const rect = dom.stageContainer.getBoundingClientRect();
 
-            // Check if mouse is inside stage container bounds
             const insideStage = (
                 clientX >= rect.left &&
                 clientX <= rect.right &&
@@ -1838,10 +1874,10 @@
             const relY = clientY - rect.top;
             const height = rect.height || window.innerHeight;
 
-            // Top Hover Zone: top 95px (or top 18% of video container) -> reveals Top Bar (Mic/Cam/Share in Fullscreen + Top Stage icons)
-            const isTopZone = relY >= 0 && relY <= Math.min(105, height * 0.20);
+            // Top Zone: reveals Live Badge & (in Fullscreen) the Social/Hardware Dock (Mic, Cam, Emojis, Laser, PiP, Exit Full)
+            const isTopZone = relY >= 0 && relY <= Math.min(100, height * 0.18);
 
-            // Bottom Hover Zone: bottom 125px (or bottom 22% of video container) -> reveals Bottom Playback Bar (Start/Stop/Seek/CC)
+            // Bottom Zone: reveals the Movie Playback Bar (Start/Stop, Seekbar, Volume, Language/CC, Watch Hub)
             const isBottomZone = relY >= height - Math.min(130, height * 0.24) && relY <= height;
 
             dom.stageContainer.classList.toggle('zone-top-active', isTopZone);
@@ -1852,7 +1888,6 @@
                 document.body.classList.remove('cursor-hidden');
             }
 
-            // Auto-hide bars and cursor if mouse stops moving for 2.2 seconds in the middle of watching
             clearTimeout(state.hoverZoneIdleTimer);
             state.hoverZoneIdleTimer = setTimeout(() => {
                 if (!state.isStagePaused) {
@@ -2109,7 +2144,7 @@
                 if (!document.fullscreenElement) {
                     document.documentElement.requestFullscreen().catch(() => {});
                 }
-                showToast('Full Screen Active! Hover at the TOP edge for Mic/Cam, or at the BOTTOM edge for Start/Stop/Seekbar.', 'info');
+                showToast('Full Screen Active! Hover at the TOP edge for Mic/Cam/Emojis, or at the BOTTOM edge for Movie Controls.', 'info');
             } else {
                 state.drawerOpen = true;
                 if (document.fullscreenElement) {
@@ -2122,11 +2157,8 @@
                     <i data-lucide="${state.isImmersiveFullscreen ? 'minimize' : 'maximize'}" class="w-4 h-4"></i>
                     <span class="hidden sm:inline">${state.isImmersiveFullscreen ? 'Exit Full' : 'Full Screen'}</span>
                 `;
+                safeCreateIcons({ nodes: [dom.btnFullscreen] });
             }
-            if (dom.btnStageExpand) {
-                dom.btnStageExpand.innerHTML = `<i data-lucide="${state.isImmersiveFullscreen ? 'minimize-2' : 'maximize-2'}" class="w-4 h-4"></i>`;
-            }
-            safeCreateIcons({ nodes: [dom.btnFullscreen, dom.btnStageExpand] });
 
             updateDrawerAndLayout();
         }
@@ -2221,7 +2253,6 @@
             dom.stageOverlayControls.classList.add('flex');
 
             updateStagePlayPauseUI();
-            updateShareButtonUI();
 
             if (state.ytPlayer && typeof state.ytPlayer.loadVideoById === 'function') {
                 state.ytPlayer.loadVideoById({ videoId: videoId, startSeconds: startSeconds });
@@ -2514,24 +2545,6 @@
             safeCreateIcons({ nodes: [dom.btnToggleMic, dom.btnToggleCam] });
         }
 
-        function updateShareButtonUI() {
-            if (!dom.btnShareScreen) return;
-            if (state.isSharingScreen || state.stageMode !== 'none') {
-                dom.btnShareScreen.className = 'px-4 py-2.5 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 transition cursor-pointer';
-                dom.btnShareScreen.innerHTML = `
-                    <i data-lucide="square" class="w-4 h-4 fill-current"></i>
-                    <span>Stop Stream</span>
-                `;
-            } else {
-                dom.btnShareScreen.className = 'px-4 py-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs shadow-glow-pink flex items-center gap-2 hover:opacity-95 transition cursor-pointer';
-                dom.btnShareScreen.innerHTML = `
-                    <i data-lucide="screen-share" class="w-4 h-4 stroke-[2.2]"></i>
-                    <span>Share Screen</span>
-                `;
-            }
-            safeCreateIcons({ nodes: [dom.btnShareScreen] });
-        }
-
         function updateStagePlayPauseUI() {
             if (!dom.btnStagePlayPause || !dom.stagePausedBanner) return;
             if (state.isStagePaused) {
@@ -2736,7 +2749,6 @@
 
             dom.mainScreenVideo.play().catch(() => {});
             updateStagePlayPauseUI();
-            updateShareButtonUI();
 
             if (broadcast) {
                 broadcastData({
@@ -2837,7 +2849,6 @@
             dom.stageOverlayControls.classList.add('flex');
 
             updateStagePlayPauseUI();
-            updateShareButtonUI();
 
             for (const [peerId] of state.dataConnections.entries()) {
                 callPeerWithScreen(peerId, stream, labelText);
@@ -2976,7 +2987,6 @@
             state.screenCalls.clear();
 
             resetStageToPlaceholder();
-            updateShareButtonUI();
 
             if (broadcast) {
                 broadcastData({
@@ -3368,10 +3378,10 @@
         // ==================== DEFENSIVE EVENT LISTENERS ====================
 
         bindEvent(dom.btnFullscreen, 'click', toggleImmersiveFullscreen);
-        bindEvent(dom.btnStageExpand, 'click', toggleImmersiveFullscreen);
 
         // Language & Subtitles (CC) Modal Listeners
         function openLanguageModal() {
+            sendExtensionCommand('scanTracks');
             updateVodTrackSelectorsUI();
             if (dom.languageModal) {
                 dom.languageModal.classList.remove('hidden');
@@ -3385,8 +3395,6 @@
             }
         }
         bindEvent(dom.btnStageLanguage, 'click', openLanguageModal);
-        bindEvent(dom.btnStageTopCc, 'click', openLanguageModal);
-        bindEvent(dom.btnDockLanguage, 'click', openLanguageModal);
         bindEvent('btn-close-language-modal', 'click', closeLanguageModal);
 
         bindEvent('btn-upload-subtitle', 'click', () => dom.inputLocalSubtitle && dom.inputLocalSubtitle.click());
@@ -3433,8 +3441,9 @@
         });
 
         bindEvent('btn-refresh-vod-tracks', 'click', () => {
-            updateVodTrackSelectorsUI();
-            showToast('Refreshed stream audio & subtitle tracks!', 'info');
+            sendExtensionCommand('scanTracks');
+            setTimeout(updateVodTrackSelectorsUI, 450);
+            showToast('Scanned platform audio & subtitle tracks!', 'info');
         });
 
         bindEvent(dom.selectVodAudio, 'change', (e) => {
@@ -3512,9 +3521,7 @@
             }
         }
 
-        bindEvent('btn-open-platforms-top', 'click', openPlatformsModal);
         bindEvent(dom.btnHeroPlatforms, 'click', openPlatformsModal);
-        bindEvent(dom.btnDockPlatforms, 'click', openPlatformsModal);
         bindEvent(dom.btnStageChangeSource, 'click', openPlatformsModal);
         bindEvent('btn-close-platforms', 'click', closePlatformsModal);
 
@@ -3614,11 +3621,7 @@
 
         bindEvent(dom.btnStageStop, 'click', () => stopAllStageStreams(true));
 
-        // Share Screen / Local File / Demo Buttons
-        bindEvent(dom.btnShareScreen, 'click', () => {
-            if (state.isSharingScreen || state.stageMode !== 'none') stopAllStageStreams(true);
-            else startScreenShare();
-        });
+        // Hero Screen Share / Local File / Demo Buttons
         bindEvent(dom.btnHeroShare, 'click', () => startScreenShare());
         bindEvent(dom.btnHeroDemo, 'click', startDemoStream);
         bindEvent(dom.btnHeroFile, 'click', () => dom.inputLocalVideo && dom.inputLocalVideo.click());
