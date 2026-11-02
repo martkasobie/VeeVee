@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "VeeVee Watch Party Bridge",
-  "version": "3.0",
-  "description": "M7375-Safe VOD Bridge for VeeVee Watch Party (Netflix Cadmium API, Disney+, Max, Prime Video, Audio & Subtitles).",
+  "version": "4.0",
+  "description": "Universal VOD Bridge for VeeVee Watch Party (Netflix M7375-Safe Cadmium API + Disney+, HBO Max, Prime Video Shadow-DOM Engine).",
   "permissions": [
     "storage"
   ],
@@ -15,21 +15,18 @@
         "content.js"
       ],
       "run_at": "document_end",
-      "all_frames": false
+      "all_frames": true
     },
     {
       "matches": [
-        "https://*.netflix.com/*",
-        "https://*.disneyplus.com/*",
-        "https://*.max.com/*",
-        "https://*.primevideo.com/*"
+        "<all_urls>"
       ],
       "js": [
         "page-bridge.js"
       ],
       "world": "MAIN",
       "run_at": "document_end",
-      "all_frames": false
+      "all_frames": true
     }
   ]
 }
