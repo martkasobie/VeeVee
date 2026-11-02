@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "VeeVee Watch Party Bridge",
-  "version": "4.0",
-  "description": "Universal VOD Bridge for VeeVee Watch Party (Netflix M7375-Safe Cadmium API + Disney+, HBO Max, Prime Video Shadow-DOM Engine).",
+  "version": "5.0",
+  "description": "Universal VOD Bridge v5.0 for VeeVee Watch Party (Netflix Cadmium API + Disney+, HBO Max, Prime Video Audio/Subtitle DOM & Shadow-DOM Controller).",
   "permissions": [
     "storage"
   ],
