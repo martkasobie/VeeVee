@@ -1,5 +1,8 @@
-// VeeVee Watch Party Bridge v4.0 - Universal VOD Engine (Netflix Cadmium + Disney+ / Max / Prime Shadow-DOM)
+// VeeVee Watch Party Bridge v5.0 - Universal VOD Engine (Netflix Cadmium + Disney+ / Max / Prime Audio & Subtitle Scraper)
 (function() {
+    let cachedDomAudioTracks = [];
+    let cachedDomSubtitleTracks = [];
+
     function getNetflixPlayer() {
         try {
             if (window.netflix && window.netflix.appContext) {
@@ -13,25 +16,25 @@
         return null;
     }
 
-    function findAllVideosDeep(root) {
-        let videos = [];
-        if (!root) return videos;
+    function queryAllDeep(selector, root = document) {
+        let results = [];
+        if (!root) return results;
         try {
-            const direct = root.querySelectorAll ? Array.from(root.querySelectorAll('video')) : [];
-            videos.push(...direct);
-            const allNodes = root.querySelectorAll ? root.querySelectorAll('*') : [];
-            for (let i = 0; i < allNodes.length; i++) {
-                const node = allNodes[i];
-                if (node.shadowRoot) {
-                    videos.push(...findAllVideosDeep(node.shadowRoot));
+            if (root.querySelectorAll) {
+                results.push(...Array.from(root.querySelectorAll(selector)));
+                const allNodes = root.querySelectorAll('*');
+                for (let i = 0; i < allNodes.length; i++) {
+                    if (allNodes[i].shadowRoot) {
+                        results.push(...queryAllDeep(selector, allNodes[i].shadowRoot));
+                    }
                 }
             }
         } catch (e) {}
-        return videos;
+        return results;
     }
 
     function getActiveMovieVideo() {
-        const allVideos = findAllVideosDeep(document);
+        const allVideos = queryAllDeep('video');
         if (allVideos.length === 0) return null;
         if (allVideos.length === 1) return allVideos[0];
 
@@ -53,12 +56,115 @@
         return bestVideo;
     }
 
+    function scanUniversalPlatformTracks(openMenuIfNeeded = false) {
+        if (location.hostname.includes('netflix.com')) return;
+
+        if (openMenuIfNeeded) {
+            const menuBtnSelectors = [
+                'button[aria-label*="Audio"]',
+                'button[aria-label*="Subtitles"]',
+                'button[aria-label*="Subtitle"]',
+                '[data-testid*="audio-subtitles"]',
+                '[data-testid*="subtitle"]',
+                '.atvwebplayersdk-subtitleaudio-button',
+                'quick-settings'
+            ];
+            for (const sel of menuBtnSelectors) {
+                const btns = queryAllDeep(sel);
+                if (btns.length > 0 && typeof btns[0].click === 'function') {
+                    try { btns[0].click(); } catch (e) {}
+                    break;
+                }
+            }
+        }
+
+        const videoEl = getActiveMovieVideo();
+        const foundAudio = [];
+        const foundSubs = [];
+
+        if (videoEl) {
+            if (videoEl.audioTracks && videoEl.audioTracks.length > 0) {
+                for (let i = 0; i < videoEl.audioTracks.length; i++) {
+                    const at = videoEl.audioTracks[i];
+                    foundAudio.push({ id: 'native-audio-' + i, label: at.label || at.language || ('Audio ' + (i + 1)) });
+                }
+            }
+            if (videoEl.textTracks && videoEl.textTracks.length > 0) {
+                for (let i = 0; i < videoEl.textTracks.length; i++) {
+                    const tt = videoEl.textTracks[i];
+                    foundSubs.push({ id: 'native-sub-' + i, label: tt.label || tt.language || ('Subtitle ' + (i + 1)) });
+                }
+            }
+        }
+
+        const candidateItems = queryAllDeep('[role="menuitemradio"], [role="option"], [data-testid*="track"], .atvwebplayersdk-audiooption-button, .atvwebplayersdk-subtitleoption-button, input[type="radio"] + label, li[role="menuitem"]');
+        const seenLabels = new Set();
+
+        candidateItems.forEach((el) => {
+            const text = (el.textContent || el.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ');
+            if (!text || text.length > 45 || seenLabels.has(text)) return;
+            seenLabels.add(text);
+
+            const parentContext = ((el.closest('[aria-label], [data-testid], section, div')?.getAttribute('aria-label') || '') + ' ' +
+                                  (el.closest('[data-testid]')?.getAttribute('data-testid') || '') + ' ' +
+                                  (el.className || '')).toLowerCase();
+
+            if (parentContext.includes('audio') || parentContext.includes('language')) {
+                foundAudio.push({ id: 'dom-track:' + text, label: text });
+            } else if (parentContext.includes('sub') || parentContext.includes('caption') || parentContext.includes('cc')) {
+                foundSubs.push({ id: 'dom-track:' + text, label: text });
+            } else {
+                foundAudio.push({ id: 'dom-track:' + text, label: text });
+                foundSubs.push({ id: 'dom-track:' + text, label: text });
+            }
+        });
+
+        if (foundAudio.length > 0) cachedDomAudioTracks = foundAudio;
+        if (foundSubs.length > 0) cachedDomSubtitleTracks = foundSubs;
+    }
+
+    function applyUniversalDomTrack(trackValue) {
+        const videoEl = getActiveMovieVideo();
+        if (!trackValue) return;
+
+        if (trackValue.startsWith('native-audio-') && videoEl && videoEl.audioTracks) {
+            const idx = parseInt(trackValue.replace('native-audio-', ''), 10);
+            for (let i = 0; i < videoEl.audioTracks.length; i++) {
+                videoEl.audioTracks[i].enabled = (i === idx);
+            }
+            return;
+        }
+
+        if (trackValue.startsWith('native-sub-') && videoEl && videoEl.textTracks) {
+            const idx = parseInt(trackValue.replace('native-sub-', ''), 10);
+            for (let i = 0; i < videoEl.textTracks.length; i++) {
+                videoEl.textTracks[i].mode = (i === idx) ? 'showing' : 'disabled';
+            }
+            return;
+        }
+
+        const targetLabel = trackValue.replace('dom-track:', '').trim().toLowerCase();
+        const candidateItems = queryAllDeep('[role="menuitemradio"], [role="option"], [data-testid*="track"], button, label, li');
+        for (const el of candidateItems) {
+            const text = (el.textContent || el.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ').toLowerCase();
+            if (text === targetLabel) {
+                try { el.click(); } catch (e) {}
+                break;
+            }
+        }
+    }
+
     window.addEventListener('message', (event) => {
         if (!event.data || event.data.type !== 'VEEVEE_MAIN_WORLD_EXEC') return;
         const cmd = event.data.cmd;
         if (!cmd) return;
 
         if (document.getElementById('stage-container') && document.getElementById('main-screen-video')) return;
+
+        if (cmd.action === 'scanTracks') {
+            scanUniversalPlatformTracks(true);
+            return;
+        }
 
         const isNetflix = location.hostname.includes('netflix.com');
         if (isNetflix) {
@@ -102,7 +208,7 @@
                 const playPromise = videoEl.play();
                 if (playPromise && typeof playPromise.catch === 'function') {
                     playPromise.catch(() => {
-                        const playBtns = document.querySelectorAll('[data-testid="player-ux-play-pause-button"], .atvwebplayersdk-playpause-button, .play-pause-icon, [aria-label="Play"], [aria-label="Odtwórz"]');
+                        const playBtns = queryAllDeep('[data-testid="player-ux-play-pause-button"], .atvwebplayersdk-playpause-button, .play-pause-icon, [aria-label="Play"], [aria-label="Odtwórz"]');
                         if (playBtns.length > 0) playBtns[0].click();
                     });
                 }
@@ -118,28 +224,13 @@
                 videoEl.currentTime = cmd.value;
             } else if (cmd.action === 'speed' && typeof cmd.value === 'number') {
                 videoEl.playbackRate = cmd.value;
-            } else if (cmd.action === 'setAudioTrack' && cmd.value && videoEl.audioTracks) {
-                for (let i = 0; i < videoEl.audioTracks.length; i++) {
-                    const at = videoEl.audioTracks[i];
-                    at.enabled = (at.id === cmd.value || at.language === cmd.value || at.label === cmd.value || String(i) === String(cmd.value));
-                }
-            } else if (cmd.action === 'setSubtitleTrack' && videoEl.textTracks) {
-                for (let i = 0; i < videoEl.textTracks.length; i++) {
-                    const t = videoEl.textTracks[i];
-                    t.mode = (t.label === cmd.value || t.language === cmd.value || String(i) === String(cmd.value)) ? 'showing' : 'disabled';
-                }
+            } else if (cmd.action === 'setAudioTrack' && cmd.value) {
+                applyUniversalDomTrack(cmd.value);
+            } else if (cmd.action === 'setSubtitleTrack' && cmd.value !== undefined) {
+                applyUniversalDomTrack(cmd.value);
             } else if (cmd.action === 'skipIntro') {
-                const selectors = [
-                    '.skip__button',
-                    '[data-testid="skip-button"]',
-                    '[data-testid="player-ux-skip-button"]',
-                    '.atvwebplayersdk-skipelement-button',
-                    'button[class*="skip"]'
-                ];
-                for (const s of selectors) {
-                    const b = document.querySelector(s);
-                    if (b) { b.click(); break; }
-                }
+                const skipBtns = queryAllDeep('.skip__button, [data-testid="skip-button"], [data-testid="player-ux-skip-button"], .atvwebplayersdk-skipelement-button, button[class*="skip"]');
+                if (skipBtns.length > 0) skipBtns[0].click();
             }
         } catch (e) {}
     });
@@ -187,21 +278,7 @@
         const videoEl = getActiveMovieVideo();
         if (!videoEl || !videoEl.duration || isNaN(videoEl.duration) || videoEl.duration < 5) return;
 
-        const audioList = [];
-        if (videoEl.audioTracks) {
-            for (let i = 0; i < videoEl.audioTracks.length; i++) {
-                const at = videoEl.audioTracks[i];
-                audioList.push({ id: String(i), label: at.label || at.language || 'Audio Track ' + (i + 1) });
-            }
-        }
-
-        const subList = [];
-        if (videoEl.textTracks) {
-            for (let i = 0; i < videoEl.textTracks.length; i++) {
-                const tr = videoEl.textTracks[i];
-                subList.push({ id: String(i), label: tr.label || tr.language || 'Subtitle ' + (i + 1) });
-            }
-        }
+        scanUniversalPlatformTracks(false);
 
         window.postMessage({
             type: 'VEEVEE_MAIN_WORLD_TELEMETRY',
@@ -209,8 +286,8 @@
                 currentTime: videoEl.currentTime || 0,
                 duration: videoEl.duration || 0,
                 paused: videoEl.paused,
-                audioTracks: audioList,
-                subtitleTracks: subList,
+                audioTracks: cachedDomAudioTracks,
+                subtitleTracks: cachedDomSubtitleTracks,
                 hostname: location.hostname
             }
         }, '*');
