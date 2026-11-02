@@ -202,7 +202,7 @@
     <div id="toast-container" class="fixed top-5 right-5 z-[80] flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
 
     <!-- ==================== FLOATING SIDEBAR TOGGLE TAB (Always accessible on right edge) ==================== -->
-    <button id="btn-floating-drawer" class="fixed right-0 top-1/2 -translate-y-1/2 z-50 py-4 px-2.5 rounded-l-2xl bg-cozy-card/95 hover:bg-cozy-pink hover:text-slate-950 text-white border border-r-0 border-cozy-border shadow-2xl flex flex-col items-center gap-2 transition-all duration-300 group" title="Slide Chat & Cameras In/Out (Works in Full Screen)">
+    <button type="button" id="btn-floating-drawer" onclick="window.veeveeToggleDrawer()" class="fixed right-0 top-1/2 -translate-y-1/2 z-50 py-4 px-2.5 rounded-l-2xl bg-cozy-card/95 hover:bg-cozy-pink hover:text-slate-950 text-white border border-r-0 border-cozy-border shadow-2xl flex flex-col items-center gap-2 transition-all duration-300 group cursor-pointer" title="Slide Chat & Cameras In/Out (Works in Full Screen)">
         <span id="floating-drawer-icon-wrap">
             <i data-lucide="panel-right-close" class="w-4 h-4 text-cozy-pink group-hover:text-slate-950 transition"></i>
         </span>
@@ -245,7 +245,7 @@
                         <span id="lobby-ext-sub" class="text-[11px] text-amber-200">Install 1-click .ZIP plugin for full VOD sync!</span>
                     </div>
                 </div>
-                <button type="button" id="btn-lobby-install-ext" class="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs shrink-0 shadow-lg transition">
+                <button type="button" id="btn-lobby-install-ext" onclick="window.veeveeOpenExtensionModal()" class="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs shrink-0 shadow-lg transition cursor-pointer">
                     Install
                 </button>
             </div>
@@ -269,12 +269,12 @@
                         Choose Your Vibe Color
                     </label>
                     <div class="flex items-center gap-2.5" id="color-picker">
-                        <button type="button" data-color="#F472B6" class="color-swatch w-8 h-8 rounded-xl bg-[#F472B6] ring-2 ring-white scale-105 transition"></button>
-                        <button type="button" data-color="#C084FC" class="color-swatch w-8 h-8 rounded-xl bg-[#C084FC] opacity-75 hover:opacity-100 transition"></button>
-                        <button type="button" data-color="#34D399" class="color-swatch w-8 h-8 rounded-xl bg-[#34D399] opacity-75 hover:opacity-100 transition"></button>
-                        <button type="button" data-color="#FBBF24" class="color-swatch w-8 h-8 rounded-xl bg-[#FBBF24] opacity-75 hover:opacity-100 transition"></button>
-                        <button type="button" data-color="#60A5FA" class="color-swatch w-8 h-8 rounded-xl bg-[#60A5FA] opacity-75 hover:opacity-100 transition"></button>
-                        <button type="button" data-color="#F87171" class="color-swatch w-8 h-8 rounded-xl bg-[#F87171] opacity-75 hover:opacity-100 transition"></button>
+                        <button type="button" data-color="#F472B6" class="color-swatch w-8 h-8 rounded-xl bg-[#F472B6] ring-2 ring-white scale-105 transition cursor-pointer"></button>
+                        <button type="button" data-color="#C084FC" class="color-swatch w-8 h-8 rounded-xl bg-[#C084FC] opacity-75 hover:opacity-100 transition cursor-pointer"></button>
+                        <button type="button" data-color="#34D399" class="color-swatch w-8 h-8 rounded-xl bg-[#34D399] opacity-75 hover:opacity-100 transition cursor-pointer"></button>
+                        <button type="button" data-color="#FBBF24" class="color-swatch w-8 h-8 rounded-xl bg-[#FBBF24] opacity-75 hover:opacity-100 transition cursor-pointer"></button>
+                        <button type="button" data-color="#60A5FA" class="color-swatch w-8 h-8 rounded-xl bg-[#60A5FA] opacity-75 hover:opacity-100 transition cursor-pointer"></button>
+                        <button type="button" data-color="#F87171" class="color-swatch w-8 h-8 rounded-xl bg-[#F87171] opacity-75 hover:opacity-100 transition cursor-pointer"></button>
                     </div>
                 </div>
 
@@ -298,7 +298,7 @@
                 </div>
 
                 <!-- Create New Room Button -->
-                <button id="btn-create-room" class="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender hover:opacity-95 active:scale-[0.99] text-slate-950 font-bold text-sm shadow-glow-pink flex items-center justify-center gap-2 transition">
+                <button type="button" id="btn-create-room" class="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender hover:opacity-95 active:scale-[0.99] text-slate-950 font-bold text-sm shadow-glow-pink flex items-center justify-center gap-2 transition cursor-pointer">
                     <i data-lucide="sparkles" class="w-4 h-4 stroke-[2.5]"></i>
                     <span>Create New Watch Party (Host)</span>
                 </button>
@@ -309,7 +309,7 @@
                     <div class="flex gap-2">
                         <input id="input-room-id" type="text" placeholder="Paste Room ID (e.g. veevee-xxxx)" 
                             class="flex-1 px-3.5 py-2.5 rounded-2xl bg-cozy-bg/90 border border-cozy-border focus:border-cozy-lavender focus:outline-none text-xs text-white placeholder-slate-500 font-mono">
-                        <button id="btn-join-room" class="px-4 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender border border-cozy-lavender/30 font-semibold text-xs flex items-center gap-1.5 transition shrink-0">
+                        <button type="button" id="btn-join-room" class="px-4 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender border border-cozy-lavender/30 font-semibold text-xs flex items-center gap-1.5 transition shrink-0 cursor-pointer">
                             <i data-lucide="log-in" class="w-4 h-4"></i>
                             <span>Join</span>
                         </button>
@@ -334,7 +334,7 @@
                         <h3 class="font-display text-xl font-bold text-white mt-1">Install VeeVee Watch Party Bridge 🧩</h3>
                     </div>
                 </div>
-                <button id="btn-close-extension-modal" class="p-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition">
+                <button type="button" id="btn-close-extension-modal" onclick="window.veeveeCloseExtensionModal()" class="p-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -350,20 +350,20 @@
                         <i data-lucide="package-check" class="w-4 h-4"></i>
                         <span>Step 1: Download the Complete Extension Package (.ZIP)</span>
                     </p>
-                    <button id="btn-download-zip-ext" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs shadow-glow-pink flex items-center justify-center gap-2 hover:opacity-95 transition mb-2.5">
+                    <button type="button" id="btn-download-zip-ext" onclick="window.veeveeDownloadZip()" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs shadow-glow-pink flex items-center justify-center gap-2 hover:opacity-95 transition mb-2.5 cursor-pointer">
                         <i data-lucide="download" class="w-4 h-4 stroke-[2.5]"></i>
                         <span>Download Complete Extension (veevee-bridge-v3.zip)</span>
                     </button>
                     <div class="grid grid-cols-3 gap-2 pt-1">
-                        <button id="btn-download-manifest" class="py-1.5 px-2.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-300 border border-cozy-border font-semibold text-[11px] flex items-center justify-center gap-1 transition">
+                        <button type="button" id="btn-download-manifest" onclick="window.veeveeDownloadSingle('manifest')" class="py-1.5 px-2.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-300 border border-cozy-border font-semibold text-[11px] flex items-center justify-center gap-1 transition cursor-pointer">
                             <i data-lucide="file-json" class="w-3 h-3 text-cozy-pink"></i>
                             <span>manifest.json</span>
                         </button>
-                        <button id="btn-download-contentjs" class="py-1.5 px-2.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-300 border border-cozy-border font-semibold text-[11px] flex items-center justify-center gap-1 transition">
+                        <button type="button" id="btn-download-contentjs" onclick="window.veeveeDownloadSingle('content')" class="py-1.5 px-2.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-300 border border-cozy-border font-semibold text-[11px] flex items-center justify-center gap-1 transition cursor-pointer">
                             <i data-lucide="file-code" class="w-3 h-3 text-cozy-mint"></i>
                             <span>content.js</span>
                         </button>
-                        <button id="btn-download-bridgejs" class="py-1.5 px-2.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-300 border border-cozy-border font-semibold text-[11px] flex items-center justify-center gap-1 transition">
+                        <button type="button" id="btn-download-bridgejs" onclick="window.veeveeDownloadSingle('bridge')" class="py-1.5 px-2.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-300 border border-cozy-border font-semibold text-[11px] flex items-center justify-center gap-1 transition cursor-pointer">
                             <i data-lucide="cpu" class="w-3 h-3 text-cozy-lavender"></i>
                             <span>page-bridge.js</span>
                         </button>
@@ -377,15 +377,15 @@
                             <i data-lucide="mouse-pointer-click" class="w-4 h-4"></i>
                             <span>Step 2: Drag & Drop onto chrome://extensions</span>
                         </p>
-                        <button id="btn-copy-ext-url" class="px-2.5 py-1 rounded-lg bg-cozy-panel hover:bg-cozy-lavender hover:text-slate-950 text-cozy-lavender border border-cozy-lavender/30 text-[11px] font-bold transition">
+                        <button type="button" id="btn-copy-ext-url" onclick="window.veeveeCopyExtUrl()" class="px-2.5 py-1 rounded-lg bg-cozy-panel hover:bg-cozy-lavender hover:text-slate-950 text-cozy-lavender border border-cozy-lavender/30 text-[11px] font-bold transition cursor-pointer">
                             Copy chrome://extensions
                         </button>
                     </div>
                     <ol class="list-decimal list-inside space-y-1.5 text-slate-300 text-xs">
                         <li>Open a new tab and paste <code class="text-cozy-mint bg-cozy-panel px-1.5 py-0.5 rounded font-mono">chrome://extensions</code> in the address bar.</li>
                         <li>Enable <strong>Developer mode</strong> in the top-right corner.</li>
-                        <li><strong>Drag and drop</strong> the downloaded <code class="text-cozy-pink">veevee-bridge-v3.zip</code> directly onto the Extensions page (or unzip it and click <strong>Load unpacked</strong>).</li>
-                        <li>If Netflix previously showed error M7375, visit <a href="https://www.netflix.com/clearcookies" target="_blank" class="text-cozy-pink underline">netflix.com/clearcookies</a> once to clear cached DRM state.</li>
+                        <li><strong>Unzip</strong> <code class="text-cozy-pink">veevee-bridge-v3.zip</code> into a folder and click <strong>Load unpacked</strong> (or drag the folder directly onto the Extensions window).</li>
+                        <li>If Netflix previously showed error M7375, visit <a href="https://www.netflix.com/clearcookies" target="_blank" class="text-cozy-pink underline">netflix.com/clearcookies</a> once to reset cached DRM state.</li>
                     </ol>
                 </div>
 
@@ -399,10 +399,10 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <button id="btn-test-extension-ping" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-cozy-mint text-slate-950 font-bold text-xs hover:opacity-95 transition">
+                        <button type="button" id="btn-test-extension-ping" onclick="window.veeveeVerifyExtension()" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-cozy-mint text-slate-950 font-bold text-xs hover:opacity-95 transition cursor-pointer">
                             Verify Extension
                         </button>
-                        <button id="btn-skip-extension-modal" class="px-3.5 py-2.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-300 font-semibold text-xs transition">
+                        <button type="button" id="btn-skip-extension-modal" onclick="window.veeveeCloseExtensionModal()" class="px-3.5 py-2.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-300 font-semibold text-xs transition cursor-pointer">
                             Skip for Now
                         </button>
                     </div>
@@ -424,7 +424,7 @@
                         <p class="text-xs text-slate-400">Customize your personal subtitles or switch the stream's audio track</p>
                     </div>
                 </div>
-                <button id="btn-close-language-modal" class="p-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition">
+                <button type="button" id="btn-close-language-modal" class="p-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -444,11 +444,11 @@
                     </p>
 
                     <div class="flex flex-wrap items-center gap-2 mb-3">
-                        <button id="btn-upload-subtitle" class="px-4 py-2.5 rounded-xl bg-cozy-mint text-slate-950 font-bold flex items-center gap-1.5 hover:opacity-95 transition">
+                        <button type="button" id="btn-upload-subtitle" class="px-4 py-2.5 rounded-xl bg-cozy-mint text-slate-950 font-bold flex items-center gap-1.5 hover:opacity-95 transition cursor-pointer">
                             <i data-lucide="upload" class="w-4 h-4"></i>
                             <span>Load .SRT / .VTT File</span>
                         </button>
-                        <button id="btn-clear-subtitle" class="px-3.5 py-2.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-300 border border-cozy-border font-semibold transition">
+                        <button type="button" id="btn-clear-subtitle" class="px-3.5 py-2.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-300 border border-cozy-border font-semibold transition cursor-pointer">
                             Turn Off Personal CC
                         </button>
                         <span id="personal-sub-status" class="text-[11px] text-slate-400 ml-1">No file loaded</span>
@@ -468,9 +468,9 @@
                         <div>
                             <label class="block text-[11px] text-slate-400 mb-1">Sync Delay Offset (sec)</label>
                             <div class="flex items-center gap-1.5">
-                                <button id="btn-sub-delay-minus" class="px-2.5 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-white font-mono">-0.5s</button>
+                                <button type="button" id="btn-sub-delay-minus" class="px-2.5 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-white font-mono cursor-pointer">-0.5s</button>
                                 <span id="label-sub-offset" class="flex-1 text-center font-mono text-cozy-pink font-bold">0.0s</span>
-                                <button id="btn-sub-delay-plus" class="px-2.5 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-white font-mono">+0.5s</button>
+                                <button type="button" id="btn-sub-delay-plus" class="px-2.5 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-white font-mono cursor-pointer">+0.5s</button>
                             </div>
                         </div>
                     </div>
@@ -483,7 +483,7 @@
                             <i data-lucide="languages" class="w-4 h-4"></i>
                             <span>2. Stream Audio & VOD Subtitle Tracks</span>
                         </span>
-                        <button id="btn-refresh-vod-tracks" class="text-[11px] text-cozy-lavender hover:underline flex items-center gap-1">
+                        <button type="button" id="btn-refresh-vod-tracks" class="text-[11px] text-cozy-lavender hover:underline flex items-center gap-1 cursor-pointer">
                             <i data-lucide="refresh-cw" class="w-3 h-3"></i>
                             <span>Refresh Tracks</span>
                         </button>
@@ -521,7 +521,7 @@
                     </div>
                     <h3 class="font-display text-lg font-bold text-white">Camera & Microphone Settings 🎥</h3>
                 </div>
-                <button id="btn-close-devices-modal" class="p-1.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition">
+                <button type="button" id="btn-close-devices-modal" class="p-1.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition cursor-pointer">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -541,7 +541,7 @@
                         <option value="">Default Microphone</option>
                     </select>
                 </div>
-                <button id="btn-Reconnect-media" class="w-full py-3 rounded-xl bg-cozy-mint text-slate-950 font-bold text-xs shadow-glow-mint flex items-center justify-center gap-2 hover:opacity-95 transition mt-2">
+                <button type="button" id="btn-Reconnect-media" class="w-full py-3 rounded-xl bg-cozy-mint text-slate-950 font-bold text-xs shadow-glow-mint flex items-center justify-center gap-2 hover:opacity-95 transition mt-2 cursor-pointer">
                     <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                     <span>Request Camera & Mic Access Now</span>
                 </button>
@@ -562,7 +562,7 @@
                         <p class="text-xs text-slate-400">Control Start / Stop / Seek / Language & Subtitles directly from VeeVee</p>
                     </div>
                 </div>
-                <button id="btn-close-platforms" class="p-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition">
+                <button type="button" id="btn-close-platforms" class="p-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -582,11 +582,11 @@
                 <div class="flex flex-col sm:flex-row gap-2">
                     <input id="input-media-url" type="text" placeholder="Paste YouTube URL (e.g. https://youtu.be/...) or .mp4 link" 
                         class="flex-1 px-3.5 py-2.5 rounded-xl bg-cozy-card border border-cozy-border focus:border-cozy-mint focus:outline-none text-xs text-white placeholder-slate-500">
-                    <button id="btn-load-url" class="px-4 py-2.5 rounded-xl bg-cozy-mint hover:opacity-95 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shrink-0 transition">
+                    <button type="button" id="btn-load-url" class="px-4 py-2.5 rounded-xl bg-cozy-mint hover:opacity-95 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shrink-0 transition cursor-pointer">
                         <i data-lucide="play" class="w-4 h-4 fill-current"></i>
                         <span>Load & Sync</span>
                     </button>
-                    <button id="btn-modal-local-file" class="px-3.5 py-2.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border font-semibold text-xs flex items-center justify-center gap-1.5 shrink-0 transition">
+                    <button type="button" id="btn-modal-local-file" class="px-3.5 py-2.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border font-semibold text-xs flex items-center justify-center gap-1.5 shrink-0 transition cursor-pointer">
                         <i data-lucide="folder-video" class="w-4 h-4 text-cozy-lavender"></i>
                         <span>Local File</span>
                     </button>
@@ -600,7 +600,7 @@
                         <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
                         Option 2: Netflix, Disney+, Max, Prime Video (M7375-Safe Bridge)
                     </span>
-                    <button type="button" id="extension-status-badge" class="text-[11px] px-3 py-1 rounded-xl bg-amber-500/20 hover:bg-amber-400 hover:text-slate-950 text-amber-300 border border-amber-400/50 font-bold flex items-center gap-1.5 transition cursor-pointer shadow-sm">
+                    <button type="button" id="extension-status-badge" onclick="window.veeveeOpenExtensionModal()" class="text-[11px] px-3 py-1 rounded-xl bg-amber-500/20 hover:bg-amber-400 hover:text-slate-950 text-amber-300 border border-amber-400/50 font-bold flex items-center gap-1.5 transition cursor-pointer shadow-sm">
                         <i data-lucide="download" class="w-3.5 h-3.5"></i>
                         <span>Extension: Not Detected — Click to Install (.ZIP)</span>
                     </button>
@@ -611,7 +611,7 @@
                 </p>
 
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
-                    <button data-platform="Netflix" data-url="https://www.netflix.com/browse" class="platform-launch-btn p-3.5 rounded-2xl bg-gradient-to-br from-red-950/60 to-cozy-card hover:from-red-900/70 border border-red-500/30 flex flex-col items-center gap-2 text-center group transition">
+                    <button type="button" data-platform="Netflix" data-url="https://www.netflix.com/browse" class="platform-launch-btn p-3.5 rounded-2xl bg-gradient-to-br from-red-950/60 to-cozy-card hover:from-red-900/70 border border-red-500/30 flex flex-col items-center gap-2 text-center group transition cursor-pointer">
                         <div class="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center font-display font-bold text-lg text-white shadow-lg group-hover:scale-105 transition">N</div>
                         <div>
                             <div class="font-bold text-xs text-white">1. Open Netflix</div>
@@ -619,7 +619,7 @@
                         </div>
                     </button>
 
-                    <button data-platform="Disney+" data-url="https://www.disneyplus.com" class="platform-launch-btn p-3.5 rounded-2xl bg-gradient-to-br from-sky-950/60 to-cozy-card hover:from-sky-900/70 border border-sky-500/30 flex flex-col items-center gap-2 text-center group transition">
+                    <button type="button" data-platform="Disney+" data-url="https://www.disneyplus.com" class="platform-launch-btn p-3.5 rounded-2xl bg-gradient-to-br from-sky-950/60 to-cozy-card hover:from-sky-900/70 border border-sky-500/30 flex flex-col items-center gap-2 text-center group transition cursor-pointer">
                         <div class="w-10 h-10 rounded-xl bg-sky-600 flex items-center justify-center font-display font-bold text-sm text-white shadow-lg group-hover:scale-105 transition">D+</div>
                         <div>
                             <div class="font-bold text-xs text-white">1. Open Disney+</div>
@@ -627,7 +627,7 @@
                         </div>
                     </button>
 
-                    <button data-platform="Max" data-url="https://play.max.com" class="platform-launch-btn p-3.5 rounded-2xl bg-gradient-to-br from-indigo-950/60 to-cozy-card hover:from-indigo-900/70 border border-indigo-500/30 flex flex-col items-center gap-2 text-center group transition">
+                    <button type="button" data-platform="Max" data-url="https://play.max.com" class="platform-launch-btn p-3.5 rounded-2xl bg-gradient-to-br from-indigo-950/60 to-cozy-card hover:from-indigo-900/70 border border-indigo-500/30 flex flex-col items-center gap-2 text-center group transition cursor-pointer">
                         <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-display font-bold text-xs text-white shadow-lg group-hover:scale-105 transition">MAX</div>
                         <div>
                             <div class="font-bold text-xs text-white">1. Open Max</div>
@@ -635,7 +635,7 @@
                         </div>
                     </button>
 
-                    <button data-platform="Prime Video" data-url="https://www.primevideo.com" class="platform-launch-btn p-3.5 rounded-2xl bg-gradient-to-br from-cyan-950/60 to-cozy-card hover:from-cyan-900/70 border border-cyan-500/30 flex flex-col items-center gap-2 text-center group transition">
+                    <button type="button" data-platform="Prime Video" data-url="https://www.primevideo.com" class="platform-launch-btn p-3.5 rounded-2xl bg-gradient-to-br from-cyan-950/60 to-cozy-card hover:from-cyan-900/70 border border-cyan-500/30 flex flex-col items-center gap-2 text-center group transition cursor-pointer">
                         <div class="w-10 h-10 rounded-xl bg-cyan-600 flex items-center justify-center font-display font-bold text-xs text-white shadow-lg group-hover:scale-105 transition">PV</div>
                         <div>
                             <div class="font-bold text-xs text-white">1. Open Prime</div>
@@ -650,7 +650,7 @@
                         <span id="step2-status-title" class="font-bold text-cozy-mint block">Step 2: Movie ready in the adjacent tab?</span>
                         <span class="text-[11px] text-slate-400">Click the button on the right, pick the movie tab, and enable <strong>"Also share tab audio"</strong>.</span>
                     </div>
-                    <button id="btn-step2-start-capture" class="w-full sm:w-auto px-5 py-3 rounded-xl bg-cozy-mint hover:opacity-95 text-slate-950 font-bold text-xs shadow-glow-mint flex items-center justify-center gap-2 shrink-0 transition">
+                    <button type="button" id="btn-step2-start-capture" class="w-full sm:w-auto px-5 py-3 rounded-xl bg-cozy-mint hover:opacity-95 text-slate-950 font-bold text-xs shadow-glow-mint flex items-center justify-center gap-2 shrink-0 transition cursor-pointer">
                         <i data-lucide="monitor-up" class="w-4 h-4 stroke-[2.3]"></i>
                         <span>2. Share Opened Movie Tab</span>
                     </button>
@@ -669,7 +669,7 @@
                     </div>
                     <h3 class="font-display text-lg font-bold text-white">Watch Party Guide & Troubleshooting 🍿</h3>
                 </div>
-                <button id="btn-close-help" class="p-1.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition">
+                <button type="button" id="btn-close-help" class="p-1.5 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-400 hover:text-white transition cursor-pointer">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -680,14 +680,14 @@
                 </div>
                 <div class="p-3 rounded-2xl bg-cozy-bg/80 border border-cozy-border">
                     <p class="font-semibold text-cozy-lavender mb-1">2. Independent Subtitles & Audio Languages</p>
-                    <p class="text-xs text-slate-400">Click the <strong>CC / Language</strong> button on the video control bar to load your own <code>.srt</code> or <code>.vtt</code> subtitles (visible only to you) or switch the stream's spoken audio track.</p>
+                    <p class="text-xs text-slate-400">Click the <strong>Audio & Subtitles (CC)</strong> button on the video control bar to load your own <code>.srt</code> or <code>.vtt</code> subtitles (visible only to you) or switch the stream's spoken audio track.</p>
                 </div>
                 <div class="p-3 rounded-2xl bg-cozy-bg/80 border border-cozy-border">
                     <p class="font-semibold text-cozy-mint mb-1">3. Camera or Microphone Not Showing?</p>
-                    <p class="text-xs text-slate-400">Click <strong>Mic On</strong> or <strong>Cam On</strong> (or the gear icon next to them) to re-request permissions from Chrome and pick your physical webcam/microphone.</p>
+                    <p class="text-xs text-slate-400">Click <strong>Mic On</strong> or <strong>Cam On</strong> (or the arrow icon next to Mic) to re-request permissions from Chrome and pick your physical webcam/microphone.</p>
                 </div>
             </div>
-            <button id="btn-got-it-help" class="mt-5 w-full py-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs">
+            <button type="button" id="btn-got-it-help" class="mt-5 w-full py-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs cursor-pointer">
                 Got it, let's watch! 🍿
             </button>
         </div>
@@ -718,7 +718,7 @@
         <div class="hidden md:flex items-center gap-2 bg-cozy-card px-3 py-1.5 rounded-2xl border border-cozy-border">
             <span class="text-xs text-slate-400">Room:</span>
             <code id="display-room-id" class="text-xs font-mono font-semibold text-cozy-pink px-1.5">---</code>
-            <button id="btn-copy-invite" class="px-3 py-1.5 rounded-xl bg-cozy-panel hover:bg-cozy-pink hover:text-slate-950 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition" title="Copy Invite Link">
+            <button type="button" id="btn-copy-invite" class="px-3 py-1.5 rounded-xl bg-cozy-panel hover:bg-cozy-pink hover:text-slate-950 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer" title="Copy Invite Link">
                 <i data-lucide="link" class="w-3.5 h-3.5"></i>
                 <span>Copy Invite Link</span>
             </button>
@@ -726,12 +726,12 @@
 
         <!-- Right: Hub, Extension, Quality, Participants, Help -->
         <div class="flex items-center gap-2">
-            <button id="btn-open-platforms-top" class="px-3 py-2 rounded-2xl bg-cozy-panel hover:bg-cozy-border border border-cozy-pink/30 text-cozy-pink text-xs font-semibold flex items-center gap-1.5 transition" title="Open Streaming Platforms & Player Hub">
+            <button type="button" id="btn-open-platforms-top" class="px-3 py-2 rounded-2xl bg-cozy-panel hover:bg-cozy-border border border-cozy-pink/30 text-cozy-pink text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer" title="Open Streaming Platforms & Player Hub">
                 <i data-lucide="tv-2" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">Watch Hub</span>
             </button>
 
-            <button id="btn-open-extension-top" class="px-3 py-2 rounded-2xl bg-amber-400/20 hover:bg-amber-400 hover:text-slate-950 border border-amber-400/50 text-amber-300 text-xs font-bold flex items-center gap-1.5 transition shadow-sm" title="Download 1-Click .ZIP Chrome Extension for Netflix / Disney+">
+            <button type="button" id="btn-open-extension-top" onclick="window.veeveeOpenExtensionModal()" class="px-3 py-2 rounded-2xl bg-amber-400/20 hover:bg-amber-400 hover:text-slate-950 border border-amber-400/50 text-amber-300 text-xs font-bold flex items-center gap-1.5 transition shadow-sm cursor-pointer" title="Download 1-Click .ZIP Chrome Extension for Netflix / Disney+">
                 <i data-lucide="puzzle" class="w-4 h-4"></i>
                 <span id="top-ext-label">Install Extension</span>
             </button>
@@ -741,7 +741,7 @@
                 <option value="720p30">Smooth 720p • 30fps</option>
             </select>
 
-            <button id="btn-copy-invite-mobile" class="md:hidden p-2.5 rounded-2xl bg-cozy-card border border-cozy-border text-cozy-pink hover:bg-cozy-panel transition" title="Copy Invite Link">
+            <button type="button" id="btn-copy-invite-mobile" class="md:hidden p-2.5 rounded-2xl bg-cozy-card border border-cozy-border text-cozy-pink hover:bg-cozy-panel transition cursor-pointer" title="Copy Invite Link">
                 <i data-lucide="share-2" class="w-4 h-4"></i>
             </button>
 
@@ -750,7 +750,7 @@
                 <span id="participant-count">1</span>
             </div>
 
-            <button id="btn-open-help" class="p-2.5 rounded-2xl bg-cozy-card hover:bg-cozy-panel border border-cozy-border text-slate-300 hover:text-white transition" title="Help & Troubleshooting">
+            <button type="button" id="btn-open-help" class="p-2.5 rounded-2xl bg-cozy-card hover:bg-cozy-panel border border-cozy-border text-slate-300 hover:text-white transition cursor-pointer" title="Help & Troubleshooting">
                 <i data-lucide="help-circle" class="w-4 h-4"></i>
             </button>
         </div>
@@ -801,24 +801,24 @@
 
                 <!-- Top-Right Stage Utility Buttons (Unmute, Subtitles/Language, Laser, PiP, Expand) -->
                 <div class="absolute top-4 right-12 z-30 flex items-center gap-2">
-                    <button id="btn-unmute-stage" class="hidden items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-cozy-pink text-slate-950 font-bold text-xs shadow-glow-pink hover:scale-105 transition">
+                    <button type="button" id="btn-unmute-stage" class="hidden items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-cozy-pink text-slate-950 font-bold text-xs shadow-glow-pink hover:scale-105 transition cursor-pointer">
                         <i data-lucide="volume-2" class="w-4 h-4"></i>
                         <span>Enable Stream Audio</span>
                     </button>
 
-                    <button id="btn-stage-top-cc" class="p-2.5 rounded-2xl bg-black/70 hover:bg-cozy-lavender hover:text-slate-950 text-white border border-white/15 backdrop-blur-md opacity-0 group-hover:opacity-100 transition" title="Audio Language & Subtitles (CC)">
+                    <button type="button" id="btn-stage-top-cc" class="p-2.5 rounded-2xl bg-black/70 hover:bg-cozy-lavender hover:text-slate-950 text-white border border-white/15 backdrop-blur-md opacity-0 group-hover:opacity-100 transition cursor-pointer" title="Audio Language & Subtitles (CC)">
                         <i data-lucide="subtitles" class="w-4 h-4"></i>
                     </button>
 
-                    <button id="btn-stage-laser" class="p-2.5 rounded-2xl bg-black/70 hover:bg-cozy-pink hover:text-slate-950 text-white border border-white/15 backdrop-blur-md opacity-0 group-hover:opacity-100 transition" title="Laser Pointer (Highlight things on the video for friends)">
+                    <button type="button" id="btn-stage-laser" class="p-2.5 rounded-2xl bg-black/70 hover:bg-cozy-pink hover:text-slate-950 text-white border border-white/15 backdrop-blur-md opacity-0 group-hover:opacity-100 transition cursor-pointer" title="Laser Pointer (Highlight things on the video for friends)">
                         <i data-lucide="wand-2" class="w-4 h-4"></i>
                     </button>
 
-                    <button id="btn-stage-pip" class="p-2.5 rounded-2xl bg-black/70 hover:bg-cozy-lavender hover:text-slate-950 text-white border border-white/15 backdrop-blur-md opacity-0 group-hover:opacity-100 transition" title="Picture-in-Picture Mode">
+                    <button type="button" id="btn-stage-pip" class="p-2.5 rounded-2xl bg-black/70 hover:bg-cozy-lavender hover:text-slate-950 text-white border border-white/15 backdrop-blur-md opacity-0 group-hover:opacity-100 transition cursor-pointer" title="Picture-in-Picture Mode">
                         <i data-lucide="picture-in-picture-2" class="w-4 h-4"></i>
                     </button>
 
-                    <button id="btn-stage-expand" class="p-2.5 rounded-2xl bg-black/70 hover:bg-cozy-pink hover:text-slate-950 text-white border border-white/15 backdrop-blur-md opacity-0 group-hover:opacity-100 transition" title="Expand Movie to Fill 100% Screen">
+                    <button type="button" id="btn-stage-expand" class="p-2.5 rounded-2xl bg-black/70 hover:bg-cozy-pink hover:text-slate-950 text-white border border-white/15 backdrop-blur-md opacity-0 group-hover:opacity-100 transition cursor-pointer" title="Expand Movie to Fill 100% Screen">
                         <i data-lucide="maximize-2" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -837,25 +837,25 @@
                     <div class="flex flex-wrap items-center justify-between gap-2">
                         <div class="flex flex-wrap items-center gap-2">
                             <!-- Direct START / PAUSE Button -->
-                            <button id="btn-stage-playpause" class="px-4 py-2 rounded-xl bg-cozy-mint hover:opacity-95 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-glow-mint transition">
+                            <button type="button" id="btn-stage-playpause" class="px-4 py-2 rounded-xl bg-cozy-mint hover:opacity-95 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-glow-mint transition cursor-pointer">
                                 <i data-lucide="pause" class="w-4 h-4 fill-current"></i>
                                 <span>Pause</span>
                             </button>
 
                             <!-- Rewind 10s Button -->
-                            <button id="btn-stage-rewind" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1 transition" title="Rewind 10 seconds for everyone">
+                            <button type="button" id="btn-stage-rewind" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1 transition cursor-pointer" title="Rewind 10 seconds for everyone">
                                 <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                                 <span>-10s</span>
                             </button>
 
                             <!-- Forward 10s Button -->
-                            <button id="btn-stage-forward" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1 transition" title="Forward 10 seconds for everyone">
+                            <button type="button" id="btn-stage-forward" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1 transition cursor-pointer" title="Forward 10 seconds for everyone">
                                 <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
                                 <span>+10s</span>
                             </button>
 
                             <!-- Audio Language & Subtitles (CC) Button -->
-                            <button id="btn-stage-language" class="px-3.5 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender border border-cozy-lavender/40 text-xs font-bold flex items-center gap-1.5 transition" title="Select Audio Language & Subtitles (CC)">
+                            <button type="button" id="btn-stage-language" class="px-3.5 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender border border-cozy-lavender/40 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer" title="Select Audio Language & Subtitles (CC)">
                                 <i data-lucide="subtitles" class="w-4 h-4"></i>
                                 <span>Audio & Subtitles (CC)</span>
                             </button>
@@ -869,13 +869,13 @@
                             </select>
 
                             <!-- Skip Intro Button -->
-                            <button id="btn-stage-skip-intro" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-cozy-amber border border-cozy-amber/30 text-xs font-semibold flex items-center gap-1.5 transition" title="Skip Intro on Netflix / Disney+ / Max">
+                            <button type="button" id="btn-stage-skip-intro" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-cozy-amber border border-cozy-amber/30 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer" title="Skip Intro on Netflix / Disney+ / Max">
                                 <i data-lucide="fast-forward" class="w-3.5 h-3.5"></i>
                                 <span class="hidden sm:inline">Skip Intro</span>
                             </button>
 
                             <!-- Change Source / Open Platform Hub -->
-                            <button id="btn-stage-change-source" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition">
+                            <button type="button" id="btn-stage-change-source" class="px-3 py-2 rounded-xl bg-cozy-panel hover:bg-cozy-border text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
                                 <i data-lucide="tv-2" class="w-3.5 h-3.5 text-cozy-pink"></i>
                                 <span class="hidden md:inline">Change Movie</span>
                             </button>
@@ -883,7 +883,7 @@
 
                         <div class="flex items-center gap-2">
                             <!-- Direct STOP Button -->
-                            <button id="btn-stage-stop" class="px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transition">
+                            <button type="button" id="btn-stage-stop" class="px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transition cursor-pointer">
                                 <i data-lucide="square" class="w-3.5 h-3.5 fill-current"></i>
                                 <span>Stop Stream</span>
                             </button>
@@ -910,23 +910,23 @@
                     </p>
 
                     <div class="flex flex-wrap items-center justify-center gap-2.5">
-                        <button id="btn-hero-platforms" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender hover:opacity-95 text-slate-950 font-bold text-xs sm:text-sm shadow-glow-pink flex items-center gap-2 transition">
+                        <button type="button" id="btn-hero-platforms" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender hover:opacity-95 text-slate-950 font-bold text-xs sm:text-sm shadow-glow-pink flex items-center gap-2 transition cursor-pointer">
                             <i data-lucide="tv-2" class="w-4 h-4 stroke-[2.2]"></i>
                             <span>Netflix / Disney+ / YouTube Hub</span>
                         </button>
-                        <button id="btn-hero-extension" class="px-4 py-3 rounded-2xl bg-amber-400/20 hover:bg-amber-400 hover:text-slate-950 text-amber-300 border border-amber-400/50 font-bold text-xs sm:text-sm flex items-center gap-2 transition">
+                        <button type="button" id="btn-hero-extension" onclick="window.veeveeOpenExtensionModal()" class="px-4 py-3 rounded-2xl bg-amber-400/20 hover:bg-amber-400 hover:text-slate-950 text-amber-300 border border-amber-400/50 font-bold text-xs sm:text-sm flex items-center gap-2 transition cursor-pointer">
                             <i data-lucide="puzzle" class="w-4 h-4"></i>
                             <span>Install VOD Extension (.ZIP)</span>
                         </button>
-                        <button id="btn-hero-share" class="px-4 py-3 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border font-semibold text-xs sm:text-sm flex items-center gap-2 transition">
+                        <button type="button" id="btn-hero-share" class="px-4 py-3 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border font-semibold text-xs sm:text-sm flex items-center gap-2 transition cursor-pointer">
                             <i data-lucide="monitor-up" class="w-4 h-4 text-cozy-pink"></i>
                             <span>Share Screen / Tab</span>
                         </button>
-                        <button id="btn-hero-file" class="px-4 py-3 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border font-semibold text-xs sm:text-sm flex items-center gap-2 transition">
+                        <button type="button" id="btn-hero-file" class="px-4 py-3 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border font-semibold text-xs sm:text-sm flex items-center gap-2 transition cursor-pointer">
                             <i data-lucide="folder-video" class="w-4 h-4 text-cozy-lavender"></i>
                             <span>Local MP4 File</span>
                         </button>
-                        <button id="btn-hero-demo" class="px-4 py-3 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border font-semibold text-xs sm:text-sm flex items-center gap-2 transition">
+                        <button type="button" id="btn-hero-demo" class="px-4 py-3 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-slate-200 border border-cozy-border font-semibold text-xs sm:text-sm flex items-center gap-2 transition cursor-pointer">
                             <i data-lucide="sparkles" class="w-4 h-4 text-cozy-mint"></i>
                             <span>Demo Stream</span>
                         </button>
@@ -940,26 +940,31 @@
                 <!-- Left: Media & Stream Controls -->
                 <div class="flex items-center flex-wrap gap-2">
                     <div class="flex items-center rounded-2xl bg-cozy-panel border border-cozy-border overflow-hidden">
-                        <button id="btn-toggle-mic" class="px-3.5 py-2.5 hover:bg-cozy-border text-white flex items-center gap-2 text-xs font-semibold transition" title="Mute / Unmute Microphone">
+                        <button type="button" id="btn-toggle-mic" class="px-3.5 py-2.5 hover:bg-cozy-border text-white flex items-center gap-2 text-xs font-semibold transition cursor-pointer" title="Mute / Unmute Microphone">
                             <i data-lucide="mic" class="w-4 h-4 text-cozy-mint"></i>
                             <span class="hidden sm:inline">Mic On</span>
                         </button>
-                        <button id="btn-open-devices" class="px-2 py-2.5 hover:bg-cozy-border text-slate-400 hover:text-white border-l border-cozy-border transition" title="Select Camera & Microphone Device">
+                        <button type="button" id="btn-open-devices" class="px-2 py-2.5 hover:bg-cozy-border text-slate-400 hover:text-white border-l border-cozy-border transition cursor-pointer" title="Select Camera & Microphone Device">
                             <i data-lucide="chevron-up" class="w-3.5 h-3.5"></i>
                         </button>
                     </div>
 
-                    <button id="btn-toggle-cam" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border flex items-center gap-2 text-xs font-semibold transition" title="Turn Camera On / Off">
+                    <button type="button" id="btn-toggle-cam" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-white border border-cozy-border flex items-center gap-2 text-xs font-semibold transition cursor-pointer" title="Turn Camera On / Off">
                         <i data-lucide="video" class="w-4 h-4 text-cozy-mint"></i>
                         <span class="hidden sm:inline">Cam On</span>
                     </button>
 
-                    <button id="btn-share-screen" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs shadow-glow-pink flex items-center gap-2 hover:opacity-95 transition">
+                    <button type="button" id="btn-share-screen" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs shadow-glow-pink flex items-center gap-2 hover:opacity-95 transition cursor-pointer">
                         <i data-lucide="screen-share" class="w-4 h-4 stroke-[2.2]"></i>
                         <span>Share Screen</span>
                     </button>
 
-                    <button id="btn-dock-language" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender border border-cozy-lavender/30 flex items-center gap-1.5 text-xs font-semibold transition" title="Audio Language & Subtitles (CC)">
+                    <button type="button" id="btn-dock-platforms" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-pink border border-cozy-pink/30 flex items-center gap-1.5 text-xs font-semibold transition cursor-pointer" title="Open Watch Hub">
+                        <i data-lucide="play-square" class="w-4 h-4"></i>
+                        <span class="hidden md:inline">Watch Hub</span>
+                    </button>
+
+                    <button type="button" id="btn-dock-language" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender border border-cozy-lavender/30 flex items-center gap-1.5 text-xs font-semibold transition cursor-pointer" title="Audio Language & Subtitles (CC)">
                         <i data-lucide="subtitles" class="w-4 h-4"></i>
                         <span class="hidden md:inline">Language & CC</span>
                     </button>
@@ -967,22 +972,22 @@
 
                 <!-- Center: Quick Floating Emoji Reactions -->
                 <div class="flex items-center gap-1.5 bg-cozy-bg/80 px-2.5 py-1.5 rounded-2xl border border-cozy-border">
-                    <button data-emoji="💖" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Heart">💖</button>
-                    <button data-emoji="😂" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Laugh">😂</button>
-                    <button data-emoji="😱" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Shocked">😱</button>
-                    <button data-emoji="🍿" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Popcorn">🍿</button>
-                    <button data-emoji="🔥" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Fire">🔥</button>
-                    <button data-emoji="🥺" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition" title="Touched">🥺</button>
+                    <button type="button" data-emoji="💖" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition cursor-pointer" title="Heart">💖</button>
+                    <button type="button" data-emoji="😂" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition cursor-pointer" title="Laugh">😂</button>
+                    <button type="button" data-emoji="😱" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition cursor-pointer" title="Shocked">😱</button>
+                    <button type="button" data-emoji="🍿" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition cursor-pointer" title="Popcorn">🍿</button>
+                    <button type="button" data-emoji="🔥" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition cursor-pointer" title="Fire">🔥</button>
+                    <button type="button" data-emoji="🥺" class="reaction-btn w-8 h-8 rounded-xl hover:bg-cozy-panel active:scale-125 text-base flex items-center justify-center transition cursor-pointer" title="Touched">🥺</button>
                 </div>
 
                 <!-- Right: Auto-Duck, SFX, Volume, Fullscreen Expand -->
                 <div class="flex items-center gap-2">
-                    <button id="btn-toggle-autoduck" class="px-3 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-mint border border-cozy-mint/30 flex items-center gap-1.5 text-xs font-semibold transition" title="Auto-Ducking: Automatically lowers movie volume when someone speaks">
+                    <button type="button" id="btn-toggle-autoduck" class="px-3 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-mint border border-cozy-mint/30 flex items-center gap-1.5 text-xs font-semibold transition cursor-pointer" title="Auto-Ducking: Automatically lowers movie volume when someone speaks">
                         <i data-lucide="ear" class="w-4 h-4"></i>
                         <span class="hidden xl:inline">Auto-Duck</span>
                     </button>
 
-                    <button id="btn-toggle-sfx" class="p-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender border border-cozy-border transition" title="Chat Notification Sounds On/Off">
+                    <button type="button" id="btn-toggle-sfx" class="p-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender border border-cozy-border transition cursor-pointer" title="Chat Notification Sounds On/Off">
                         <i data-lucide="bell" class="w-4 h-4"></i>
                     </button>
 
@@ -991,7 +996,7 @@
                         <input id="slider-stage-volume" type="range" min="0" max="1" step="0.05" value="1" class="w-16 accent-cozy-pink cursor-pointer">
                     </div>
 
-                    <button id="btn-fullscreen" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-pink hover:text-slate-950 text-slate-200 border border-cozy-border flex items-center gap-1.5 text-xs font-semibold transition" title="Expand Video to Fill 100% Screen (Bottom bar auto-hides)">
+                    <button type="button" id="btn-fullscreen" class="px-3.5 py-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-pink hover:text-slate-950 text-slate-200 border border-cozy-border flex items-center gap-1.5 text-xs font-semibold transition cursor-pointer" title="Expand Video to Fill 100% Screen (Bottom bar auto-hides)">
                         <i data-lucide="maximize" class="w-4 h-4"></i>
                         <span class="hidden sm:inline" id="label-fullscreen">Full Screen</span>
                     </button>
@@ -1009,7 +1014,7 @@
                         <i data-lucide="camera" class="w-3.5 h-3.5 text-cozy-pink"></i>
                         <h3 class="font-display font-bold text-xs uppercase tracking-wider text-slate-200">Cameras & Voice</h3>
                     </div>
-                    <button id="btn-close-drawer-inside" class="text-[11px] text-slate-400 hover:text-white flex items-center gap-1 transition">
+                    <button type="button" id="btn-close-drawer-inside" onclick="window.veeveeToggleDrawer(false)" class="text-[11px] text-slate-400 hover:text-white flex items-center gap-1 transition cursor-pointer">
                         <span>Hide Panel</span>
                         <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                     </button>
@@ -1040,30 +1045,30 @@
 
                 <div id="emoji-drawer" class="hidden absolute bottom-16 left-3 right-3 p-2.5 rounded-2xl bg-cozy-card/95 backdrop-blur-xl border border-cozy-border shadow-2xl z-30">
                     <div class="grid grid-cols-7 gap-1 text-base text-center">
-                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">😊</button>
-                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">😂</button>
-                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">🥹</button>
-                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">😍</button>
-                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">🍿</button>
-                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">🎬</button>
-                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">✨</button>
-                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">🔥</button>
-                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">💖</button>
-                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">😭</button>
-                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">😱</button>
-                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">🥳</button>
-                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">👀</button>
-                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl">💜</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl cursor-pointer">😊</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl cursor-pointer">😂</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl cursor-pointer">🥹</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl cursor-pointer">😍</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl cursor-pointer">🍿</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl cursor-pointer">🎬</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl cursor-pointer">✨</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl cursor-pointer">🔥</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl cursor-pointer">💖</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl cursor-pointer">😭</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl cursor-pointer">😱</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl cursor-pointer">🥳</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl cursor-pointer">👀</button>
+                        <button type="button" class="emoji-pick p-1.5 hover:bg-cozy-panel rounded-xl cursor-pointer">💜</button>
                     </div>
                 </div>
 
                 <form id="chat-form" class="pt-2 flex items-center gap-1.5">
-                    <button type="button" id="btn-toggle-emoji" class="p-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender transition shrink-0" title="Insert Emoji">
+                    <button type="button" id="btn-toggle-emoji" class="p-2.5 rounded-2xl bg-cozy-panel hover:bg-cozy-border text-cozy-lavender transition shrink-0 cursor-pointer" title="Insert Emoji">
                         <i data-lucide="smile" class="w-4 h-4"></i>
                     </button>
                     <input id="chat-input" type="text" maxlength="350" autocomplete="off" placeholder="Write a message..." 
                         class="flex-1 px-3.5 py-2.5 rounded-2xl bg-cozy-bg/90 border border-cozy-border focus:border-cozy-pink focus:outline-none text-xs text-white placeholder-slate-500">
-                    <button type="submit" class="p-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold hover:opacity-95 transition shrink-0" title="Send">
+                    <button type="submit" class="p-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold hover:opacity-95 transition shrink-0 cursor-pointer" title="Send">
                         <i data-lucide="send" class="w-4 h-4"></i>
                     </button>
                 </form>
@@ -1073,7 +1078,23 @@
 
     <!-- ==================== APPLICATION JAVASCRIPT ==================== -->
     <script>
-        lucide.createIcons();
+        // Crash-safe Lucide icon initializer
+        function safeCreateIcons(opts) {
+            try {
+                if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                    window.lucide.createIcons(opts);
+                }
+            } catch (e) {}
+        }
+        safeCreateIcons();
+
+        // Crash-safe event listener helper (never throws if an element ID is absent)
+        function bindEvent(elOrId, eventName, handler) {
+            const el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
+            if (el && typeof el.addEventListener === 'function') {
+                el.addEventListener(eventName, handler);
+            }
+        }
 
         /**
          * Global VeeVee Application State
@@ -1106,7 +1127,7 @@
                 currentAudioId: '',
                 currentSubtitleId: ''
             },
-            personalSubtitles: [], // Parsed [{ start, end, text }] for independent user subtitles
+            personalSubtitles: [],
             personalSubOffset: 0.0,
             isSharingScreen: false,
             isStagePaused: false,
@@ -1220,6 +1241,7 @@
             btnOpenDevices: document.getElementById('btn-open-devices'),
             btnToggleCam: document.getElementById('btn-toggle-cam'),
             btnShareScreen: document.getElementById('btn-share-screen'),
+            btnDockPlatforms: document.getElementById('btn-dock-platforms'),
             btnDockLanguage: document.getElementById('btn-dock-language'),
             btnToggleAutoduck: document.getElementById('btn-toggle-autoduck'),
             btnToggleSfx: document.getElementById('btn-toggle-sfx'),
@@ -1273,7 +1295,6 @@
             ]
         }, null, 2);
 
-        // Executed in the MAIN page world on VOD sites so Netflix's official Cadmium API is used instead of raw <video>.currentTime!
         const EXTENSION_PAGE_BRIDGE_JS = `// VeeVee Watch Party Bridge v3.0 - MAIN World VOD API Bridge (M7375 DRM-Safe)
 (function() {
     function getNetflixPlayer() {
@@ -1296,7 +1317,6 @@
 
         const isNetflix = location.hostname.includes('netflix.com');
         if (isNetflix) {
-            // CRITICAL M7375 FIX: Never touch <video>.currentTime on Netflix! Only use Netflix's official Cadmium player API.
             const nfPlayer = getNetflixPlayer();
             if (!nfPlayer) return;
 
@@ -1329,7 +1349,6 @@
             return;
         }
 
-        // Non-Netflix VOD sites (Disney+, Max, Prime Video)
         const videoEl = document.querySelector('video');
         if (!videoEl) return;
 
@@ -1353,7 +1372,6 @@
         }
     });
 
-    // Safe Telemetry & Audio/Subtitle Track Discovery Loop (Every 900ms)
     setInterval(() => {
         if (document.getElementById('stage-container')) return;
 
@@ -1490,29 +1508,90 @@
         }
 
         async function downloadCompleteZipExtension() {
-            if (typeof JSZip === 'undefined') {
-                downloadTextFile('manifest.json', EXTENSION_MANIFEST_JSON);
-                setTimeout(() => downloadTextFile('content.js', EXTENSION_CONTENT_JS), 300);
-                setTimeout(() => downloadTextFile('page-bridge.js', EXTENSION_PAGE_BRIDGE_JS), 600);
-                showToast('Downloaded extension files!', 'success');
-                return;
-            }
-            const zip = new JSZip();
-            zip.file('manifest.json', EXTENSION_MANIFEST_JSON);
-            zip.file('content.js', EXTENSION_CONTENT_JS);
-            zip.file('page-bridge.js', EXTENSION_PAGE_BRIDGE_JS);
+            try {
+                if (typeof JSZip !== 'undefined') {
+                    const zip = new JSZip();
+                    zip.file('manifest.json', EXTENSION_MANIFEST_JSON);
+                    zip.file('content.js', EXTENSION_CONTENT_JS);
+                    zip.file('page-bridge.js', EXTENSION_PAGE_BRIDGE_JS);
 
-            const blob = await zip.generateAsync({ type: 'blob' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'veevee-bridge-v3.zip';
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            setTimeout(() => URL.revokeObjectURL(url), 1500);
-            showToast('Downloaded veevee-bridge-v3.zip! Drag & drop it onto chrome://extensions', 'success');
+                    const blob = await zip.generateAsync({ type: 'blob' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'veevee-bridge-v3.zip';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    setTimeout(() => URL.revokeObjectURL(url), 1500);
+                    showToast('Downloaded veevee-bridge-v3.zip! Unzip it into a folder and Load unpacked in chrome://extensions', 'success');
+                    return;
+                }
+            } catch (err) {
+                console.warn('JSZip fallback:', err);
+            }
+            // Automatic fallback if JSZip is blocked
+            downloadTextFile('manifest.json', EXTENSION_MANIFEST_JSON);
+            setTimeout(() => downloadTextFile('content.js', EXTENSION_CONTENT_JS), 350);
+            setTimeout(() => downloadTextFile('page-bridge.js', EXTENSION_PAGE_BRIDGE_JS), 700);
+            showToast('Downloaded all 3 extension files!', 'success');
         }
+
+        // Expose top-level global functions so inline onclick attributes work immediately
+        window.veeveeOpenExtensionModal = function() {
+            if (dom.platformsModal) {
+                dom.platformsModal.classList.add('hidden');
+                dom.platformsModal.classList.remove('flex');
+            }
+            if (dom.extensionModal) {
+                dom.extensionModal.classList.remove('hidden');
+                dom.extensionModal.classList.add('flex');
+            }
+            window.postMessage({ type: 'VEEVEE_EXTENSION_PING' }, '*');
+        };
+
+        window.veeveeCloseExtensionModal = function() {
+            if (dom.extensionModal) {
+                dom.extensionModal.classList.add('hidden');
+                dom.extensionModal.classList.remove('flex');
+            }
+        };
+
+        window.veeveeDownloadZip = function() {
+            downloadCompleteZipExtension();
+        };
+
+        window.veeveeDownloadSingle = function(which) {
+            if (which === 'manifest') {
+                downloadTextFile('manifest.json', EXTENSION_MANIFEST_JSON);
+                showToast('Downloaded manifest.json!', 'success');
+            } else if (which === 'content') {
+                downloadTextFile('content.js', EXTENSION_CONTENT_JS);
+                showToast('Downloaded content.js!', 'success');
+            } else if (which === 'bridge') {
+                downloadTextFile('page-bridge.js', EXTENSION_PAGE_BRIDGE_JS);
+                showToast('Downloaded page-bridge.js!', 'success');
+            }
+        };
+
+        window.veeveeCopyExtUrl = async function() {
+            try {
+                await navigator.clipboard.writeText('chrome://extensions');
+                showToast('Copied chrome://extensions! Paste it in a new tab.', 'success');
+            } catch (e) {}
+        };
+
+        window.veeveeVerifyExtension = function() {
+            window.postMessage({ type: 'VEEVEE_EXTENSION_PING' }, '*');
+            setTimeout(() => {
+                if (state.extensionDetected) {
+                    showToast('VeeVee Watch Party Bridge v3.0 is active! ✅', 'success');
+                    window.veeveeCloseExtensionModal();
+                } else {
+                    showToast('Extension not detected yet. Load the unpacked folder in chrome://extensions and refresh this page (F5).', 'warning');
+                }
+            }, 300);
+        };
 
         function sendExtensionCommand(action, value = null) {
             window.postMessage({
@@ -1529,11 +1608,11 @@
             if (dom.extensionStatusBadge) {
                 dom.extensionStatusBadge.innerHTML = `<i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i><span>VOD Bridge v3.0: Active ✓</span>`;
                 dom.extensionStatusBadge.className = 'text-[11px] px-3 py-1 rounded-xl bg-cozy-mint/20 text-cozy-mint border border-cozy-mint/40 font-bold flex items-center gap-1.5';
-                lucide.createIcons({ nodes: [dom.extensionStatusBadge] });
+                safeCreateIcons({ nodes: [dom.extensionStatusBadge] });
             }
 
             if (dom.btnOpenExtensionTop) {
-                dom.btnOpenExtensionTop.className = 'px-3 py-2 rounded-2xl bg-cozy-mint/15 border border-cozy-mint/40 text-cozy-mint text-xs font-bold flex items-center gap-1.5 transition';
+                dom.btnOpenExtensionTop.className = 'px-3 py-2 rounded-2xl bg-cozy-mint/15 border border-cozy-mint/40 text-cozy-mint text-xs font-bold flex items-center gap-1.5 transition cursor-pointer';
             }
             if (dom.topExtLabel) {
                 dom.topExtLabel.textContent = 'Extension Active ✓';
@@ -1561,13 +1640,13 @@
             const audioTracks = state.remoteVodTelemetry.audioTracks || [];
             const subTracks = state.remoteVodTelemetry.subtitleTracks || [];
 
-            if (audioTracks.length > 0) {
+            if (audioTracks.length > 0 && dom.selectVodAudio) {
                 const currentVal = dom.selectVodAudio.value || state.remoteVodTelemetry.currentAudioId;
                 dom.selectVodAudio.innerHTML = `<option value="">-- Select Stream Audio Language --</option>` +
                     audioTracks.map(t => `<option value="${escapeHtml(t.id)}" ${t.id === currentVal ? 'selected' : ''}>${escapeHtml(t.label)}</option>`).join('');
             }
 
-            if (subTracks.length > 0) {
+            if (subTracks.length > 0 && dom.selectVodSubtitle) {
                 const currentSub = dom.selectVodSubtitle.value || state.remoteVodTelemetry.currentSubtitleId;
                 dom.selectVodSubtitle.innerHTML = `<option value="">-- Select Stream Subtitles --</option>` +
                     subTracks.map(t => `<option value="${escapeHtml(t.id)}" ${t.id === currentSub ? 'selected' : ''}>${escapeHtml(t.label)}</option>`).join('');
@@ -1597,7 +1676,7 @@
                     currentSubtitleId: tel.currentSubtitleId || ''
                 };
 
-                if (state.stageMode === 'screen') {
+                if (state.stageMode === 'screen' && dom.vodSyncBadge) {
                     dom.vodSyncBadge.classList.remove('hidden');
                 }
 
@@ -1611,10 +1690,10 @@
         setTimeout(() => {
             window.postMessage({ type: 'VEEVEE_EXTENSION_PING' }, '*');
             setTimeout(() => {
-                if (!state.extensionDetected) {
+                if (!state.extensionDetected && dom.extensionModal) {
                     dom.extensionModal.classList.remove('hidden');
                     dom.extensionModal.classList.add('flex');
-                    showToast('🧩 Download the 1-Click .ZIP Extension to control Netflix & Disney+ without Error M7375!', 'warning');
+                    showToast('🧩 Download the 1-Click .ZIP Extension or click "Skip for Now" to enter the room!', 'warning');
                 }
             }, 900);
         }, 300);
@@ -1671,6 +1750,7 @@
         }
 
         function updatePersonalSubtitleOverlay() {
+            if (!dom.personalSubtitleOverlay) return;
             if (!state.personalSubtitles || state.personalSubtitles.length === 0 || state.stageMode === 'none') {
                 dom.personalSubtitleOverlay.classList.add('hidden');
                 return;
@@ -1745,6 +1825,7 @@
         }
 
         function showToast(message, type = 'info') {
+            if (!dom.toastContainer) return;
             const toast = document.createElement('div');
             const borderColors = {
                 info: 'border-cozy-lavender/50',
@@ -1765,7 +1846,7 @@
                 <span class="flex-1 leading-snug">${escapeHtml(message)}</span>
             `;
             dom.toastContainer.appendChild(toast);
-            lucide.createIcons({ nodes: [toast] });
+            safeCreateIcons({ nodes: [toast] });
 
             requestAnimationFrame(() => toast.classList.remove('opacity-0', 'translate-y-2'));
             setTimeout(() => {
@@ -1781,15 +1862,17 @@
         }
 
         function updateConnectionUI(status, text) {
-            dom.connectionStatusText.textContent = text;
-            dom.connectionDot.className = 'w-2 h-2 rounded-full pulse-dot ';
-            if (status === 'connected') dom.connectionDot.classList.add('bg-cozy-mint');
-            else if (status === 'connecting') dom.connectionDot.classList.add('bg-amber-400');
-            else dom.connectionDot.classList.add('bg-rose-500');
+            if (dom.connectionStatusText) dom.connectionStatusText.textContent = text;
+            if (dom.connectionDot) {
+                dom.connectionDot.className = 'w-2 h-2 rounded-full pulse-dot ';
+                if (status === 'connected') dom.connectionDot.classList.add('bg-cozy-mint');
+                else if (status === 'connecting') dom.connectionDot.classList.add('bg-amber-400');
+                else dom.connectionDot.classList.add('bg-rose-500');
+            }
         }
 
         function updateParticipantsCounter() {
-            dom.participantCount.textContent = state.participants.size;
+            if (dom.participantCount) dom.participantCount.textContent = state.participants.size;
         }
 
         function saveProfilePreferences() {
@@ -1815,7 +1898,7 @@
             }, 2200);
         }
 
-        window.addEventListener('mousemove', (e) => {
+        window.addEventListener('mousemove', () => {
             if (!state.isImmersiveFullscreen) return;
             wakeFullscreenControls();
         });
@@ -1840,20 +1923,25 @@
                 }
             }
 
-            if (state.drawerOpen) {
+            if (state.drawerOpen && dom.unreadChatDot) {
                 state.unreadCount = 0;
                 dom.unreadChatDot.classList.add('hidden');
             }
 
-            dom.floatingDrawerIconWrap.innerHTML = `<i data-lucide="${state.drawerOpen ? 'panel-right-close' : 'panel-right-open'}" class="w-4 h-4 text-cozy-pink group-hover:text-slate-950 transition"></i>`;
-            dom.floatingDrawerLabel.textContent = state.drawerOpen ? 'Hide Chat' : 'Open Chat';
-            lucide.createIcons({ nodes: [dom.floatingDrawerIconWrap] });
+            if (dom.floatingDrawerIconWrap) {
+                dom.floatingDrawerIconWrap.innerHTML = `<i data-lucide="${state.drawerOpen ? 'panel-right-close' : 'panel-right-open'}" class="w-4 h-4 text-cozy-pink group-hover:text-slate-950 transition"></i>`;
+                safeCreateIcons({ nodes: [dom.floatingDrawerIconWrap] });
+            }
+            if (dom.floatingDrawerLabel) {
+                dom.floatingDrawerLabel.textContent = state.drawerOpen ? 'Hide Chat' : 'Open Chat';
+            }
         }
 
         function toggleDrawer(forceState) {
             state.drawerOpen = typeof forceState === 'boolean' ? forceState : !state.drawerOpen;
             updateDrawerAndLayout();
         }
+        window.veeveeToggleDrawer = toggleDrawer;
 
         function toggleImmersiveFullscreen() {
             state.isImmersiveFullscreen = !state.isImmersiveFullscreen;
@@ -1871,12 +1959,16 @@
                 }
             }
 
-            dom.btnFullscreen.innerHTML = `
-                <i data-lucide="${state.isImmersiveFullscreen ? 'minimize' : 'maximize'}" class="w-4 h-4"></i>
-                <span class="hidden sm:inline">${state.isImmersiveFullscreen ? 'Exit Full' : 'Full Screen'}</span>
-            `;
-            dom.btnStageExpand.innerHTML = `<i data-lucide="${state.isImmersiveFullscreen ? 'minimize-2' : 'maximize-2'}" class="w-4 h-4"></i>`;
-            lucide.createIcons({ nodes: [dom.btnFullscreen, dom.btnStageExpand] });
+            if (dom.btnFullscreen) {
+                dom.btnFullscreen.innerHTML = `
+                    <i data-lucide="${state.isImmersiveFullscreen ? 'minimize' : 'maximize'}" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">${state.isImmersiveFullscreen ? 'Exit Full' : 'Full Screen'}</span>
+                `;
+            }
+            if (dom.btnStageExpand) {
+                dom.btnStageExpand.innerHTML = `<i data-lucide="${state.isImmersiveFullscreen ? 'minimize-2' : 'maximize-2'}" class="w-4 h-4"></i>`;
+            }
+            safeCreateIcons({ nodes: [dom.btnFullscreen, dom.btnStageExpand] });
 
             updateDrawerAndLayout();
         }
@@ -1893,6 +1985,7 @@
 
         function initLaserPointer() {
             const canvas = dom.laserCanvas;
+            if (!canvas) return;
             const ctx = canvas.getContext('2d');
 
             function resizeLaser() {
@@ -2048,7 +2141,7 @@
             }
         }, 300);
 
-        // ==================== RESILIENT CAMERA & MICROPHONE ACQUISITION (FIXES CHROME AVATAR ISSUE) ====================
+        // ==================== RESILIENT CAMERA & MICROPHONE ACQUISITION ====================
 
         function createAvatarFallbackStream(username, bgColor) {
             const canvas = document.createElement('canvas');
@@ -2105,18 +2198,18 @@
                 const cams = devices.filter(d => d.kind === 'videoinput');
                 const mics = devices.filter(d => d.kind === 'audioinput');
 
-                if (cams.length > 0) {
+                if (cams.length > 0 && dom.selectCameraDevice) {
                     dom.selectCameraDevice.innerHTML = cams.map((c, i) => `<option value="${escapeHtml(c.deviceId)}">${escapeHtml(c.label || 'Camera ' + (i + 1))}</option>`).join('');
                 }
-                if (mics.length > 0) {
+                if (mics.length > 0 && dom.selectMicDevice) {
                     dom.selectMicDevice.innerHTML = mics.map((m, i) => `<option value="${escapeHtml(m.deviceId)}">${escapeHtml(m.label || 'Microphone ' + (i + 1))}</option>`).join('');
                 }
             } catch (e) {}
         }
 
         async function acquireRealHardwareStream(wantVideo = true, wantAudio = true) {
-            const camId = dom.selectCameraDevice.value;
-            const micId = dom.selectMicDevice.value;
+            const camId = dom.selectCameraDevice ? dom.selectCameraDevice.value : '';
+            const micId = dom.selectMicDevice ? dom.selectMicDevice.value : '';
 
             const videoConstraints = wantVideo
                 ? (camId ? { deviceId: { exact: camId }, width: { ideal: 640 }, height: { ideal: 360 } } : { width: { ideal: 640 }, height: { ideal: 360 } })
@@ -2125,7 +2218,6 @@
                 ? (micId ? { deviceId: { exact: micId }, echoCancellation: true, noiseSuppression: true } : { echoCancellation: true, noiseSuppression: true })
                 : false;
 
-            // 1. Try combined video + audio first
             try {
                 const combined = await navigator.mediaDevices.getUserMedia({
                     video: videoConstraints,
@@ -2135,7 +2227,6 @@
                 await populateMediaDeviceSelectors();
                 return combined;
             } catch (firstErr) {
-                // 2. Resilient split fallback: if user has a mic but no webcam (or vice versa), acquire whichever is available!
                 const fallbackStream = createAvatarFallbackStream(state.username, state.avatarColor);
                 let gotAnyRealHardware = false;
 
@@ -2224,9 +2315,11 @@
             const newStream = await acquireRealHardwareStream(true, true);
 
             if (state.isUsingAvatarFallback) {
-                showToast('Chrome blocked camera/mic access. Click the lock/camera icon in Chrome\'s address bar and Allow permissions!', 'error');
-                dom.devicesModal.classList.remove('hidden');
-                dom.devicesModal.classList.add('flex');
+                showToast('Chrome blocked camera/mic access. Click the camera/lock icon in Chrome\'s address bar and Allow permissions!', 'error');
+                if (dom.devicesModal) {
+                    dom.devicesModal.classList.remove('hidden');
+                    dom.devicesModal.classList.add('flex');
+                }
                 return;
             }
 
@@ -2248,37 +2341,43 @@
         }
 
         function updateMediaButtonsUI() {
-            dom.btnToggleMic.innerHTML = `
-                <i data-lucide="${state.micEnabled ? 'mic' : 'mic-off'}" class="w-4 h-4 ${state.micEnabled ? 'text-cozy-mint' : 'text-rose-400'}"></i>
-                <span class="hidden sm:inline">${state.micEnabled ? 'Mic On' : 'Muted'}</span>
-            `;
-            dom.btnToggleCam.innerHTML = `
-                <i data-lucide="${state.camEnabled ? 'video' : 'video-off'}" class="w-4 h-4 ${state.camEnabled ? 'text-cozy-mint' : 'text-rose-400'}"></i>
-                <span class="hidden sm:inline">${state.camEnabled ? 'Cam On' : 'Cam Off'}</span>
-            `;
-            lucide.createIcons({ nodes: [dom.btnToggleMic, dom.btnToggleCam] });
+            if (dom.btnToggleMic) {
+                dom.btnToggleMic.innerHTML = `
+                    <i data-lucide="${state.micEnabled ? 'mic' : 'mic-off'}" class="w-4 h-4 ${state.micEnabled ? 'text-cozy-mint' : 'text-rose-400'}"></i>
+                    <span class="hidden sm:inline">${state.micEnabled ? 'Mic On' : 'Muted'}</span>
+                `;
+            }
+            if (dom.btnToggleCam) {
+                dom.btnToggleCam.innerHTML = `
+                    <i data-lucide="${state.camEnabled ? 'video' : 'video-off'}" class="w-4 h-4 ${state.camEnabled ? 'text-cozy-mint' : 'text-rose-400'}"></i>
+                    <span class="hidden sm:inline">${state.camEnabled ? 'Cam On' : 'Cam Off'}</span>
+                `;
+            }
+            safeCreateIcons({ nodes: [dom.btnToggleMic, dom.btnToggleCam] });
         }
 
         function updateShareButtonUI() {
+            if (!dom.btnShareScreen) return;
             if (state.isSharingScreen || state.stageMode !== 'none') {
-                dom.btnShareScreen.className = 'px-4 py-2.5 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 transition';
+                dom.btnShareScreen.className = 'px-4 py-2.5 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 transition cursor-pointer';
                 dom.btnShareScreen.innerHTML = `
                     <i data-lucide="square" class="w-4 h-4 fill-current"></i>
                     <span>Stop Stream</span>
                 `;
             } else {
-                dom.btnShareScreen.className = 'px-4 py-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs shadow-glow-pink flex items-center gap-2 hover:opacity-95 transition';
+                dom.btnShareScreen.className = 'px-4 py-2.5 rounded-2xl bg-gradient-to-r from-cozy-pink to-cozy-lavender text-slate-950 font-bold text-xs shadow-glow-pink flex items-center gap-2 hover:opacity-95 transition cursor-pointer';
                 dom.btnShareScreen.innerHTML = `
                     <i data-lucide="screen-share" class="w-4 h-4 stroke-[2.2]"></i>
                     <span>Share Screen</span>
                 `;
             }
-            lucide.createIcons({ nodes: [dom.btnShareScreen] });
+            safeCreateIcons({ nodes: [dom.btnShareScreen] });
         }
 
         function updateStagePlayPauseUI() {
+            if (!dom.btnStagePlayPause || !dom.stagePausedBanner) return;
             if (state.isStagePaused) {
-                dom.btnStagePlayPause.className = 'px-4 py-2 rounded-xl bg-cozy-pink hover:opacity-95 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-glow-pink transition';
+                dom.btnStagePlayPause.className = 'px-4 py-2 rounded-xl bg-cozy-pink hover:opacity-95 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-glow-pink transition cursor-pointer';
                 dom.btnStagePlayPause.innerHTML = `
                     <i data-lucide="play" class="w-4 h-4 fill-current"></i>
                     <span>Start / Resume</span>
@@ -2286,7 +2385,7 @@
                 dom.stagePausedBanner.classList.remove('hidden');
                 dom.stagePausedBanner.classList.add('flex');
             } else {
-                dom.btnStagePlayPause.className = 'px-4 py-2 rounded-xl bg-cozy-mint hover:opacity-95 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-glow-mint transition';
+                dom.btnStagePlayPause.className = 'px-4 py-2 rounded-xl bg-cozy-mint hover:opacity-95 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-glow-mint transition cursor-pointer';
                 dom.btnStagePlayPause.innerHTML = `
                     <i data-lucide="pause" class="w-4 h-4 fill-current"></i>
                     <span>Pause</span>
@@ -2294,7 +2393,7 @@
                 dom.stagePausedBanner.classList.add('hidden');
                 dom.stagePausedBanner.classList.remove('flex');
             }
-            lucide.createIcons({ nodes: [dom.btnStagePlayPause] });
+            safeCreateIcons({ nodes: [dom.btnStagePlayPause] });
         }
 
         // ==================== VOICE DETECTION & AUTO-DUCKING ====================
@@ -2346,6 +2445,7 @@
         }
 
         function renderCameraTile(peerId, stream, label, isLocal = false) {
+            if (!dom.camerasGrid) return;
             let tile = document.getElementById(`cam-tile-${peerId}`);
             if (!tile) {
                 tile = document.createElement('div');
@@ -2386,19 +2486,19 @@
                     });
 
                     const muteBtn = document.createElement('button');
-                    muteBtn.className = 'p-1 rounded hover:text-cozy-pink text-white transition';
+                    muteBtn.className = 'p-1 rounded hover:text-cozy-pink text-white transition cursor-pointer';
                     muteBtn.title = 'Mute / Unmute Participant';
                     muteBtn.innerHTML = `<i data-lucide="volume-2" class="w-3 h-3"></i>`;
                     muteBtn.addEventListener('click', () => {
                         video.muted = !video.muted;
                         muteBtn.innerHTML = `<i data-lucide="${video.muted ? 'volume-x' : 'volume-2'}" class="w-3 h-3 ${video.muted ? 'text-rose-400' : ''}"></i>`;
-                        lucide.createIcons({ nodes: [muteBtn] });
+                        safeCreateIcons({ nodes: [muteBtn] });
                     });
 
                     controlsWrap.appendChild(volSlider);
                     controlsWrap.appendChild(muteBtn);
                     tile.appendChild(controlsWrap);
-                    lucide.createIcons({ nodes: [muteBtn] });
+                    safeCreateIcons({ nodes: [muteBtn] });
                 }
 
                 dom.camerasGrid.appendChild(tile);
@@ -2424,7 +2524,7 @@
         // ==================== STREAMING SOURCES & DIRECT STAGE START/STOP ====================
 
         function getSelectedMediaConstraints() {
-            const quality = dom.selectStreamQuality.value;
+            const quality = dom.selectStreamQuality ? dom.selectStreamQuality.value : '1080p60';
             const videoConstraints = quality === '720p30'
                 ? { cursor: 'always', width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30, max: 30 } }
                 : { cursor: 'always', width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 60, max: 60 } };
@@ -2667,7 +2767,7 @@
 
         function changeStagePlaybackSpeed(speedVal, broadcast = true) {
             state.stagePlaybackSpeed = speedVal;
-            dom.selectStageSpeed.value = String(speedVal);
+            if (dom.selectStageSpeed) dom.selectStageSpeed.value = String(speedVal);
 
             if (state.stageMode === 'youtube' && state.ytPlayer && typeof state.ytPlayer.setPlaybackRate === 'function') {
                 state.ytPlayer.setPlaybackRate(speedVal);
@@ -3062,6 +3162,7 @@
         // ==================== CHAT & FLOATING REACTIONS ====================
 
         function appendChatMessage({ sender, color, text, time, isSelf }) {
+            if (!dom.chatMessages) return;
             const wrapper = document.createElement('div');
             wrapper.className = `flex flex-col ${isSelf ? 'items-end' : 'items-start'}`;
             const bubbleColor = isSelf
@@ -3083,6 +3184,7 @@
         }
 
         function appendSystemMessage(text) {
+            if (!dom.chatMessages) return;
             const msg = document.createElement('div');
             msg.className = 'bg-cozy-bg/70 border border-cozy-border/60 rounded-xl px-3 py-1.5 text-center text-[11px] text-slate-400';
             msg.textContent = text;
@@ -3091,6 +3193,7 @@
         }
 
         function spawnFloatingReaction(emoji, senderName) {
+            if (!dom.reactionsOverlay) return;
             const el = document.createElement('div');
             el.className = 'floating-reaction flex flex-col items-center';
             el.style.left = `${Math.floor(Math.random() * 73) + 12}%`;
@@ -3102,72 +3205,79 @@
             setTimeout(() => el.remove(), 2600);
         }
 
-        // ==================== EVENT LISTENERS ====================
+        // ==================== DEFENSIVE EVENT LISTENERS ====================
 
-        // Drawer & Fullscreen
-        dom.btnFloatingDrawer.addEventListener('click', () => toggleDrawer());
-        dom.btnCloseDrawerInside.addEventListener('click', () => toggleDrawer(false));
-        dom.btnFullscreen.addEventListener('click', toggleImmersiveFullscreen);
-        dom.btnStageExpand.addEventListener('click', toggleImmersiveFullscreen);
+        bindEvent(dom.btnFullscreen, 'click', toggleImmersiveFullscreen);
+        bindEvent(dom.btnStageExpand, 'click', toggleImmersiveFullscreen);
 
         // Language & Subtitles (CC) Modal Listeners
         function openLanguageModal() {
             updateVodTrackSelectorsUI();
-            dom.languageModal.classList.remove('hidden');
-            dom.languageModal.classList.add('flex');
+            if (dom.languageModal) {
+                dom.languageModal.classList.remove('hidden');
+                dom.languageModal.classList.add('flex');
+            }
         }
         function closeLanguageModal() {
-            dom.languageModal.classList.add('hidden');
-            dom.languageModal.classList.remove('flex');
+            if (dom.languageModal) {
+                dom.languageModal.classList.add('hidden');
+                dom.languageModal.classList.remove('flex');
+            }
         }
-        dom.btnStageLanguage.addEventListener('click', openLanguageModal);
-        dom.btnStageTopCc.addEventListener('click', openLanguageModal);
-        dom.btnDockLanguage.addEventListener('click', openLanguageModal);
-        document.getElementById('btn-close-language-modal').addEventListener('click', closeLanguageModal);
+        bindEvent(dom.btnStageLanguage, 'click', openLanguageModal);
+        bindEvent(dom.btnStageTopCc, 'click', openLanguageModal);
+        bindEvent(dom.btnDockLanguage, 'click', openLanguageModal);
+        bindEvent('btn-close-language-modal', 'click', closeLanguageModal);
 
-        document.getElementById('btn-upload-subtitle').addEventListener('click', () => dom.inputLocalSubtitle.click());
-        dom.inputLocalSubtitle.addEventListener('change', (e) => {
+        bindEvent('btn-upload-subtitle', 'click', () => dom.inputLocalSubtitle && dom.inputLocalSubtitle.click());
+        bindEvent(dom.inputLocalSubtitle, 'change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = (ev) => {
                 const cues = parseSubtitleFileContent(String(ev.target.result || ''));
                 state.personalSubtitles = cues;
-                dom.personalSubStatus.textContent = `Loaded: ${file.name} (${cues.length} lines)`;
-                dom.personalSubStatus.className = 'text-[11px] text-cozy-mint font-semibold ml-1';
+                if (dom.personalSubStatus) {
+                    dom.personalSubStatus.textContent = `Loaded: ${file.name} (${cues.length} lines)`;
+                    dom.personalSubStatus.className = 'text-[11px] text-cozy-mint font-semibold ml-1';
+                }
                 showToast(`Loaded personal subtitles: ${file.name} (${cues.length} cues)!`, 'success');
             };
             reader.readAsText(file);
             e.target.value = '';
         });
 
-        document.getElementById('btn-clear-subtitle').addEventListener('click', () => {
+        bindEvent('btn-clear-subtitle', 'click', () => {
             state.personalSubtitles = [];
-            dom.personalSubtitleOverlay.classList.add('hidden');
-            dom.personalSubStatus.textContent = 'Subtitles turned off';
-            dom.personalSubStatus.className = 'text-[11px] text-slate-400 ml-1';
+            if (dom.personalSubtitleOverlay) dom.personalSubtitleOverlay.classList.add('hidden');
+            if (dom.personalSubStatus) {
+                dom.personalSubStatus.textContent = 'Subtitles turned off';
+                dom.personalSubStatus.className = 'text-[11px] text-slate-400 ml-1';
+            }
             showToast('Personal subtitles turned off.', 'info');
         });
 
-        dom.selectSubSize.addEventListener('change', (e) => {
-            dom.personalSubtitleOverlay.className = `hidden absolute bottom-24 left-1/2 -translate-x-1/2 z-25 max-w-[85%] px-4 py-1.5 rounded-xl custom-subtitle-box text-white font-semibold ${e.target.value} text-center pointer-events-none leading-snug`;
+        bindEvent(dom.selectSubSize, 'change', (e) => {
+            if (dom.personalSubtitleOverlay) {
+                dom.personalSubtitleOverlay.className = `hidden absolute bottom-24 left-1/2 -translate-x-1/2 z-25 max-w-[85%] px-4 py-1.5 rounded-xl custom-subtitle-box text-white font-semibold ${e.target.value} text-center pointer-events-none leading-snug`;
+            }
         });
 
-        document.getElementById('btn-sub-delay-minus').addEventListener('click', () => {
+        bindEvent('btn-sub-delay-minus', 'click', () => {
             state.personalSubOffset = Math.round((state.personalSubOffset - 0.5) * 10) / 10;
-            dom.labelSubOffset.textContent = `${state.personalSubOffset >= 0 ? '+' : ''}${state.personalSubOffset.toFixed(1)}s`;
+            if (dom.labelSubOffset) dom.labelSubOffset.textContent = `${state.personalSubOffset >= 0 ? '+' : ''}${state.personalSubOffset.toFixed(1)}s`;
         });
-        document.getElementById('btn-sub-delay-plus').addEventListener('click', () => {
+        bindEvent('btn-sub-delay-plus', 'click', () => {
             state.personalSubOffset = Math.round((state.personalSubOffset + 0.5) * 10) / 10;
-            dom.labelSubOffset.textContent = `${state.personalSubOffset >= 0 ? '+' : ''}${state.personalSubOffset.toFixed(1)}s`;
+            if (dom.labelSubOffset) dom.labelSubOffset.textContent = `${state.personalSubOffset >= 0 ? '+' : ''}${state.personalSubOffset.toFixed(1)}s`;
         });
 
-        document.getElementById('btn-refresh-vod-tracks').addEventListener('click', () => {
+        bindEvent('btn-refresh-vod-tracks', 'click', () => {
             updateVodTrackSelectorsUI();
             showToast('Refreshed stream audio & subtitle tracks!', 'info');
         });
 
-        dom.selectVodAudio.addEventListener('change', (e) => {
+        bindEvent(dom.selectVodAudio, 'change', (e) => {
             const val = e.target.value;
             if (!val) return;
             sendExtensionCommand('setAudioTrack', val);
@@ -3175,7 +3285,7 @@
             showToast('Switched stream audio language!', 'success');
         });
 
-        dom.selectVodSubtitle.addEventListener('change', (e) => {
+        bindEvent(dom.selectVodSubtitle, 'change', (e) => {
             const val = e.target.value;
             sendExtensionCommand('setSubtitleTrack', val);
             broadcastData({ type: 'vod-track-change', trackType: 'setSubtitleTrack', trackValue: val, sender: state.username });
@@ -3183,23 +3293,29 @@
         });
 
         // Camera & Microphone Device Settings Modal
-        dom.btnOpenDevices.addEventListener('click', async () => {
+        bindEvent(dom.btnOpenDevices, 'click', async () => {
             await populateMediaDeviceSelectors();
-            dom.devicesModal.classList.remove('hidden');
-            dom.devicesModal.classList.add('flex');
+            if (dom.devicesModal) {
+                dom.devicesModal.classList.remove('hidden');
+                dom.devicesModal.classList.add('flex');
+            }
         });
-        document.getElementById('btn-close-devices-modal').addEventListener('click', () => {
-            dom.devicesModal.classList.add('hidden');
-            dom.devicesModal.classList.remove('flex');
+        bindEvent('btn-close-devices-modal', 'click', () => {
+            if (dom.devicesModal) {
+                dom.devicesModal.classList.add('hidden');
+                dom.devicesModal.classList.remove('flex');
+            }
         });
-        document.getElementById('btn-Reconnect-media').addEventListener('click', async () => {
-            dom.devicesModal.classList.add('hidden');
-            dom.devicesModal.classList.remove('flex');
+        bindEvent('btn-Reconnect-media', 'click', async () => {
+            if (dom.devicesModal) {
+                dom.devicesModal.classList.add('hidden');
+                dom.devicesModal.classList.remove('flex');
+            }
             await requestAndUpgradeRealMedia(true, true);
         });
 
         // Laser Pointer & Picture-in-Picture
-        dom.btnStageLaser.addEventListener('click', () => {
+        bindEvent(dom.btnStageLaser, 'click', () => {
             state.laserActive = !state.laserActive;
             dom.btnStageLaser.classList.toggle('bg-cozy-pink', state.laserActive);
             dom.btnStageLaser.classList.toggle('text-slate-950', state.laserActive);
@@ -3207,7 +3323,7 @@
             showToast(state.laserActive ? 'Laser Pointer ON! Move your mouse over the movie.' : 'Laser Pointer OFF.', 'info');
         });
 
-        dom.btnStagePip.addEventListener('click', async () => {
+        bindEvent(dom.btnStagePip, 'click', async () => {
             try {
                 if (document.pictureInPictureElement) {
                     await document.exitPictureInPicture();
@@ -3223,86 +3339,47 @@
 
         // Modals Open/Close
         function openPlatformsModal() {
-            dom.platformsModal.classList.remove('hidden');
-            dom.platformsModal.classList.add('flex');
+            if (dom.platformsModal) {
+                dom.platformsModal.classList.remove('hidden');
+                dom.platformsModal.classList.add('flex');
+            }
             window.postMessage({ type: 'VEEVEE_EXTENSION_PING' }, '*');
         }
         function closePlatformsModal() {
-            dom.platformsModal.classList.add('hidden');
-            dom.platformsModal.classList.remove('flex');
-        }
-        function openExtensionModal() {
-            closePlatformsModal();
-            dom.extensionModal.classList.remove('hidden');
-            dom.extensionModal.classList.add('flex');
-            window.postMessage({ type: 'VEEVEE_EXTENSION_PING' }, '*');
-        }
-        function closeExtensionModal() {
-            dom.extensionModal.classList.add('hidden');
-            dom.extensionModal.classList.remove('flex');
+            if (dom.platformsModal) {
+                dom.platformsModal.classList.add('hidden');
+                dom.platformsModal.classList.remove('flex');
+            }
         }
 
-        document.getElementById('btn-open-platforms-top').addEventListener('click', openPlatformsModal);
-        dom.btnHeroPlatforms.addEventListener('click', openPlatformsModal);
-        document.getElementById('btn-dock-platforms').addEventListener('click', openPlatformsModal);
-        dom.btnStageChangeSource.addEventListener('click', openPlatformsModal);
-        document.getElementById('btn-close-platforms').addEventListener('click', closePlatformsModal);
-
-        dom.btnOpenExtensionTop.addEventListener('click', openExtensionModal);
-        dom.extensionStatusBadge.addEventListener('click', openExtensionModal);
-        dom.btnLobbyInstallExt.addEventListener('click', openExtensionModal);
-        dom.btnHeroExtension.addEventListener('click', openExtensionModal);
-        document.getElementById('btn-close-extension-modal').addEventListener('click', closeExtensionModal);
-        document.getElementById('btn-skip-extension-modal').addEventListener('click', closeExtensionModal);
-
-        // Extension File Downloads (1-Click Single .ZIP + Individual Files)
-        document.getElementById('btn-download-zip-ext').addEventListener('click', downloadCompleteZipExtension);
-        document.getElementById('btn-download-manifest').addEventListener('click', () => {
-            downloadTextFile('manifest.json', EXTENSION_MANIFEST_JSON);
-            showToast('Downloaded manifest.json!', 'success');
-        });
-        document.getElementById('btn-download-contentjs').addEventListener('click', () => {
-            downloadTextFile('content.js', EXTENSION_CONTENT_JS);
-            showToast('Downloaded content.js!', 'success');
-        });
-        document.getElementById('btn-download-bridgejs').addEventListener('click', () => {
-            downloadTextFile('page-bridge.js', EXTENSION_PAGE_BRIDGE_JS);
-            showToast('Downloaded page-bridge.js!', 'success');
-        });
-        document.getElementById('btn-copy-ext-url').addEventListener('click', async () => {
-            try {
-                await navigator.clipboard.writeText('chrome://extensions');
-                showToast('Copied chrome://extensions! Paste it in a new tab.', 'success');
-            } catch (e) {}
-        });
-        document.getElementById('btn-test-extension-ping').addEventListener('click', () => {
-            window.postMessage({ type: 'VEEVEE_EXTENSION_PING' }, '*');
-            setTimeout(() => {
-                if (state.extensionDetected) {
-                    showToast('VeeVee Watch Party Bridge v3.0 is active! ✅', 'success');
-                    closeExtensionModal();
-                } else {
-                    showToast('Extension not detected yet. Drag veevee-bridge-v3.zip onto chrome://extensions and refresh this page (F5).', 'warning');
-                }
-            }, 300);
-        });
+        bindEvent('btn-open-platforms-top', 'click', openPlatformsModal);
+        bindEvent(dom.btnHeroPlatforms, 'click', openPlatformsModal);
+        bindEvent(dom.btnDockPlatforms, 'click', openPlatformsModal);
+        bindEvent(dom.btnStageChangeSource, 'click', openPlatformsModal);
+        bindEvent('btn-close-platforms', 'click', closePlatformsModal);
 
         // Help Modal
-        document.getElementById('btn-open-help').addEventListener('click', () => {
-            dom.helpModal.classList.remove('hidden');
-            dom.helpModal.classList.add('flex');
+        bindEvent('btn-open-help', 'click', () => {
+            if (dom.helpModal) {
+                dom.helpModal.classList.remove('hidden');
+                dom.helpModal.classList.add('flex');
+            }
         });
-        document.getElementById('btn-close-help').addEventListener('click', () => {
-            dom.helpModal.classList.add('hidden');
-            dom.helpModal.classList.remove('flex');
+        bindEvent('btn-close-help', 'click', () => {
+            if (dom.helpModal) {
+                dom.helpModal.classList.add('hidden');
+                dom.helpModal.classList.remove('flex');
+            }
         });
-        document.getElementById('btn-got-it-help').addEventListener('click', () => {
-            dom.helpModal.classList.add('hidden');
-            dom.helpModal.classList.remove('flex');
+        bindEvent('btn-got-it-help', 'click', () => {
+            if (dom.helpModal) {
+                dom.helpModal.classList.add('hidden');
+                dom.helpModal.classList.remove('flex');
+            }
         });
 
         // Load YouTube or Direct MP4 URL inside VeeVee
-        dom.btnLoadUrl.addEventListener('click', () => {
+        bindEvent(dom.btnLoadUrl, 'click', () => {
             const rawUrl = dom.inputMediaUrl.value.trim();
             if (!rawUrl) {
                 showToast('Paste a YouTube link or direct video URL first!', 'warning');
@@ -3319,9 +3396,9 @@
             }
         });
 
-        dom.btnModalLocalFile.addEventListener('click', () => {
+        bindEvent(dom.btnModalLocalFile, 'click', () => {
             closePlatformsModal();
-            dom.inputLocalVideo.click();
+            if (dom.inputLocalVideo) dom.inputLocalVideo.click();
         });
 
         // 2-Step VOD Platform Launch
@@ -3333,56 +3410,60 @@
 
                 state.openedPlatformWindow = window.open(platformUrl, '_blank');
 
-                dom.step2StatusTitle.textContent = `Step 2: Log in to ${platformName} in the new tab and start your movie, then click the green button!`;
-                dom.step2CaptureBox.classList.add('ring-2', 'ring-cozy-mint');
+                if (dom.step2StatusTitle) {
+                    dom.step2StatusTitle.textContent = `Step 2: Log in to ${platformName} in the new tab and start your movie, then click the green button!`;
+                }
+                if (dom.step2CaptureBox) {
+                    dom.step2CaptureBox.classList.add('ring-2', 'ring-cozy-mint');
+                }
                 showToast(`Opened ${platformName} in a new tab! Start your movie there, then come back and click Step 2.`, 'success');
             });
         });
 
-        dom.btnStep2StartCapture.addEventListener('click', () => {
+        bindEvent(dom.btnStep2StartCapture, 'click', () => {
             const label = state.selectedPlatformName ? `${state.selectedPlatformName} • ${state.username}` : `${state.username}'s Screen`;
             closePlatformsModal();
             startScreenShare(label);
         });
 
         // Stage Direct Start / Pause / Rewind / Forward / Speed / Skip Intro / Seek / Stop
-        dom.btnStagePlayPause.addEventListener('click', () => toggleStagePlayPause(true));
-        dom.mainScreenVideo.addEventListener('click', () => {
+        bindEvent(dom.btnStagePlayPause, 'click', () => toggleStagePlayPause(true));
+        bindEvent(dom.mainScreenVideo, 'click', () => {
             if (state.stageMode !== 'none' && !state.laserActive) toggleStagePlayPause(true);
         });
-        dom.ytClickShield.addEventListener('click', () => {
+        bindEvent(dom.ytClickShield, 'click', () => {
             if (state.stageMode === 'youtube' && !state.laserActive) toggleStagePlayPause(true);
         });
 
-        dom.btnStageRewind.addEventListener('click', () => seekStageByOffset(-10, true));
-        dom.btnStageForward.addEventListener('click', () => seekStageByOffset(10, true));
+        bindEvent(dom.btnStageRewind, 'click', () => seekStageByOffset(-10, true));
+        bindEvent(dom.btnStageForward, 'click', () => seekStageByOffset(10, true));
 
-        dom.selectStageSpeed.addEventListener('change', (e) => {
+        bindEvent(dom.selectStageSpeed, 'change', (e) => {
             changeStagePlaybackSpeed(parseFloat(e.target.value), true);
         });
 
-        dom.btnStageSkipIntro.addEventListener('click', () => {
+        bindEvent(dom.btnStageSkipIntro, 'click', () => {
             sendExtensionCommand('skipIntro');
             broadcastData({ type: 'stage-skip-intro', sender: state.username });
             showToast('Sent "Skip Intro" command to VOD player!', 'info');
         });
 
-        dom.sliderStageSeek.addEventListener('input', (e) => {
+        bindEvent(dom.sliderStageSeek, 'input', (e) => {
             seekStageVideo(parseFloat(e.target.value), true);
         });
 
-        dom.btnStageStop.addEventListener('click', () => stopAllStageStreams(true));
+        bindEvent(dom.btnStageStop, 'click', () => stopAllStageStreams(true));
 
         // Share Screen / Local File / Demo Buttons
-        dom.btnShareScreen.addEventListener('click', () => {
+        bindEvent(dom.btnShareScreen, 'click', () => {
             if (state.isSharingScreen || state.stageMode !== 'none') stopAllStageStreams(true);
             else startScreenShare();
         });
-        dom.btnHeroShare.addEventListener('click', () => startScreenShare());
-        dom.btnHeroDemo.addEventListener('click', startDemoStream);
-        dom.btnHeroFile.addEventListener('click', () => dom.inputLocalVideo.click());
+        bindEvent(dom.btnHeroShare, 'click', () => startScreenShare());
+        bindEvent(dom.btnHeroDemo, 'click', startDemoStream);
+        bindEvent(dom.btnHeroFile, 'click', () => dom.inputLocalVideo && dom.inputLocalVideo.click());
 
-        dom.inputLocalVideo.addEventListener('change', (e) => {
+        bindEvent(dom.inputLocalVideo, 'change', (e) => {
             const file = e.target.files[0];
             if (file) startLocalFileStream(file);
             e.target.value = '';
@@ -3406,7 +3487,7 @@
             });
         });
 
-        dom.btnCreateRoom.addEventListener('click', async () => {
+        bindEvent(dom.btnCreateRoom, 'click', async () => {
             state.username = dom.inputUsername.value.trim() || `CozyHost_${Math.floor(Math.random() * 90 + 10)}`;
             saveProfilePreferences();
             dom.btnCreateRoom.disabled = true;
@@ -3414,7 +3495,7 @@
             initPeerSession(true, generateShortRoomId());
         });
 
-        dom.btnJoinRoom.addEventListener('click', async () => {
+        bindEvent(dom.btnJoinRoom, 'click', async () => {
             const targetRoom = dom.inputRoomId.value.trim();
             if (!targetRoom) return showToast('Enter a Room ID to join!', 'warning');
             state.username = dom.inputUsername.value.trim() || `CozyGuest_${Math.floor(Math.random() * 90 + 10)}`;
@@ -3424,8 +3505,8 @@
             initPeerSession(false, targetRoom);
         });
 
-        // FIXED Mic & Camera Toggles: If currently on avatar fallback, actively request real camera/mic from Chrome!
-        dom.btnToggleMic.addEventListener('click', async () => {
+        // Mic & Camera Toggles
+        bindEvent(dom.btnToggleMic, 'click', async () => {
             if (state.isUsingAvatarFallback) {
                 await requestAndUpgradeRealMedia(true, state.camEnabled);
                 return;
@@ -3436,7 +3517,7 @@
             showToast(state.micEnabled ? 'Microphone unmuted 🎙️' : 'Microphone muted 🔇', 'info');
         });
 
-        dom.btnToggleCam.addEventListener('click', async () => {
+        bindEvent(dom.btnToggleCam, 'click', async () => {
             if (state.isUsingAvatarFallback || (state.localCamStream && state.localCamStream._isAvatarFallback)) {
                 await requestAndUpgradeRealMedia(state.micEnabled, true);
                 return;
@@ -3447,27 +3528,27 @@
             showToast(state.camEnabled ? 'Camera turned on 📷' : 'Camera turned off', 'info');
         });
 
-        dom.btnUnmuteStage.addEventListener('click', () => {
+        bindEvent(dom.btnUnmuteStage, 'click', () => {
             dom.mainScreenVideo.muted = false;
             dom.mainScreenVideo.play().catch(() => {});
             dom.btnUnmuteStage.classList.add('hidden');
         });
 
-        dom.btnToggleAutoduck.addEventListener('click', () => {
+        bindEvent(dom.btnToggleAutoduck, 'click', () => {
             state.autoDuckEnabled = !state.autoDuckEnabled;
             dom.btnToggleAutoduck.classList.toggle('text-cozy-mint', state.autoDuckEnabled);
             dom.btnToggleAutoduck.classList.toggle('text-slate-400', !state.autoDuckEnabled);
             showToast(state.autoDuckEnabled ? 'Auto-Ducking enabled' : 'Auto-Ducking disabled', 'info');
         });
 
-        dom.btnToggleSfx.addEventListener('click', () => {
+        bindEvent(dom.btnToggleSfx, 'click', () => {
             state.sfxEnabled = !state.sfxEnabled;
             dom.btnToggleSfx.innerHTML = `<i data-lucide="${state.sfxEnabled ? 'bell' : 'bell-off'}" class="w-4 h-4 ${state.sfxEnabled ? 'text-cozy-lavender' : 'text-slate-500'}"></i>`;
-            lucide.createIcons({ nodes: [dom.btnToggleSfx] });
+            safeCreateIcons({ nodes: [dom.btnToggleSfx] });
             showToast(state.sfxEnabled ? 'Notification sounds ON 🔔' : 'Notification sounds muted 🔕', 'info');
         });
 
-        dom.sliderStageVolume.addEventListener('input', (e) => {
+        bindEvent(dom.sliderStageVolume, 'input', (e) => {
             state.userStageVolume = parseFloat(e.target.value);
             dom.mainScreenVideo.volume = state.userStageVolume;
             if (state.stageMode === 'youtube' && state.ytPlayer && typeof state.ytPlayer.setVolume === 'function') {
@@ -3490,8 +3571,8 @@
             }
             showToast('Invite link copied to clipboard! 🔗✨', 'success');
         }
-        dom.btnCopyInvite.addEventListener('click', copyInviteLink);
-        dom.btnCopyInviteMobile.addEventListener('click', copyInviteLink);
+        bindEvent(dom.btnCopyInvite, 'click', copyInviteLink);
+        bindEvent(dom.btnCopyInviteMobile, 'click', copyInviteLink);
 
         document.querySelectorAll('.reaction-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -3501,7 +3582,7 @@
             });
         });
 
-        dom.chatInput.addEventListener('input', () => {
+        bindEvent(dom.chatInput, 'input', () => {
             const now = Date.now();
             if (now - state.lastTypingSent > 1200) {
                 state.lastTypingSent = now;
@@ -3509,7 +3590,7 @@
             }
         });
 
-        dom.chatForm.addEventListener('submit', (e) => {
+        bindEvent(dom.chatForm, 'submit', (e) => {
             e.preventDefault();
             const text = dom.chatInput.value.trim();
             if (!text) return;
@@ -3520,7 +3601,7 @@
             dom.emojiDrawer.classList.add('hidden');
         });
 
-        dom.btnToggleEmoji.addEventListener('click', () => dom.emojiDrawer.classList.toggle('hidden'));
+        bindEvent(dom.btnToggleEmoji, 'click', () => dom.emojiDrawer.classList.toggle('hidden'));
         document.querySelectorAll('.emoji-pick').forEach(btn => {
             btn.addEventListener('click', () => {
                 dom.chatInput.value += btn.textContent;
@@ -3531,7 +3612,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
             const roomParam = params.get('room');
-            if (roomParam) {
+            if (roomParam && dom.inputRoomId) {
                 dom.inputRoomId.value = roomParam.trim();
                 showToast(`Invite to room "${roomParam}" detected! Click "Join".`, 'info');
             }
@@ -3539,7 +3620,9 @@
             const savedName = localStorage.getItem('veevee_username');
             const savedColor = localStorage.getItem('veevee_color');
             const cuteNames = ['CozyPanda', 'StarryFox', 'MochiCat', 'LunaBunny', 'VelvetOwl', 'SweetPeach'];
-            dom.inputUsername.value = savedName || cuteNames[Math.floor(Math.random() * cuteNames.length)];
+            if (dom.inputUsername) {
+                dom.inputUsername.value = savedName || cuteNames[Math.floor(Math.random() * cuteNames.length)];
+            }
             if (savedColor) selectColorSwatch(savedColor);
         });
     </script>
