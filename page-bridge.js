@@ -1,4 +1,4 @@
-// VeeVee Watch Party Bridge v3.0 - MAIN World VOD API Bridge (M7375 DRM-Safe)
+// VeeVee Watch Party Bridge v4.0 - Universal VOD Engine (Netflix Cadmium + Disney+ / Max / Prime Shadow-DOM)
 (function() {
     function getNetflixPlayer() {
         try {
@@ -13,10 +13,52 @@
         return null;
     }
 
+    function findAllVideosDeep(root) {
+        let videos = [];
+        if (!root) return videos;
+        try {
+            const direct = root.querySelectorAll ? Array.from(root.querySelectorAll('video')) : [];
+            videos.push(...direct);
+            const allNodes = root.querySelectorAll ? root.querySelectorAll('*') : [];
+            for (let i = 0; i < allNodes.length; i++) {
+                const node = allNodes[i];
+                if (node.shadowRoot) {
+                    videos.push(...findAllVideosDeep(node.shadowRoot));
+                }
+            }
+        } catch (e) {}
+        return videos;
+    }
+
+    function getActiveMovieVideo() {
+        const allVideos = findAllVideosDeep(document);
+        if (allVideos.length === 0) return null;
+        if (allVideos.length === 1) return allVideos[0];
+
+        let bestVideo = allVideos[0];
+        let bestScore = -1;
+
+        for (const v of allVideos) {
+            let score = 0;
+            const rect = v.getBoundingClientRect ? v.getBoundingClientRect() : { width: 0, height: 0 };
+            if (rect.width > 200 && rect.height > 120) score += 50;
+            if (v.readyState >= 1) score += 30;
+            if (v.duration && !isNaN(v.duration) && v.duration > 60) score += 100;
+            if (!v.paused) score += 40;
+            if (score > bestScore) {
+                bestScore = score;
+                bestVideo = v;
+            }
+        }
+        return bestVideo;
+    }
+
     window.addEventListener('message', (event) => {
         if (!event.data || event.data.type !== 'VEEVEE_MAIN_WORLD_EXEC') return;
         const cmd = event.data.cmd;
         if (!cmd) return;
+
+        if (document.getElementById('stage-container') && document.getElementById('main-screen-video')) return;
 
         const isNetflix = location.hostname.includes('netflix.com');
         if (isNetflix) {
@@ -52,27 +94,54 @@
             return;
         }
 
-        const videoEl = document.querySelector('video');
+        const videoEl = getActiveMovieVideo();
         if (!videoEl) return;
 
-        if (cmd.action === 'play') videoEl.play().catch(() => {});
-        else if (cmd.action === 'pause') videoEl.pause();
-        else if (cmd.action === 'rewind') videoEl.currentTime = Math.max(0, videoEl.currentTime - (Number(cmd.value) || 10));
-        else if (cmd.action === 'forward') videoEl.currentTime = Math.min(videoEl.duration || Infinity, videoEl.currentTime + (Number(cmd.value) || 10));
-        else if (cmd.action === 'seekTo' && typeof cmd.value === 'number') videoEl.currentTime = cmd.value;
-        else if (cmd.action === 'speed' && typeof cmd.value === 'number') videoEl.playbackRate = cmd.value;
-        else if (cmd.action === 'setSubtitleTrack' && videoEl.textTracks) {
-            for (let i = 0; i < videoEl.textTracks.length; i++) {
-                const t = videoEl.textTracks[i];
-                t.mode = (t.label === cmd.value || t.language === cmd.value || String(i) === String(cmd.value)) ? 'showing' : 'disabled';
+        try {
+            if (cmd.action === 'play') {
+                const playPromise = videoEl.play();
+                if (playPromise && typeof playPromise.catch === 'function') {
+                    playPromise.catch(() => {
+                        const playBtns = document.querySelectorAll('[data-testid="player-ux-play-pause-button"], .atvwebplayersdk-playpause-button, .play-pause-icon, [aria-label="Play"], [aria-label="Odtwórz"]');
+                        if (playBtns.length > 0) playBtns[0].click();
+                    });
+                }
+            } else if (cmd.action === 'pause') {
+                videoEl.pause();
+            } else if (cmd.action === 'rewind') {
+                const offset = Number(cmd.value) || 10;
+                videoEl.currentTime = Math.max(0, videoEl.currentTime - offset);
+            } else if (cmd.action === 'forward') {
+                const offset = Number(cmd.value) || 10;
+                videoEl.currentTime = Math.min(videoEl.duration || Infinity, videoEl.currentTime + offset);
+            } else if (cmd.action === 'seekTo' && typeof cmd.value === 'number') {
+                videoEl.currentTime = cmd.value;
+            } else if (cmd.action === 'speed' && typeof cmd.value === 'number') {
+                videoEl.playbackRate = cmd.value;
+            } else if (cmd.action === 'setAudioTrack' && cmd.value && videoEl.audioTracks) {
+                for (let i = 0; i < videoEl.audioTracks.length; i++) {
+                    const at = videoEl.audioTracks[i];
+                    at.enabled = (at.id === cmd.value || at.language === cmd.value || at.label === cmd.value || String(i) === String(cmd.value));
+                }
+            } else if (cmd.action === 'setSubtitleTrack' && videoEl.textTracks) {
+                for (let i = 0; i < videoEl.textTracks.length; i++) {
+                    const t = videoEl.textTracks[i];
+                    t.mode = (t.label === cmd.value || t.language === cmd.value || String(i) === String(cmd.value)) ? 'showing' : 'disabled';
+                }
+            } else if (cmd.action === 'skipIntro') {
+                const selectors = [
+                    '.skip__button',
+                    '[data-testid="skip-button"]',
+                    '[data-testid="player-ux-skip-button"]',
+                    '.atvwebplayersdk-skipelement-button',
+                    'button[class*="skip"]'
+                ];
+                for (const s of selectors) {
+                    const b = document.querySelector(s);
+                    if (b) { b.click(); break; }
+                }
             }
-        } else if (cmd.action === 'skipIntro') {
-            const selectors = ['.skip__button', '[data-testid="skip-button"]', '.atvwebplayersdk-skipelement-button'];
-            for (const s of selectors) {
-                const b = document.querySelector(s);
-                if (b) { b.click(); break; }
-            }
-        }
+        } catch (e) {}
     });
 
     setInterval(() => {
@@ -115,14 +184,22 @@
             return;
         }
 
-        const videoEl = document.querySelector('video');
-        if (!videoEl || !videoEl.duration || isNaN(videoEl.duration)) return;
+        const videoEl = getActiveMovieVideo();
+        if (!videoEl || !videoEl.duration || isNaN(videoEl.duration) || videoEl.duration < 5) return;
+
+        const audioList = [];
+        if (videoEl.audioTracks) {
+            for (let i = 0; i < videoEl.audioTracks.length; i++) {
+                const at = videoEl.audioTracks[i];
+                audioList.push({ id: String(i), label: at.label || at.language || 'Audio Track ' + (i + 1) });
+            }
+        }
 
         const subList = [];
         if (videoEl.textTracks) {
             for (let i = 0; i < videoEl.textTracks.length; i++) {
                 const tr = videoEl.textTracks[i];
-                subList.push({ id: String(i), label: tr.label || tr.language || 'Track ' + (i + 1) });
+                subList.push({ id: String(i), label: tr.label || tr.language || 'Subtitle ' + (i + 1) });
             }
         }
 
@@ -132,10 +209,10 @@
                 currentTime: videoEl.currentTime || 0,
                 duration: videoEl.duration || 0,
                 paused: videoEl.paused,
-                audioTracks: [],
+                audioTracks: audioList,
                 subtitleTracks: subList,
                 hostname: location.hostname
             }
         }, '*');
-    }, 900);
+    }, 800);
 })();
