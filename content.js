@@ -1,12 +1,12 @@
-// VeeVee Watch Party Bridge v3.0 - Isolated Content Script Bridge
+// VeeVee Watch Party Bridge v4.0 - Isolated Content Script Bridge
 (function() {
-    window.postMessage({ type: 'VEEVEE_EXTENSION_READY', version: '3.0' }, '*');
+    window.postMessage({ type: 'VEEVEE_EXTENSION_READY', version: '4.0' }, '*');
 
     window.addEventListener('message', (event) => {
         if (!event.data || typeof event.data !== 'object') return;
 
         if (event.data.type === 'VEEVEE_EXTENSION_PING') {
-            window.postMessage({ type: 'VEEVEE_EXTENSION_READY', version: '3.0' }, '*');
+            window.postMessage({ type: 'VEEVEE_EXTENSION_READY', version: '4.0' }, '*');
         }
 
         if (event.data.type === 'VEEVEE_EXTENSION_COMMAND') {
