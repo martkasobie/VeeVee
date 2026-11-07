@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "VeeVee Watch Party Bridge",
+  "version": "5.1",
+  "description": "Universal VOD Bridge v5.1 for VeeVee Watch Party (Netflix Cadmium API + Disney+, HBO Max, Prime Video audio/subtitle menus, tab-targeted control).",
+  "permissions": [
+    "storage"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_end",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "page-bridge.js"
+      ],
+      "world": "MAIN",
+      "run_at": "document_end",
+      "all_frames": false
+    }
+  ]
+}
