@@ -1,7 +1,7 @@
 // VeeVee service worker - makes the site installable (PWA) and opens it even on a bad connection.
 // When you change index.html you do NOT need to touch this file: the page is always loaded fresh
 // from the network first. Only bump CACHE_VERSION if you change the icons or the manifest.
-const CACHE_VERSION = 'veevee-v1';
+const CACHE_VERSION = 'veevee-v2';
 
 // The app shell: everything VeeVee needs from your own GitHub Pages site
 const APP_SHELL = [
